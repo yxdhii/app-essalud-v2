@@ -8316,3 +8316,791 @@ button:active {
     transform: scale(0.97);
   }
 }
+
+/* =========================================================
+   ESSALUD DIGITAL | TUTORIAL GLASSMORPHISM PREMIUM
+========================================================= */
+
+.help-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  font-family: inherit;
+  isolation: isolate;
+}
+
+/* =========================================================
+   OVERLAY — FONDO OSCURO
+========================================================= */
+
+.help-tour-shade {
+  position: fixed;
+  z-index: 10000;
+  background: rgba(11, 27, 49, 0.54);
+
+  border: none;
+  outline: none;
+  border-radius: 0;
+
+  pointer-events: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+/* =========================================================
+   SPOTLIGHT — ELEMENTO RESALTADO
+========================================================= */
+
+.help-tour-spotlight {
+  position: fixed;
+  z-index: 10001;
+  box-sizing: border-box;
+
+  border: 2px solid #1685ff;
+  border-radius: 13px;
+
+  background: rgba(232, 243, 255, 0.12);
+
+  box-shadow:
+    0 0 0 3px rgba(22, 133, 255, 0.13),
+    0 0 22px rgba(22, 133, 255, 0.23),
+    inset 0 0 12px rgba(255, 255, 255, 0.12);
+
+  pointer-events: none;
+
+  transition:
+    top 0.22s ease,
+    left 0.22s ease,
+    width 0.22s ease,
+    height 0.22s ease;
+}
+
+/* =========================================================
+   TARJETA PRINCIPAL — GLASSMORPHISM
+========================================================= */
+
+.help-tour-card {
+  position: fixed;
+  z-index: 10002;
+
+  width: min(340px, calc(100vw - 32px));
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+
+  box-sizing: border-box;
+  padding: 20px 20px 16px;
+
+  /* Sin barra de desplazamiento interna */
+  overflow: hidden;
+  overscroll-behavior: none;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(239, 246, 255, 0.94)
+  );
+
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
+  backdrop-filter: blur(20px) saturate(145%);
+
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 23px;
+
+  box-shadow:
+    0 24px 65px rgba(5, 23, 49, 0.25),
+    0 5px 18px rgba(8, 38, 75, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  color: #14294b;
+
+  pointer-events: auto;
+
+  animation: helpTourAppear 0.24s ease-out;
+}
+
+/* =========================================================
+   BOTÓN CERRAR
+========================================================= */
+
+.help-tour-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 1px solid rgba(215, 228, 245, 0.95);
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.9);
+  color: #63748d;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.help-tour-close:hover {
+  background: #eaf3ff;
+  color: #0878ff;
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   ICONO
+========================================================= */
+
+.help-tour-icon {
+  width: 46px;
+  height: 46px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 0 auto 10px;
+
+  border: 1px solid rgba(209, 230, 255, 0.95);
+  border-radius: 15px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(222, 239, 255, 0.96)
+  );
+
+  color: #0878ff;
+
+  box-shadow:
+    0 6px 17px rgba(8, 120, 255, 0.09),
+    inset 0 1px 0 #ffffff;
+}
+
+/* =========================================================
+   INDICADOR DEL PASO
+========================================================= */
+
+.help-tour-step {
+  margin: 0 0 10px;
+
+  color: #0878ff;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+
+  text-align: center;
+}
+
+/* =========================================================
+   PROGRESO
+========================================================= */
+
+.help-tour-progress {
+  display: flex;
+  gap: 5px;
+
+  margin-bottom: 17px;
+}
+
+.help-tour-progress span {
+  flex: 1;
+  height: 4px;
+
+  border-radius: 20px;
+
+  background: #e0e9f5;
+
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.help-tour-progress span.active {
+  background: linear-gradient(90deg, #0878ff, #54a5ff);
+  box-shadow: 0 1px 5px rgba(8, 120, 255, 0.15);
+}
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.help-tour-card h2 {
+  margin: 0 0 9px;
+
+  color: #14294b;
+
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.45px;
+
+  text-align: center;
+  overflow-wrap: break-word;
+}
+
+/* =========================================================
+   DESCRIPCIÓN
+========================================================= */
+
+.help-tour-description {
+  margin: 0;
+  min-height: 0;
+
+  color: #5a6a82;
+
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  text-align: center;
+  overflow-wrap: break-word;
+}
+
+/* =========================================================
+   BOTONERA
+========================================================= */
+
+.help-tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: nowrap;
+  gap: 4px;
+
+  margin-top: 17px;
+}
+
+/* Estilos compartidos */
+
+.help-tour-back,
+.help-tour-skip,
+.help-tour-next {
+  min-height: 38px;
+  padding: 0 9px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Omitir y anterior */
+
+.help-tour-back,
+.help-tour-skip {
+  flex-shrink: 1;
+
+  border: 1px solid transparent;
+
+  background: transparent;
+  color: #64748b;
+}
+
+.help-tour-back:hover,
+.help-tour-skip:hover {
+  background: #eaf3ff;
+  color: #0878ff;
+}
+
+/* Siguiente y finalizar */
+
+.help-tour-next {
+  flex-shrink: 0;
+  margin-left: auto;
+
+  border: 1px solid #0878ff;
+
+  background: linear-gradient(135deg, #1685ff, #0668e8);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 4px 12px rgba(8, 120, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.help-tour-next:hover {
+  background: linear-gradient(135deg, #0878ff, #005bd1);
+
+  box-shadow: 0 6px 16px rgba(8, 120, 255, 0.26);
+
+  transform: translateY(-1px);
+}
+
+.help-tour-next:active {
+  transform: scale(0.97);
+}
+
+/* =========================================================
+   MÓVILES
+========================================================= */
+
+@media (max-width: 380px) {
+  .help-tour-card {
+    width: calc(100vw - 28px);
+    padding: 17px 13px 14px;
+    border-radius: 21px;
+  }
+
+  .help-tour-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 8px;
+    border-radius: 14px;
+  }
+
+  .help-tour-step {
+    margin-bottom: 9px;
+    font-size: 9px;
+  }
+
+  .help-tour-progress {
+    gap: 4px;
+    margin-bottom: 13px;
+  }
+
+  .help-tour-card h2 {
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .help-tour-description {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .help-tour-actions {
+    gap: 2px;
+    margin-top: 14px;
+  }
+
+  .help-tour-back,
+  .help-tour-skip,
+  .help-tour-next {
+    min-height: 35px;
+    padding: 0 6px;
+    gap: 3px;
+    font-size: 10px;
+  }
+}
+
+/* Pantallas con poca altura */
+
+@media (max-height: 650px) {
+  .help-tour-card {
+    padding-top: 14px;
+    padding-bottom: 12px;
+  }
+
+  .help-tour-icon {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 7px;
+  }
+
+  .help-tour-progress {
+    margin-bottom: 11px;
+  }
+
+  .help-tour-card h2 {
+    font-size: 18px;
+    margin-bottom: 7px;
+  }
+
+  .help-tour-description {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .help-tour-actions {
+    margin-top: 11px;
+  }
+}
+
+/* =========================================================
+   ANIMACIONES Y ACCESIBILIDAD
+========================================================= */
+
+@keyframes helpTourAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .help-tour-card,
+  .help-tour-spotlight,
+  .help-tour-close,
+  .help-tour-back,
+  .help-tour-skip,
+  .help-tour-next {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* =========================================
+   AUTENTICACIÓN BIOMÉTRICA
+========================================= */
+
+/* ==========================================
+   ESSALUD DIGITAL — FONDO DEL BIOMÉTRICO
+   ========================================== */
+
+.biometric-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 11000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+  box-sizing: border-box;
+
+  /* Oscurece el contenido que está detrás del modal */
+  background: rgba(8, 23, 46, 0.58);
+
+  /* Sin desenfoque */
+  filter: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  animation: biometricFadeIn 0.25s ease;
+}
+
+/* El cuadro biométrico conserva su apariencia nítida */
+.biometric-modal {
+  position: relative;
+  z-index: 1;
+
+  filter: none;
+  opacity: 1;
+}
+
+.biometric-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 360px;
+  box-sizing: border-box;
+
+  padding: 30px 24px 22px;
+
+  text-align: center;
+
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(239, 246, 255, 0.97)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  animation: biometricModalIn 0.3s ease;
+}
+
+.biometric-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+
+  width: 35px;
+  height: 35px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #e3eaf4;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #64748b;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.biometric-close:hover {
+  color: #0878ff;
+  background: #edf5ff;
+}
+
+.biometric-security-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  margin-bottom: 26px;
+  padding: 8px 12px;
+
+  border: 1px solid #dceaff;
+  border-radius: 30px;
+
+  background: #edf5ff;
+  color: #0878ff;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.biometric-scan-icon {
+  position: relative;
+
+  width: 124px;
+  height: 124px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 0 auto 24px;
+
+  border: 1px solid #d9eaff;
+  border-radius: 35px;
+
+  background: linear-gradient(145deg, #ffffff, #e8f3ff);
+
+  color: #0878ff;
+
+  box-shadow:
+    0 12px 28px rgba(8, 120, 255, 0.1),
+    inset 0 1px 0 #ffffff;
+
+  transition:
+    color 0.3s ease,
+    background 0.3s ease;
+}
+
+.biometric-scan-ring {
+  position: absolute;
+  inset: -8px;
+
+  border: 2px solid rgba(8, 120, 255, 0.25);
+  border-radius: 40px;
+
+  animation: biometricPulse 1.5s ease-out infinite;
+}
+
+.biometric-success {
+  color: #16a36a;
+
+  background: linear-gradient(145deg, #ffffff, #e5fff2);
+
+  border-color: #bdebd4;
+}
+
+.biometric-modal h2 {
+  margin: 0 0 12px;
+
+  color: #14294b;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+.biometric-description {
+  max-width: 280px;
+
+  margin: 0 auto 24px;
+
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.biometric-progress {
+  height: 5px;
+  overflow: hidden;
+
+  margin: 0 0 13px;
+
+  border-radius: 20px;
+  background: #e2ebf8;
+}
+
+.biometric-progress span {
+  display: block;
+  width: 40%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: linear-gradient(90deg, #0878ff, #66b4ff);
+
+  animation: biometricProgress 2.4s ease-in-out forwards;
+}
+
+.biometric-status {
+  margin: 0 0 23px;
+
+  color: #0878ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.biometric-success-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  margin: 0 0 22px;
+
+  color: #138755;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.biometric-cancel {
+  width: 100%;
+  min-height: 46px;
+
+  border: 1px solid #dce6f3;
+  border-radius: 13px;
+
+  background: #ffffff;
+  color: #52647d;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.biometric-cancel:hover {
+  background: #edf5ff;
+  border-color: #c8defb;
+  color: #0878ff;
+}
+
+.biometric-demo-note {
+  margin: 17px 0 0;
+
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+@keyframes biometricFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes biometricModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes biometricPulse {
+  0% {
+    transform: scale(0.94);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
+
+@keyframes biometricProgress {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .biometric-modal {
+    padding: 26px 19px 19px;
+    border-radius: 24px;
+  }
+
+  .biometric-security-badge {
+    margin-bottom: 22px;
+  }
+
+  .biometric-scan-icon {
+    width: 108px;
+    height: 108px;
+    margin-bottom: 21px;
+    border-radius: 30px;
+  }
+
+  .biometric-modal h2 {
+    font-size: 20px;
+  }
+
+  .biometric-description {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biometric-overlay,
+  .biometric-modal,
+  .biometric-scan-ring,
+  .biometric-progress span {
+    animation: none;
+  }
+}
