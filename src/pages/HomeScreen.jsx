@@ -174,7 +174,6 @@ function HomeScreen() {
           <div
             className="home-app-icon"
             ref={iconRef}
-            onClick={launchCalleGo}
             onContextMenu={(e) => {
               e.preventDefault();
               setShowAppMenu(true);

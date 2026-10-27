@@ -8347,6 +8347,7 @@ button:active {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+
 /* =========================================================
    SPOTLIGHT — ELEMENTO RESALTADO
 ========================================================= */
@@ -8383,9 +8384,9 @@ button:active {
   position: fixed;
   z-index: 10002;
 
-  width: min(340px, calc(100vw - 32px));
-  max-height: calc(100vh - 24px);
-  max-height: calc(100dvh - 24px);
+  height: auto;
+  max-height: none;
+  overflow: visible;
 
   box-sizing: border-box;
   padding: 20px 20px 16px;
@@ -8416,6 +8417,44 @@ button:active {
   pointer-events: auto;
 
   animation: helpTourAppear 0.24s ease-out;
+}
+
+/* Tarjeta del tutorial de registro sin scroll */
+.register-help-tour-card {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 16px 20px 14px;
+  box-sizing: border-box;
+}
+
+/* Reducir espacios para que todo el contenido quepa */
+.register-help-tour-card .help-tour-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 7px;
+}
+
+.register-help-tour-card .help-tour-step {
+  margin-bottom: 8px;
+}
+
+.register-help-tour-card .help-tour-progress {
+  margin-bottom: 12px;
+}
+
+.register-help-tour-card h2 {
+  margin-bottom: 7px;
+  font-size: 19px;
+}
+
+.register-help-tour-card .help-tour-description {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.register-help-tour-card .help-tour-actions {
+  margin-top: 10px;
 }
 
 /* =========================================================
@@ -8752,12 +8791,10 @@ button:active {
 @keyframes helpTourAppear {
   from {
     opacity: 0;
-    transform: translate(-50%, 7px);
   }
 
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
   }
 }
 
@@ -9102,5 +9139,1223 @@ button:active {
   .biometric-scan-ring,
   .biometric-progress span {
     animation: none;
+  }
+}
+
+/* =========================================
+   REGISTRO ESSALUD DIGITAL
+   Diseño consistente con el login
+   ========================================= */
+
+.register-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 50px 10% 24px;
+  background: #fff;
+  color: #10133f;
+  font-family: Arial, Helvetica, sans-serif;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+}
+
+.register-page::-webkit-scrollbar {
+  display: none;
+}
+
+.register-page *,
+.register-page *::before,
+.register-page *::after {
+  box-sizing: border-box;
+}
+
+/* Cabecera: misma posición que el login */
+
+.register-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 38px;
+  margin: 10px 0 18px;
+  padding: 0 4px;
+}
+
+.register-back,
+.register-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 3px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #0877ff;
+  font-family: inherit;
+  font-weight: 400;
+  box-shadow: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.register-back svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.7;
+}
+
+.register-help {
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.register-help svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7;
+}
+
+.register-back:focus,
+.register-help:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.register-back:focus-visible,
+.register-help:focus-visible {
+  outline: 2px solid #0877ff;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Contenido */
+
+.register-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0 0 24px;
+}
+
+/* Logo */
+
+.register-logo {
+  display: block;
+  width: 115px;
+  max-width: 70%;
+  max-height: 90px;
+  height: auto;
+  margin: 0 auto 14px;
+  object-fit: contain;
+}
+
+/* Título y paso */
+
+.register-content h1 {
+  margin: 0 0 6px;
+  color: #10133f;
+  font-size: 25px;
+  line-height: 1.25;
+  font-weight: 700;
+  text-align: center;
+}
+
+.register-step {
+  margin: 0;
+  color: #555b72;
+  font-size: 13px;
+  line-height: 19px;
+  text-align: center;
+}
+
+/* Progreso */
+
+.register-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 10px auto 24px;
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.progress-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #dceafa;
+  color: #49698e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.progress-number.active {
+  background: #0877ff;
+  color: #fff;
+}
+
+.progress-line {
+  width: 78px;
+  height: 4px;
+  border-radius: 4px;
+  background: #dceafa;
+}
+
+.progress-line.completed {
+  background: #0877ff;
+}
+
+/* Sección de datos */
+
+.register-section-title {
+  margin: 0 0 12px;
+}
+
+.register-section-title h2 {
+  margin: 0 0 5px;
+  color: #10133f;
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.register-section-title p {
+  margin: 0;
+  color: #71809b;
+  font-size: 12px;
+  line-height: 17px;
+}
+
+/* Formulario */
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  margin: 0;
+}
+
+/* Campos */
+
+.register-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  min-height: 46px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid #d2d9e5;
+  border-radius: 13px;
+  background: #f4f8fc;
+  box-shadow: none;
+  transition: border-color 0.18s ease;
+}
+
+.register-field:focus-within {
+  border-color: #0877ff;
+  box-shadow: none;
+  outline: none;
+}
+
+/* Iconos */
+
+.field-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 19px;
+  height: 19px;
+  margin-right: 12px;
+  color: #606b83;
+  stroke-width: 1.8;
+  pointer-events: none;
+}
+
+/* Inputs sin borde interno */
+
+.register-field input,
+.register-field select,
+.register-field textarea {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent;
+  color: #10133f;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.register-field input::placeholder,
+.register-field textarea::placeholder {
+  color: #71809b;
+  opacity: 1;
+}
+
+/* Selector de documento */
+
+.register-field select {
+  padding-right: 22px;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  color: #606b83;
+  pointer-events: none;
+}
+
+/* Botón informativo */
+
+.register-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #0877ff;
+  cursor: pointer;
+}
+
+.register-info-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Botón Continuar */
+
+.register-primary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 46px;
+  height: 46px;
+  margin: 2px 0 0;
+  padding: 0 16px;
+  border: 1px solid #0e70f5;
+  border-radius: 30px;
+  background: #126cf5;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.register-primary-button:hover {
+  background: #075bd7;
+}
+
+.register-primary-button:active {
+  background: #075bd7;
+}
+
+.register-primary-button:focus-visible {
+  outline: 2px solid #0877ff;
+  outline-offset: 3px;
+}
+
+.register-primary-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Checkbox */
+
+.register-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #52647d;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.register-checkbox input {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin: 1px 0 0;
+  accent-color: #0877ff;
+}
+
+/* Divisor */
+
+.register-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 15px 0;
+  color: #71809b;
+  font-size: 12px;
+}
+
+.register-divider::before,
+.register-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #d2d9e5;
+}
+
+/* Contacto y versión */
+
+.register-contact {
+  margin-top: 15px;
+  color: #62677b;
+  font-size: 12px;
+  text-align: center;
+}
+
+.register-version {
+  margin-top: 10px;
+  color: #8a9ab2;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* Móviles */
+
+@media (max-width: 600px) {
+  .register-page {
+    padding: 50px 8% 24px;
+  }
+
+  .register-header {
+    min-height: 38px;
+    margin: 10px 0 18px;
+    padding: 0 4px;
+  }
+
+  .register-logo {
+    width: 110px;
+    margin-bottom: 12px;
+  }
+
+  .register-content h1 {
+    font-size: 24px;
+  }
+
+  .register-progress {
+    margin-bottom: 21px;
+  }
+
+  .register-form {
+    gap: 8px;
+  }
+
+  .register-field {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .register-primary-button {
+    height: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 360px) {
+  .register-page {
+    padding-right: 7%;
+    padding-left: 7%;
+  }
+
+  .register-back svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .register-help {
+    font-size: 13px;
+  }
+
+  .register-content h1 {
+    font-size: 23px;
+  }
+
+  .register-progress {
+    margin-bottom: 18px;
+  }
+
+  .register-field {
+    height: 42px;
+    min-height: 42px;
+  }
+}
+
+/* =========================================
+   CALENDARIO DE FECHA DE NACIMIENTO
+   ========================================= */
+
+.register-page .react-datepicker {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  background: #fff;
+  border: 1px solid #d8e3f0;
+  border-radius: 12px;
+  box-shadow: 0 5px 18px rgba(16, 35, 75, 0.12);
+  overflow: hidden;
+}
+
+.register-page .react-datepicker__header {
+  padding-top: 12px;
+  background: #eff6ff;
+  border-bottom: 1px solid #dce7f5;
+  border-radius: 12px 12px 0 0;
+}
+
+.register-page .react-datepicker__current-month {
+  margin-bottom: 10px;
+  color: #10133f;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.register-page .react-datepicker__day-names {
+  display: flex;
+  justify-content: space-around;
+}
+
+.register-page .react-datepicker__day-name {
+  width: 30px;
+  margin: 2px;
+  color: #60708a;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 30px;
+}
+
+.register-page .react-datepicker__month {
+  margin: 8px;
+}
+
+.register-page .react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
+}
+
+.register-page .react-datepicker__day {
+  width: 30px;
+  margin: 2px;
+  border-radius: 8px;
+  color: #263754;
+  line-height: 30px;
+}
+
+.register-page .react-datepicker__day:hover {
+  border-radius: 8px;
+  background: #e7f1ff;
+  color: #0877ff;
+}
+
+.register-page .react-datepicker__day--selected,
+.register-page .react-datepicker__day--keyboard-selected {
+  border-radius: 8px;
+  background: #0877ff;
+  color: #fff;
+}
+
+.register-page .react-datepicker__day--selected:hover {
+  background: #075bd7;
+  color: #fff;
+}
+
+.register-page .react-datepicker__day--today {
+  border: 1px solid #0877ff;
+  font-weight: 700;
+}
+
+.register-page .react-datepicker__day--disabled {
+  color: #c5cedb;
+}
+
+.register-page .react-datepicker__navigation {
+  top: 10px;
+}
+
+.register-page .react-datepicker__navigation-icon::before {
+  border-color: #0877ff;
+}
+
+.register-page .react-datepicker__month-select,
+.register-page .react-datepicker__year-select {
+  padding: 5px 8px;
+  border: 1px solid #d5e1f0;
+  border-radius: 6px;
+  background: #fff;
+  color: #10133f;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Evita que el calendario altere el diseño del formulario */
+.register-page .react-datepicker-popper {
+  z-index: 100;
+  transform-origin: top left;
+}
+
+/* =========================================
+   POSICIÓN ESTABLE DEL CALENDARIO
+   ========================================= */
+
+.register-page .react-datepicker-wrapper {
+  display: block;
+  width: 100%;
+}
+
+.register-page .react-datepicker__input-container {
+  display: block;
+  width: 100%;
+}
+
+.register-page .react-datepicker-popper {
+  z-index: 100 !important;
+  transform: none !important;
+}
+
+.register-page .react-datepicker-popper[data-placement^="bottom"] {
+  margin-top: 6px;
+}
+
+/* Mantener el calendario por encima del formulario */
+.register-page .react-datepicker {
+  position: relative;
+  background: #fff;
+  border: 1px solid #d8e3f0;
+  border-radius: 12px;
+  box-shadow: 0 5px 18px rgba(16, 35, 75, 0.12);
+}
+
+@media (max-width: 400px) {
+  .register-page .react-datepicker__day,
+  .register-page .react-datepicker__day-name {
+    width: 27px;
+    line-height: 27px;
+  }
+
+  .register-page .react-datepicker__day {
+    margin: 1px;
+  }
+}
+
+/* Calendario centrado sin oscurecer toda la página */
+.react-datepicker__portal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 16px;
+  background: rgba(16, 19, 63, 0.28) !important;
+}
+
+/* Mantener el calendario limpio y legible */
+.react-datepicker__portal .react-datepicker {
+  background: #fff;
+  border: 1px solid #d8e3f0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(16, 35, 75, 0.18);
+}
+
+/* ==========================================
+   SELECTORES DESPLEGABLES DE MES Y AÑO
+========================================== */
+
+/* Contenedor de las listas */
+.register-page .react-datepicker__month-dropdown,
+.register-page .react-datepicker__year-dropdown {
+  position: absolute;
+  top: 35px;
+
+  background: #ffffff;
+  border: 1px solid #d8e3f0;
+  border-radius: 10px;
+
+  box-shadow: 0 8px 22px rgba(16, 35, 75, 0.18);
+
+  text-align: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b9cce5 #f4f8ff;
+
+  z-index: 10005;
+}
+
+/* Lista de meses */
+.register-page .react-datepicker__month-dropdown {
+  left: 50%;
+  width: 112px;
+  max-height: 190px;
+  transform: translateX(-50%);
+}
+
+/* Lista de años */
+.register-page .react-datepicker__year-dropdown {
+  left: 50%;
+  width: 90px;
+  max-height: 190px;
+  transform: translateX(-50%);
+}
+
+/* Opciones */
+.register-page .react-datepicker__month-option,
+.register-page .react-datepicker__year-option {
+  padding: 9px 8px;
+
+  color: #263754;
+  font-size: 12px;
+  line-height: 1.2;
+
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+/* Al pasar el cursor */
+.register-page .react-datepicker__month-option:hover,
+.register-page .react-datepicker__year-option:hover {
+  background: #eaf3ff;
+  color: #0877ff;
+}
+
+/* Opción seleccionada */
+.register-page .react-datepicker__month-option--selected_month,
+.register-page .react-datepicker__year-option--selected_year {
+  background: #0877ff;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* Flecha para volver a la vista del calendario */
+.register-page .react-datepicker__month-option--selected_month:hover,
+.register-page .react-datepicker__year-option--selected_year:hover {
+  background: #075bd7;
+  color: #ffffff;
+}
+
+/* Encabezado del calendario */
+.register-page .react-datepicker__header {
+  position: relative;
+  background: #eff6ff;
+}
+
+/* Calendario siempre nítido */
+.register-page .react-datepicker {
+  background: #ffffff !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Evitar que las listas queden detrás del calendario */
+.register-page .react-datepicker__month-dropdown-container,
+.register-page .react-datepicker__year-dropdown-container {
+  position: relative;
+  z-index: 10004;
+}
+
+/* =========================================
+   PASO 2: ESTILOS EXCLUSIVOS
+   No modifica los campos del paso 1
+   ========================================= */
+
+/* Botones para mostrar y ocultar contraseña */
+.register-page .register-field .password-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  margin: 0 0 0 8px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #606b83;
+  box-shadow: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.register-page .register-field .password-toggle svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 1.8;
+}
+
+.register-page .register-field .password-toggle:hover {
+  background: #e8f1ff;
+  color: #0877ff;
+}
+
+.register-page .register-field .password-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Casillas de autorización */
+.register-page .register-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  margin: 2px 0;
+  color: #52647d;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.register-page .register-checkbox input[type="checkbox"] {
+  appearance: auto;
+  -webkit-appearance: checkbox;
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  margin: 2px 0 0;
+  padding: 0;
+  accent-color: #0877ff;
+  cursor: pointer;
+}
+
+.register-page .register-checkbox span {
+  flex: 1;
+  min-width: 0;
+}
+
+.register-page .register-checkbox a {
+  color: #0877ff;
+  text-decoration: none;
+}
+
+.register-page .register-checkbox a:hover {
+  text-decoration: underline;
+}
+
+/* Botón Registrarme */
+.register-page .register-primary-button {
+  margin-top: 12px;
+}
+
+/* Separador de inicio de sesión */
+.register-page .register-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 14px 0;
+  color: #71809b;
+  font-size: 12px;
+  text-align: center;
+}
+
+.register-page .register-divider::before,
+.register-page .register-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #d2d9e5;
+}
+
+/* Botón Inicia tu Sesión */
+.register-page .register-secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid #d2d9e5;
+  border-radius: 24px;
+  background: #fff;
+  color: #0877ff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background 0.2s ease;
+}
+
+.register-page .register-secondary-button:hover {
+  background: #f0f6ff;
+  border-color: #0877ff;
+}
+
+.register-page .register-secondary-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Contacto */
+.register-page .register-contact {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #dceafa;
+  border-radius: 14px;
+  background: #f3f8ff;
+  color: #344563;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: left;
+}
+
+.register-page .register-contact .contact-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 23px;
+  height: 23px;
+  color: #0877ff;
+  stroke-width: 1.8;
+}
+
+.register-page .register-contact p {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.register-page .register-contact strong {
+  color: #0877ff;
+  font-weight: 700;
+}
+
+/* Versión de la aplicación */
+.register-page .register-version {
+  margin: 16px 0 0;
+  color: #8a9ab2;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+}
+
+/* ==========================================
+   MODAL: CARÁCTER VERIFICADOR
+========================================== */
+
+.verification-modal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px;
+
+  background: rgba(16, 24, 45, 0.58);
+
+  border-radius: inherit;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Ventana blanca compacta */
+.verification-modal {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 88%;
+  max-width: 310px;
+  max-height: 82%;
+
+  padding: 15px 9px 9px;
+
+  background: #ffffff;
+  border: 1px solid #e3eaf2;
+  border-radius: 12px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+
+  overflow: hidden;
+  opacity: 1;
+  box-sizing: border-box;
+}
+
+/* Encabezado */
+.verification-modal-header {
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+
+/* Título */
+.verification-modal h2 {
+  margin: 0 18px 5px;
+
+  color: #075985;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  text-align: center;
+}
+
+/* Descripción */
+.verification-description {
+  margin: 0 0 8px;
+
+  color: #202b3c;
+  font-size: 11px;
+  line-height: 1.4;
+
+  text-align: center;
+}
+
+/* Botón X */
+.verification-close-icon {
+  position: absolute;
+  top: 3px;
+  right: 5px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #111827;
+
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.verification-close-icon:hover {
+  background: #f1f5f9;
+}
+
+/* Imágenes */
+.verification-images {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 5px;
+
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.verification-images img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  flex-shrink: 0;
+
+  object-fit: contain;
+  object-position: center;
+
+  border-radius: 12px;
+}
+
+/* Pie */
+.verification-footer {
+  flex-shrink: 0;
+
+  margin-top: 7px;
+  padding-top: 7px;
+
+  border-top: 1px solid #d4dce5;
+}
+
+/* Botón Cerrar */
+.verification-close-button {
+  display: block;
+
+  width: 100%;
+  min-height: 34px;
+
+  padding: 7px 12px;
+
+  border: none;
+  border-radius: 22px;
+
+  background: #29b6f6;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.verification-close-button:hover {
+  background: #07566e;
+}
+
+.verification-close-button:focus-visible,
+.verification-close-icon:focus-visible {
+  outline: 2px solid #0877ff;
+  outline-offset: 3px;
+}
+
+/* Icono de información del formulario */
+.verification-info-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: #10133f;
+
+  cursor: pointer;
+}
+
+.verification-info-button:hover {
+  background: #eaf3ff;
+  color: #0877ff;
+}
+
+/* ==========================================
+   ADAPTACIÓN PARA MÓVILES
+========================================== */
+
+@media (max-width: 400px) {
+  .verification-modal-overlay {
+    padding: 8px;
+  }
+
+  .verification-modal {
+    width: 88%;
+    max-width: 290px;
+    max-height: 82%;
+
+    padding: 14px 8px 8px;
+  }
+
+  .verification-modal h2 {
+    font-size: 17px;
+    margin-bottom: 5px;
+  }
+
+  .verification-description {
+    font-size: 10px;
+    line-height: 1.4;
+    margin-bottom: 7px;
+  }
+
+  .verification-images {
+    gap: 5px;
+  }
+
+  .verification-images img {
+    border-radius: 10px;
+  }
+
+  .verification-footer {
+    margin-top: 7px;
+    padding-top: 7px;
+  }
+
+  .verification-close-button {
+    min-height: 33px;
+    font-size: 12px;
   }
 }

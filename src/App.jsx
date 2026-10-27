@@ -32,6 +32,7 @@ import DataProtectionLaw from "./pages/DataProtectionLaw";
 import EsSalud from "./pages/EsSaludSplash";
 import EsSaludWelcome from "./pages/EsSaludWelcome";
 import EsSaludLogin from "./pages/EsSaludLogin";
+import EsSaludRegister from "./pages/EsSaludRegister";
 
 import "./App.css";
 
@@ -72,6 +73,7 @@ function App() {
           <Route path="/data-protection-law" element={<DataProtectionLaw />} />
           <Route path="/essalud/bienvenida" element={<EsSaludWelcome />} />
           <Route path="/essalud/login" element={<EsSaludLogin />} />
+          <Route path="/essalud/registro" element={<EsSaludRegister />} />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>
