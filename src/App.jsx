@@ -33,6 +33,7 @@ import EsSalud from "./pages/EsSaludSplash";
 import EsSaludWelcome from "./pages/EsSaludWelcome";
 import EsSaludLogin from "./pages/EsSaludLogin";
 import EsSaludRegister from "./pages/EsSaludRegister";
+import EsSaludHome from "./pages/EsSaludHome";
 
 import "./App.css";
 
@@ -74,6 +75,7 @@ function App() {
           <Route path="/essalud/bienvenida" element={<EsSaludWelcome />} />
           <Route path="/essalud/login" element={<EsSaludLogin />} />
           <Route path="/essalud/registro" element={<EsSaludRegister />} />
+          <Route path="/essalud/inicio" element={<EsSaludHome />} />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

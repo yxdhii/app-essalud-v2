@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -5937,14 +5939,19 @@ button:active {
   padding: 40px;
 }
 
+/* MARCO DEL CELULAR */
 .phone-frame {
   position: relative;
+  isolation: isolate;
   z-index: 3;
+
   width: 430px;
   height: 932px;
+  box-sizing: border-box;
   background: linear-gradient(145deg, #1c1c1e, #0a0a0a);
   border-radius: 60px;
   padding: 12px;
+
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     inset 0 0 0 3px #2c2c2e,
@@ -5983,17 +5990,31 @@ button:active {
   height: 100% !important;
 }
 
+/* ISLA DINÁMICA */
 .phone-notch {
   position: absolute;
   top: 18px;
   left: 50%;
   transform: translateX(-50%);
+
   width: 126px;
   height: 37px;
   background: #000;
   border-radius: 22px;
-  z-index: 9999;
+
+  z-index: 10001;
+  pointer-events: none;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* PANTALLA INTERNA */
+.phone-screen-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 48px;
+  overflow: hidden;
+  background: #0f1117;
 }
 
 .phone-statusbar {
@@ -10358,4 +10379,1393 @@ button:active {
     min-height: 33px;
     font-size: 12px;
   }
+}
+
+/* =====================================================
+   ESSALUD DIGITAL — REDISEÑO DE LA PANTALLA PRINCIPAL
+   Estilo limpio, moderno y adaptable a móviles
+===================================================== */
+
+.essalud-home {
+  --ess-primary: #0878e8;
+  --ess-primary-dark: #075bb5;
+  --ess-navy: #173b70;
+  --ess-text: #25466f;
+  --ess-muted: #71839d;
+  --ess-light-blue: #eaf4ff;
+  --ess-background: #f8fbff;
+  --ess-border: #e6edf6;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--ess-background);
+  color: var(--ess-text);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.essalud-home *,
+.essalud-home *::before,
+.essalud-home *::after {
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   CABECERA
+===================================================== */
+
+.essalud-home .home-header {
+  position: relative;
+  flex-shrink: 0;
+  padding: 55px 16px 12px;
+  overflow: hidden;
+  color: var(--ess-navy);
+  background: linear-gradient(180deg, #e6f2ff 0%, #f0f7ff 75%, #f8fbff 100%);
+}
+
+/* Menú, logo y notificaciones */
+
+.essalud-home .home-header-top {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  margin-bottom: 12px;
+}
+
+.essalud-home .header-icon-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: #355779;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.essalud-home .header-icon-button:hover {
+  background: rgba(8, 120, 232, 0.07);
+}
+
+.essalud-home .header-icon-button svg {
+  width: 23px;
+  height: 23px;
+}
+
+.essalud-home .header-logo {
+  display: block;
+  justify-self: center;
+  width: 120px;
+  max-width: 100%;
+  height: 40px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.essalud-home .notification-dot {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  background: #ef6464;
+  border: 1.5px solid #edf6ff;
+  border-radius: 50%;
+}
+
+/* =====================================================
+   BIENVENIDA CON IMAGEN DE FONDO
+===================================================== */
+
+.essalud-home .home-welcome {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 138px;
+  padding: 17px 0 15px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.essalud-home .welcome-image {
+  position: absolute;
+  z-index: -2;
+  right: -4px;
+  bottom: -3px;
+  display: block;
+  width: 78%;
+  max-width: 280px;
+  height: 115%;
+  object-fit: contain;
+  object-position: right bottom;
+  pointer-events: none;
+}
+
+.essalud-home .home-welcome::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    rgba(237, 246, 255, 0.99) 0%,
+    rgba(237, 246, 255, 0.96) 34%,
+    rgba(237, 246, 255, 0.66) 54%,
+    rgba(237, 246, 255, 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+.essalud-home .welcome-text {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.essalud-home .welcome-text > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #496a91;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.essalud-home .welcome-text h1 {
+  max-width: 100%;
+  margin: 0;
+  color: var(--ess-navy);
+  font-size: 23px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+  overflow-wrap: anywhere;
+}
+
+.essalud-home .welcome-text p {
+  max-width: 85%;
+  margin: 7px 0 0;
+  color: #486487;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   CONTENIDO PRINCIPAL
+===================================================== */
+
+.essalud-home .home-content {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 0 14px 18px;
+  background: var(--ess-background);
+}
+
+/* =====================================================
+   BUSCADOR
+===================================================== */
+
+.essalud-home .home-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 46px;
+  margin-top: 0;
+  padding: 5px 6px 5px 12px;
+  background: #ffffff;
+  border: 1px solid #edf1f7;
+  border-radius: 15px;
+  box-shadow: 0 3px 12px rgba(38, 77, 125, 0.055);
+}
+
+.essalud-home .search-icon {
+  flex-shrink: 0;
+  width: 21px;
+  height: 21px;
+  color: #577495;
+}
+
+.essalud-home .home-search input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  padding: 7px 0;
+  color: var(--ess-text);
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.essalud-home .home-search input::placeholder {
+  color: #899ab0;
+  opacity: 1;
+}
+
+.essalud-home .search-clear {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 30px;
+  padding: 0;
+  color: var(--ess-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.essalud-home .search-submit {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  color: #ffffff;
+  background: var(--ess-primary);
+  border: none;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.essalud-home .search-submit:hover {
+  background: var(--ess-primary-dark);
+}
+
+/* =====================================================
+   TÍTULOS DE SECCIÓN
+===================================================== */
+
+.essalud-home .section-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ess-primary);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.35px;
+}
+
+/* =====================================================
+   PRÓXIMA CITA
+===================================================== */
+
+.essalud-home .next-appointment {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 68px;
+  padding: 11px;
+  background: #e8f3ff;
+  border: 1px solid #e1efff;
+  border-radius: 15px;
+}
+
+.essalud-home .appointment-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--ess-primary);
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.essalud-home .appointment-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.essalud-home .appointment-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.essalud-home .appointment-info .section-eyebrow {
+  display: none;
+}
+
+.essalud-home .appointment-info h2 {
+  margin: 0 0 3px;
+  color: var(--ess-navy);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.essalud-home .appointment-info p {
+  margin: 0;
+  color: #607896;
+  font-size: 10px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.essalud-home .appointment-date {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  text-align: right;
+}
+
+.essalud-home .appointment-date strong {
+  color: var(--ess-text);
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.essalud-home .appointment-date span {
+  color: var(--ess-text);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.essalud-home .next-appointment > svg:last-child {
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  color: var(--ess-text);
+}
+
+/* =====================================================
+   SERVICIOS PRINCIPALES
+===================================================== */
+
+.essalud-home .services-section {
+  width: 100%;
+  min-width: 0;
+}
+
+.essalud-home .services-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.essalud-home .services-heading-text {
+  min-width: 0;
+}
+
+.essalud-home .services-heading-text .section-eyebrow {
+  display: none;
+}
+
+.essalud-home .services-heading h2 {
+  margin: 0;
+  color: var(--ess-navy);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+}
+
+.essalud-home .services-heading p {
+  display: none;
+}
+
+.essalud-home .services-view-all {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 0 5px 5px;
+  color: var(--ess-primary);
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.essalud-home .services-view-all svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Cuadrícula de accesos rápidos */
+
+.essalud-home .services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Tarjetas */
+
+.essalud-home .service-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  min-height: 136px;
+  padding: 13px 9px 12px;
+  color: var(--ess-text);
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid var(--ess-border);
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(38, 77, 125, 0.025);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.essalud-home .service-card:hover {
+  border-color: #c9e2ff;
+  box-shadow: 0 4px 12px rgba(38, 77, 125, 0.07);
+}
+
+.essalud-home .service-card:active {
+  transform: scale(0.985);
+}
+
+/* Iconos de los servicios */
+
+.essalud-home .service-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 9px;
+  color: var(--ess-primary);
+  background: #eaf4ff;
+  border-radius: 50%;
+}
+
+.essalud-home .service-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.essalud-home .service-icon-blue,
+.essalud-home .service-icon-turquoise,
+.essalud-home .service-icon-orange {
+  color: var(--ess-primary);
+  background: #eaf4ff;
+}
+
+.essalud-home .service-icon-purple {
+  color: #696ce5;
+  background: #f0f0ff;
+}
+
+/* Nombre de cada servicio */
+
+.essalud-home .service-title {
+  display: block;
+  max-width: 100%;
+  padding: 0 4px;
+  color: #243f66;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* Descripción de cada servicio */
+
+.essalud-home .service-description {
+  display: block;
+  max-width: 100%;
+  margin-top: 5px;
+  padding: 0 3px;
+  color: #71839d;
+  font-size: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* Flecha */
+
+.essalud-home .service-arrow {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  width: 15px;
+  height: 15px;
+  color: var(--ess-text);
+  transform: translateY(-5%);
+}
+
+/* =====================================================
+   ATENCIÓN MÉDICA EN LÍNEA
+===================================================== */
+
+.essalud-home .online-attention {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 84px;
+  padding: 10px;
+  overflow: hidden;
+  color: var(--ess-text);
+  text-align: left;
+  background: #e8f3ff;
+  border: 1px solid #e2efff;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.essalud-home .online-attention-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.essalud-home .online-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+  color: var(--ess-primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.25px;
+}
+
+.essalud-home .online-eyebrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.essalud-home .online-attention-text > strong {
+  display: block;
+  max-width: 100%;
+  color: var(--ess-navy);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.essalud-home .online-attention-text > span:nth-child(3) {
+  display: block;
+  max-width: 100%;
+  margin-top: 4px;
+  color: #607896;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.essalud-home .online-attention-link {
+  display: none;
+}
+
+.essalud-home .online-doctor-image {
+  display: block;
+  flex: 0 0 65px;
+  width: 65px;
+  max-width: 30%;
+  height: 65px;
+  min-width: 0;
+  object-fit: contain;
+  object-position: center;
+  align-self: center;
+}
+
+/* =====================================================
+   NAVEGACIÓN INFERIOR
+===================================================== */
+
+.essalud-home .bottom-navigation {
+  position: sticky;
+  z-index: 20;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  flex-shrink: 0;
+  width: 100%;
+  min-height: 68px;
+  padding: 5px 8px 16px;
+  background: #ffffff;
+  border-top: 1px solid #e8eef5;
+  box-shadow: 0 -2px 8px rgba(38, 77, 125, 0.025);
+}
+
+.essalud-home .bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 42px;
+  padding: 2px;
+  color: #8292a8;
+  background: transparent;
+  border: none;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.essalud-home .bottom-nav-item svg {
+  flex-shrink: 0;
+  width: 21px;
+  height: 21px;
+}
+
+.essalud-home .bottom-nav-item.active {
+  color: var(--ess-primary);
+  font-weight: 800;
+}
+
+.essalud-home .bottom-nav-item:hover {
+  color: var(--ess-primary);
+  background: #f5f9ff;
+}
+
+/* =====================================================
+   RESPONSIVE — TELÉFONOS ESTRECHOS
+===================================================== */
+
+@media (max-width: 370px) {
+  .essalud-home .home-header {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .essalud-home .home-welcome {
+    min-height: 125px;
+  }
+
+  .essalud-home .welcome-image {
+    right: -8px;
+    width: 72%;
+  }
+
+  .essalud-home .welcome-text h1 {
+    font-size: 19px;
+  }
+
+  .essalud-home .welcome-text p {
+    max-width: 82%;
+    font-size: 11px;
+  }
+
+  .essalud-home .home-content {
+    gap: 12px;
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  .essalud-home .next-appointment {
+    gap: 7px;
+    padding: 9px 7px;
+  }
+
+  .essalud-home .appointment-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .essalud-home .appointment-info h2 {
+    font-size: 11px;
+  }
+
+  .essalud-home .appointment-info p {
+    font-size: 9px;
+  }
+
+  .essalud-home .appointment-date {
+    padding: 6px;
+  }
+
+  .essalud-home .services-heading h2 {
+    font-size: 15px;
+  }
+
+  .essalud-home .service-card {
+    min-height: 126px;
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  .essalud-home .service-title {
+    font-size: 11px;
+  }
+
+  .essalud-home .service-description {
+    font-size: 9px;
+  }
+
+  .essalud-home .service-arrow {
+    right: 4px;
+  }
+
+  .essalud-home .online-doctor-image {
+    flex-basis: 55px;
+    width: 55px;
+    height: 58px;
+  }
+
+  .essalud-home .online-attention-text > strong {
+    font-size: 11px;
+  }
+
+  .essalud-home .online-attention-text > span:nth-child(3) {
+    font-size: 9px;
+  }
+
+  .essalud-home .bottom-navigation {
+    min-height: 66px;
+    padding-bottom: 15px;
+  }
+}
+
+/* Ocultar la barra de desplazamiento sin modificar el diseño */
+.essalud-home {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.essalud-home::-webkit-scrollbar {
+  display: none;
+}
+
+.essalud-home .home-content {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.essalud-home .home-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* TARJETA DE ATENCIÓN EN LÍNEA */
+.essalud-home .online-attention {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 94px;
+  padding: 10px 12px;
+
+  position: relative;
+  text-align: left;
+  border-radius: 16px;
+}
+
+/* Imagen de la doctora a la izquierda */
+.essalud-home .online-doctor-image {
+  order: -1;
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Texto en el centro */
+.essalud-home .online-attention-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* Título y descripción */
+.essalud-home .online-attention-text strong {
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.essalud-home
+  .online-attention-text
+  > span:not(.online-eyebrow):not(.online-attention-link) {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* Indicador de atención en línea */
+.essalud-home .online-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Flecha en el extremo derecho */
+.essalud-home .online-attention::after {
+  content: "›";
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-size: 25px;
+  line-height: 1;
+  color: #17477e;
+}
+
+/* Ocultar el enlace de texto para evitar duplicar la flecha */
+.essalud-home .online-attention-link {
+  display: none;
+}
+
+/* ========================================
+   ESSALUD DIGITAL - MENÚ LATERAL
+======================================== */
+
+.sidebar-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-start;
+  background: rgba(12, 28, 48, 0.48);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  overflow: hidden;
+  border-radius: inherit;
+  animation: sidebarFadeIn 0.22s ease;
+}
+
+/* PANEL PRINCIPAL */
+
+.home-sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(320px, 88vw);
+  height: 100%;
+  max-height: 100dvh;
+  padding: 20px 17px 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #18304f;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  box-shadow: 8px 0 30px rgba(15, 42, 75, 0.15);
+  animation: sidebarSlideIn 0.28s ease;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-top: 55px;
+  padding-bottom: 28px;
+}
+
+.home-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ENCABEZADO */
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 43px;
+  margin-bottom: 19px;
+}
+
+.sidebar-logo {
+  display: block;
+  width: 125px;
+  max-height: 43px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.sidebar-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #50627a;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar-close:hover {
+  background: #edf5ff;
+  color: #0879cf;
+}
+
+/* PERFIL DEL USUARIO */
+
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px 10px;
+  border: 1px solid #edf2f8;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f1f8ff, #f8fbff);
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sidebar-profile:hover {
+  background: #eaf5ff;
+}
+
+.sidebar-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #cce7ff;
+  box-shadow: 0 0 0 1px #c8e2fa;
+  font-size: 25px;
+}
+
+.sidebar-profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+}
+
+.sidebar-profile-info strong {
+  overflow: hidden;
+  color: #19365b;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-profile-info > span {
+  color: #697d95;
+  font-size: 10px;
+}
+
+.sidebar-profile-info .sidebar-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #0879cf;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* MIS CUENTAS */
+
+.sidebar-accounts {
+  margin-top: 21px;
+}
+
+.sidebar-accounts h3 {
+  margin: 0 0 11px 2px;
+  color: #203653;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.sidebar-family-member {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 7px 5px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sidebar-family-member:hover,
+.sidebar-family-member.selected {
+  background: #f1f7fd;
+}
+
+.sidebar-family-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #e6edf5;
+  font-size: 20px;
+}
+
+.sidebar-family-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+
+.sidebar-family-info strong {
+  overflow: hidden;
+  color: #263b56;
+  font-size: 10px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-family-info small {
+  color: #8190a3;
+  font-size: 9px;
+}
+
+.sidebar-family-arrow {
+  flex-shrink: 0;
+  color: #647b97;
+}
+
+.sidebar-add-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 4px;
+  padding: 7px 5px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #3d526d;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar-add-account:hover {
+  background: #f1f7fd;
+  color: #0879cf;
+}
+
+.sidebar-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: 1px solid #d9e7f6;
+  border-radius: 50%;
+  color: #0879cf;
+}
+
+/* SEPARADOR Y NAVEGACIÓN */
+
+.sidebar-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 18px;
+  padding-top: 13px;
+  border-top: 1px solid #e8eef5;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 37px;
+  padding: 9px 11px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #344a66;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sidebar-nav-item svg {
+  flex-shrink: 0;
+  color: #1767b5;
+}
+
+.sidebar-nav-item span {
+  flex: 1;
+}
+
+.sidebar-nav-item:hover {
+  background: #f0f7ff;
+  color: #086bc2;
+}
+
+.sidebar-nav-item.active {
+  background: #e0f0ff;
+  color: #086bc2;
+  font-weight: 700;
+}
+
+.sidebar-nav-item.active svg {
+  color: #0874d1;
+}
+
+/* CERRAR SESIÓN */
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 15px;
+  padding-bottom: 4px;
+  border-top: 1px solid #e8eef5;
+}
+
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 11px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #344a66;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar-logout svg {
+  color: #1767b5;
+}
+
+.sidebar-logout:hover {
+  background: #fff0f0;
+  color: #c23b48;
+}
+
+.sidebar-logout:hover svg {
+  color: #c23b48;
+}
+
+/* ANIMACIONES */
+
+@keyframes sidebarFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sidebarSlideIn {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* PANTALLAS PEQUEÑAS */
+
+@media (max-width: 360px) {
+  .home-sidebar {
+    width: 88vw;
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+
+  .sidebar-nav-item {
+    gap: 10px;
+    font-size: 10px;
+  }
+}
+
+/* RESPETAR PREFERENCIAS DE MOVIMIENTO */
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-overlay,
+  .home-sidebar {
+    animation: none;
+  }
+
+  .sidebar-nav-item,
+  .sidebar-profile,
+  .sidebar-close,
+  .sidebar-logout {
+    transition: none;
+  }
+}
+
+.sidebar-overlay,
+.home-sidebar {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* MENÚ LATERAL COMPLETAMENTE FIJO */
+.sidebar-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.home-sidebar {
+  height: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+/* Evitar desplazamiento por gestos dentro del menú */
+.sidebar-overlay,
+.home-sidebar {
+  touch-action: none;
+}
+
+
+/* FONDO SUAVE */
+.logout-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+/* VENTANA MÁS PEQUEÑA */
+.logout-confirm-modal {
+  width: 100%;
+  max-width: 320px;
+  padding: 23px 18px 18px;
+  box-sizing: border-box;
+  border-radius: 24px;
+  background: #ffffff;
+  text-align: center;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  box-shadow: 0 8px 24px rgba(20, 50, 80, 0.12);
+}
+
+/* PREGUNTA */
+.logout-confirm-modal h2 {
+  margin: 0 0 23px;
+  color: #14556b;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* BOTONES */
+.logout-confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.logout-confirm-actions button {
+  flex: 1;
+  min-height: 44px;
+  padding: 8px;
+  border: none;
+  border-radius: 28px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* NO */
+.logout-cancel-button {
+  background: #e7ebf3;
+  color: #666666;
+}
+
+/* SÍ */
+.logout-accept-button {
+  background: #1086b8;
+  color: #ffffff;
 }

@@ -38,14 +38,11 @@ function EsSaludLogin() {
 
     const timer = setTimeout(() => {
       setLoading(false);
-      setFormMessage(
-        "El inicio de sesión todavía no está conectado al servidor."
-      );
-    }, 2000);
+      navigate("/essalud/inicio");
+    }, 1500);
 
     return () => clearTimeout(timer);
-  }, [loading]);
-
+  }, [loading, navigate]);
   // Validaciones.
   const dniError = !dni.trim()
     ? "El número de documento no puede estar vacío"
@@ -100,9 +97,7 @@ function EsSaludLogin() {
 
   return (
     <main
-      className={`essalud-login ${
-        isOverlayOpen ? "essalud-modal-open" : ""
-      }`}
+      className={`essalud-login ${isOverlayOpen ? "essalud-modal-open" : ""}`}
     >
       {/* CONTENIDO PRINCIPAL DEL INICIO DE SESIÓN */}
       <div className="essalud-login-content">
@@ -139,11 +134,7 @@ function EsSaludLogin() {
         </section>
 
         {/* Formulario */}
-        <form
-          className="essalud-login-form"
-          onSubmit={handleLogin}
-          noValidate
-        >
+        <form className="essalud-login-form" onSubmit={handleLogin} noValidate>
           {/* DNI */}
           <div
             data-tour="dni"
@@ -152,11 +143,7 @@ function EsSaludLogin() {
             }`}
           >
             <label className="essalud-login-input">
-              <IdCard
-                size={27}
-                strokeWidth={1.9}
-                aria-hidden="true"
-              />
+              <IdCard size={27} strokeWidth={1.9} aria-hidden="true" />
 
               <span className="essalud-input-content">
                 <span>Número de documento</span>
@@ -190,11 +177,7 @@ function EsSaludLogin() {
             }`}
           >
             <label className="essalud-login-input">
-              <LockKeyhole
-                size={27}
-                strokeWidth={1.9}
-                aria-hidden="true"
-              />
+              <LockKeyhole size={27} strokeWidth={1.9} aria-hidden="true" />
 
               <span className="essalud-input-content">
                 <span>Contraseña</span>
@@ -206,22 +189,16 @@ function EsSaludLogin() {
                   onChange={handlePasswordChange}
                   autoComplete="current-password"
                   aria-label="Contraseña"
-                  aria-invalid={
-                    submitted && Boolean(passwordError)
-                  }
+                  aria-invalid={submitted && Boolean(passwordError)}
                 />
               </span>
 
               <button
                 type="button"
                 className="essalud-password-toggle"
-                onClick={() =>
-                  setShowPassword((previous) => !previous)
-                }
+                onClick={() => setShowPassword((previous) => !previous)}
                 aria-label={
-                  showPassword
-                    ? "Ocultar contraseña"
-                    : "Mostrar contraseña"
+                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                 }
               >
                 {showPassword ? (
@@ -256,7 +233,7 @@ function EsSaludLogin() {
               className="essalud-forgot-password"
               onClick={() =>
                 setFormMessage(
-                  "La recuperación de contraseña estará disponible próximamente."
+                  "La recuperación de contraseña estará disponible próximamente.",
                 )
               }
             >
@@ -291,27 +268,13 @@ function EsSaludLogin() {
 
         {/* Métodos biométricos */}
         <div className="essalud-login-biometric">
-          <button
-            type="button"
-            onClick={() => handleBiometric("fingerprint")}
-          >
-            <Fingerprint
-              size={27}
-              strokeWidth={1.8}
-              aria-hidden="true"
-            />
+          <button type="button" onClick={() => handleBiometric("fingerprint")}>
+            <Fingerprint size={27} strokeWidth={1.8} aria-hidden="true" />
             <span>Huella digital</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => handleBiometric("face")}
-          >
-            <ScanFace
-              size={27}
-              strokeWidth={1.8}
-              aria-hidden="true"
-            />
+          <button type="button" onClick={() => handleBiometric("face")}>
+            <ScanFace size={27} strokeWidth={1.8} aria-hidden="true" />
             <span>Reconocimiento facial</span>
           </button>
         </div>
@@ -345,19 +308,14 @@ function EsSaludLogin() {
                 aria-label="Validando tus datos"
               />
 
-              <p className="essalud-loading-text">
-                Validando tus datos...
-              </p>
+              <p className="essalud-loading-text">Validando tus datos...</p>
             </div>
           </div>
         )}
       </div>
 
       {/* TUTORIAL: FUERA DEL CONTENIDO QUE SE DESENFOCA */}
-      <HelpTutorial
-        isOpen={showHelp}
-        onClose={() => setShowHelp(false)}
-      />
+      <HelpTutorial isOpen={showHelp} onClose={() => setShowHelp(false)} />
 
       {/* MODAL BIOMÉTRICO: FUERA DEL CONTENIDO QUE SE DESENFOCA */}
       {biometricMethod && (
