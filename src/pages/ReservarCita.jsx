@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { guardarCita } from "../utils/citasStorage";
+
 import {
   ArrowLeft,
   CircleHelp,
@@ -202,6 +204,22 @@ export default function ReservarCita() {
     setFecha("");
     setHorario("");
   };
+
+  const confirmarReserva = () => {
+  const nuevaCita = guardarCita({
+    tipo: tipoCita,
+    paciente,
+    especialidad,
+    medico: medico.nombre,
+    cmp: medico.cmp,
+    fecha,
+    horario,
+  });
+
+  setPaso(5);
+};
+
+  
 
   return (
     <main className="reservar-screen">
@@ -683,7 +701,7 @@ export default function ReservarCita() {
           <button
             className="reservar-primary"
             type="button"
-            onClick={continuar}
+            onClick={paso === 4 ? confirmarReserva : continuar}
             disabled={
               (paso === 2 && !especialidad) ||
               (paso === 3 && !medico) ||
