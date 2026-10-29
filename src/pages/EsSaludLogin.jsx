@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import HelpTutorial from "../components/HelpTutorial";
 import BiometricModal from "../components/BiometricModal";
+import { iniciarSesion } from "../services/usuariosService.js";
+import { buscarAsegurado } from "../services/usuariosService.js";
 import {
+
   ChevronLeft,
   CircleHelp,
   IdCard,
@@ -62,6 +65,13 @@ function EsSaludLogin() {
     setFormMessage("");
 
     if (dniError || passwordError) {
+      return;
+    }
+
+    const resultado = iniciarSesion(dni, password);
+
+    if (!resultado.correcto) {
+      setFormMessage(resultado.mensaje);
       return;
     }
 

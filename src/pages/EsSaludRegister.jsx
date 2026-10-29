@@ -5,6 +5,10 @@ import { es } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
 import VerificationCharacterModal from "../components/VerificationCharacterModal.jsx";
 import RegisterHelpTutorial from "../components/RegisterHelpTutorial";
+import {
+  registrarUsuario,
+  buscarAsegurado,
+} from "../services/usuariosService.js";
 
 import {
   ChevronLeft,
@@ -86,6 +90,7 @@ export default function EsSaludRegister() {
   const continueRegistration = (event) => {
     event.preventDefault();
 
+    // Validar campos obligatorios
     if (
       !form.documentNumber.trim() ||
       (form.documentType === "DNI" && !form.verificationCode.trim()) ||
@@ -97,13 +102,13 @@ export default function EsSaludRegister() {
       return;
     }
 
-    // Validar DNI
+    // Validar formato del DNI
     if (form.documentType === "DNI" && !/^\d{8}$/.test(form.documentNumber)) {
       setError("El DNI debe contener 8 dígitos.");
       return;
     }
 
-    // Validar carné de extranjería
+    // Validar formato del carné de extranjería
     if (
       form.documentType === "CE" &&
       !/^[a-zA-Z0-9]{5,20}$/.test(form.documentNumber)
@@ -112,13 +117,38 @@ export default function EsSaludRegister() {
       return;
     }
 
-    // Validar carácter verificador solamente para DNI
+    // Validar formato del carácter verificador
     if (
       form.documentType === "DNI" &&
-      !/^[a-zA-Z0-9]$/.test(form.verificationCode)
+      !/^[a-zA-Z0-9]$/.test(form.verificationCode.trim())
     ) {
       setError("Ingresa un carácter verificador válido.");
       return;
+    }
+
+    // Verificar los datos del asegurado registrado
+    if (form.documentType === "DNI") {
+      const asegurado = buscarAsegurado(form.documentNumber.trim());
+
+      if (!asegurado) {
+        setError("No se encontró un asegurado con ese DNI.");
+        return;
+      }
+
+      // Validar carácter verificador
+      if (
+        form.verificationCode.trim().toUpperCase() !==
+        String(asegurado.digitoVerificador).trim().toUpperCase()
+      ) {
+        setError("El carácter verificador es incorrecto.");
+        return;
+      }
+
+      // Validar fecha de nacimiento
+      if (form.birthDate !== asegurado.fechaNacimiento) {
+        setError("La fecha de nacimiento no coincide con la registrada.");
+        return;
+      }
     }
 
     // Validar correo electrónico
@@ -128,11 +158,12 @@ export default function EsSaludRegister() {
     }
 
     // Validar celular
-    if (!/^\d{9}$/.test(form.phone)) {
+    if (!/^\d{9}$/.test(form.phone.trim())) {
       setError("El celular debe tener 9 dígitos.");
       return;
     }
 
+    // Continuar al paso 2
     setError("");
     setStep(2);
 
@@ -175,7 +206,15 @@ export default function EsSaludRegister() {
       return;
     }
 
-    setError("Formulario validado. Falta conectar el servicio de registro.");
+    const resultado = registrarUsuario(form);
+
+    if (!resultado.correcto) {
+      setError(resultado.mensaje);
+      return;
+    }
+
+    window.alert(resultado.mensaje);
+    navigate("/essalud");
   };
 
   return (
@@ -487,7 +526,11 @@ export default function EsSaludRegister() {
             )}
 
             {/* BOTÓN REGISTRARME */}
-            <button data-tour="register" type="submit" className="register-primary-button">
+            <button
+              data-tour="register"
+              type="submit"
+              className="register-primary-button"
+            >
               Registrarme
               <ChevronRight size={21} strokeWidth={2} />
             </button>

@@ -1,0 +1,42 @@
+export const asegurados = [
+  {
+    id: "U001",
+    dni: "70000001",
+    digitoVerificador: "1",
+    nombres: "Ricardo Huamán",
+    fechaNacimiento: "1958-04-15",
+    centroId: "CENTRO001",
+  },
+  {
+    id: "U002",
+    dni: "70000002",
+    digitoVerificador: "2",
+    nombres: "Javier Salazar",
+    fechaNacimiento: "1998-06-20",
+    centroId: "CENTRO002",
+  },
+  {
+    id: "U003",
+    dni: "70000003",
+    digitoVerificador: "3",
+    nombres: "Fiorella Ramos",
+    fechaNacimiento: "1991-09-12",
+    centroId: "CENTRO003",
+  },
+  {
+    id: "U004",
+    dni: "70000004",
+    digitoVerificador: "4",
+    nombres: "Carlos Mendoza",
+    fechaNacimiento: "1984-03-25",
+    centroId: "CENTRO004",
+  },
+  {
+    id: "U005",
+    dni: "70000005",
+    digitoVerificador: "5",
+    nombres: "Elena Torres",
+    fechaNacimiento: "1971-11-08",
+    centroId: "CENTRO001",
+  },
+];

@@ -36,7 +36,8 @@ import EsSaludRegister from "./pages/EsSaludRegister";
 import EsSaludHome from "./pages/EsSaludHome";
 import MisCitas from "./pages/MisCitas";
 import ReservarCita from "./pages/ReservarCita";
-
+import DetalleCita from "./pages/DetalleCita";
+import CitaVirtual from "./pages/CitaVirtual";
 import "./App.css";
 
 function App() {
@@ -80,6 +81,8 @@ function App() {
           <Route path="/essalud/inicio" element={<EsSaludHome />} />
           <Route path="/essalud/citas" element={<MisCitas />} />
           <Route path="/essalud/reservar-cita" element={<ReservarCita />} />
+          <Route path="/essalud/detalle-cita" element={<DetalleCita />} />
+          <Route path="/essalud/cita-virtual" element={<CitaVirtual />} />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

@@ -6,31 +6,28 @@ import ServicesGrid from "../components/ServicesGrid";
 import OnlineAttention from "../components/OnlineAttention";
 import BottomNavigation from "../components/BottomNavigation";
 import HealthTip from "../components/HealthTip";
+import { obtenerUsuarioActivo } from "../services/usuariosService.js";
 
 export default function EsSaludHome() {
-const user = {
-name: "María Guadalupe",
-gender: "female",
-};
+  const user = obtenerUsuarioActivo();
 
-return (
-<main className="essalud-home">
-<HomeHeader user={user} />
+  return (
+    <main className="essalud-home">
+      <HomeHeader user={user} />
 
-  <div className="home-content">
-    <SearchBar />
+      <div className="home-content">
+        <SearchBar />
 
-    <HealthTip />
+        <HealthTip />
 
-    <OnlineAttention />
+        <OnlineAttention />
 
-    <ServicesGrid />
+        <ServicesGrid />
 
-    <NextAppointment />
-  </div>
+        <NextAppointment />
+      </div>
 
-  <BottomNavigation />
-</main>
-
-);
+      <BottomNavigation />
+    </main>
+  );
 }

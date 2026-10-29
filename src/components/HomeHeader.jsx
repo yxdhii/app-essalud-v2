@@ -5,10 +5,10 @@ import logoEssalud from "../assets/digital-logo.png";
 import headerMujer from "../assets/header-mujer.png";
 import HomeSidebar from "./HomeSidebar";
 
-export default function HomeHeader({
-  user = { name: "María Guadalupe" },
-}) {
+export default function HomeHeader({ user }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const nombreUsuario = user?.nombres || user?.name || "Usuario";
 
   return (
     <>
@@ -49,7 +49,7 @@ export default function HomeHeader({
 
           <div className="welcome-text">
             <span>¡Hola!</span>
-            <h1>{user.name}</h1>
+            <h1>{nombreUsuario}</h1>
             <p>¿Cómo podemos ayudarte hoy?</p>
           </div>
         </section>

@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { guardarCita } from "../utils/citasStorage";
+import { guardarCita } from "../services/citasService.js";
+import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+import BottomNavigation from "../components/BottomNavigation";
+import logoEssalud from "../assets/digital-logo.png";
 
 import {
   ArrowLeft,
@@ -24,18 +27,39 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 
-import BottomNavigation from "../components/BottomNavigation";
-import logoEssalud from "../assets/digital-logo.png";
-
 const especialidades = [
-  { nombre: "Medicina General", descripcion: "Atención integral", icono: Stethoscope },
+  {
+    nombre: "Medicina General",
+    descripcion: "Atención integral",
+    icono: Stethoscope,
+  },
   { nombre: "Pediatría", descripcion: "Niños y adolescentes", icono: Baby },
-  { nombre: "Ginecología y Obstetricia", descripcion: "Salud de la mujer", icono: HeartPulse },
+  {
+    nombre: "Ginecología y Obstetricia",
+    descripcion: "Salud de la mujer",
+    icono: HeartPulse,
+  },
   { nombre: "Psicología", descripcion: "Bienestar emocional", icono: Brain },
-  { nombre: "Medicina Interna", descripcion: "Salud del adulto", icono: UserRound },
-  { nombre: "Cardiología", descripcion: "Salud del corazón", icono: HeartPulse },
-  { nombre: "Cirugía General", descripcion: "Evaluación y tratamiento", icono: UserRoundCheck },
-  { nombre: "Dermatología", descripcion: "Cuidado de la piel", icono: Sparkles },
+  {
+    nombre: "Medicina Interna",
+    descripcion: "Salud del adulto",
+    icono: UserRound,
+  },
+  {
+    nombre: "Cardiología",
+    descripcion: "Salud del corazón",
+    icono: HeartPulse,
+  },
+  {
+    nombre: "Cirugía General",
+    descripcion: "Evaluación y tratamiento",
+    icono: UserRoundCheck,
+  },
+  {
+    nombre: "Dermatología",
+    descripcion: "Cuidado de la piel",
+    icono: Sparkles,
+  },
 ];
 
 const medicos = [
@@ -139,24 +163,15 @@ export default function ReservarCita() {
   const resultados = useMemo(
     () =>
       especialidades.filter((item) =>
-        item.nombre.toLowerCase().includes(busqueda.toLowerCase())
+        item.nombre.toLowerCase().includes(busqueda.toLowerCase()),
       ),
-    [busqueda]
+    [busqueda],
   );
 
   const medicosDisponibles = useMemo(() => {
-    const exactos = medicos.filter(
-      (item) => item.especialidad === especialidad
-    );
+    if (!especialidad) return [];
 
-    if (exactos.length > 0) {
-      return exactos;
-    }
-
-    return medicos.slice(0, 3).map((item) => ({
-      ...item,
-      especialidad,
-    }));
+    return medicos.filter((medico) => medico.especialidad === especialidad);
   }, [especialidad]);
 
   const continuar = () => {
@@ -206,30 +221,75 @@ export default function ReservarCita() {
   };
 
   const confirmarReserva = () => {
-  const nuevaCita = guardarCita({
-    tipo: tipoCita,
-    paciente,
-    especialidad,
-    medico: medico.nombre,
-    cmp: medico.cmp,
-    fecha,
-    horario,
-  });
+    const usuario = obtenerUsuarioActivo();
 
-  setPaso(5);
-};
+    if (!usuario) {
+      window.alert("Tu sesión no está activa. Inicia sesión nuevamente.");
+      navigate("/essalud");
+      return;
+    }
 
-  
+    if (!medico || !especialidad || !fecha || !horario) {
+      window.alert("Completa los datos de tu cita antes de continuar.");
+      return;
+    }
+
+    // Convertir el horario a formato de 24 horas (HH:mm)
+    const convertirHora = (valor) => {
+      const [horaTexto, periodo, meridiano] = valor.split(" ");
+      const [horas, minutos] = horaTexto.split(":").map(Number);
+
+      const esPM = periodo === "p." && meridiano === "m.";
+
+      const hora24 = esPM
+        ? horas === 12
+          ? 12
+          : horas + 12
+        : horas === 12
+          ? 0
+          : horas;
+
+      return `${String(hora24).padStart(2, "0")}:${String(minutos).padStart(2, "0")}`;
+    };
+
+    const resultado = guardarCita({
+      usuarioId: usuario.id,
+      tipo: tipoCita,
+      paciente,
+      especialidad,
+      medico: medico.nombre,
+      cmp: medico.cmp,
+      fecha,
+      horario,
+      hora: convertirHora(horario),
+      centroNombre: usuario.centro?.nombre || "Centro de atención asignado",
+      estado: "Pendiente",
+    });
+
+    if (!resultado.correcto) {
+      window.alert(resultado.mensaje || "No se pudo guardar la cita.");
+      return;
+    }
+
+    setPaso(5);
+  };
+
+  const navegarMenu = (id) => {
+    if (id === "inicio") navigate("/essalud/inicio");
+    if (id === "citas") navigate("/essalud/citas");
+    if (id === "chat") navigate("/essalud/chat");
+    if (id === "perfil") navigate("/essalud/perfil");
+  };
 
   return (
-    <main className="reservar-screen">
+    <main className="appointments-screen reservar-screen">
       {/* ENCABEZADO */}
-      <header className="reservar-header">
+      <header className="appointments-header">
         <button
-          className="reservar-back"
+          type="button"
+          className="appointments-back"
           onClick={volver}
           aria-label="Volver"
-          type="button"
         >
           <ArrowLeft size={23} />
         </button>
@@ -237,20 +297,20 @@ export default function ReservarCita() {
         <h1>{paso === 5 ? "Cita reservada" : "Reservar cita"}</h1>
 
         <img
-          className="reservar-logo"
           src={logoEssalud}
           alt="EsSalud Digital"
+          className="appointments-logo"
         />
 
         <button
           className="reservar-help"
-          aria-label="Ayuda"
           type="button"
+          aria-label="Ayuda"
           onClick={() =>
             window.alert("¿Necesitas ayuda para reservar tu cita?")
           }
         >
-          <CircleHelp size={22} />
+          <CircleHelp size={18} />
         </button>
       </header>
 
@@ -271,6 +331,7 @@ export default function ReservarCita() {
                     item.numero
                   )}
                 </span>
+
                 <small>{item.texto}</small>
               </div>
 
@@ -373,12 +434,12 @@ export default function ReservarCita() {
             ))}
 
             <div className="reservar-notice">
-              <CalendarCheck size={21} />
+              <MapPin size={21} />
               <span>
-                <strong>Ten en cuenta</strong>
+                <strong>Centro de atención</strong>
                 <small>
-                  La disponibilidad depende de la especialidad y del
-                  establecimiento seleccionado.
+                  {obtenerUsuarioActivo()?.centro?.nombre ||
+                    "Centro de atención asignado"}
                 </small>
               </span>
             </div>
@@ -433,29 +494,27 @@ export default function ReservarCita() {
             </div>
 
             <div className="reservar-specialties">
-              {resultados.map(
-                ({ nombre, descripcion, icono: Icono }) => (
-                  <button
-                    key={nombre}
-                    type="button"
-                    className={`reservar-specialty ${
-                      especialidad === nombre ? "selected" : ""
-                    }`}
-                    onClick={() => seleccionarEspecialidad(nombre)}
-                  >
-                    <span className="reservar-specialty-icon">
-                      <Icono size={22} />
-                    </span>
+              {resultados.map(({ nombre, descripcion, icono: Icono }) => (
+                <button
+                  key={nombre}
+                  type="button"
+                  className={`reservar-specialty ${
+                    especialidad === nombre ? "selected" : ""
+                  }`}
+                  onClick={() => seleccionarEspecialidad(nombre)}
+                >
+                  <span className="reservar-specialty-icon">
+                    <Icono size={22} />
+                  </span>
 
-                    <span className="reservar-specialty-info">
-                      <strong>{nombre}</strong>
-                      <small>{descripcion}</small>
-                    </span>
+                  <span className="reservar-specialty-info">
+                    <strong>{nombre}</strong>
+                    <small>{descripcion}</small>
+                  </span>
 
-                    <ArrowRight size={18} />
-                  </button>
-                )
-              )}
+                  <ArrowRight size={18} />
+                </button>
+              ))}
 
               {resultados.length === 0 && (
                 <p className="reservar-no-results">
@@ -505,18 +564,14 @@ export default function ReservarCita() {
                   }`}
                   onClick={() => seleccionarMedico(item)}
                 >
-                  <span
-                    className={`reservar-doctor-avatar ${item.color}`}
-                  >
+                  <span className={`reservar-doctor-avatar ${item.color}`}>
                     {item.iniciales}
                   </span>
 
                   <span className="reservar-doctor-info">
                     <strong>{item.nombre}</strong>
                     <small>{especialidad}</small>
-                    <small className="reservar-cmp">
-                      CMP {item.cmp}
-                    </small>
+                    <small className="reservar-cmp">CMP {item.cmp}</small>
 
                     <small className="reservar-availability">
                       <CalendarDays size={13} />
@@ -574,7 +629,6 @@ export default function ReservarCita() {
             <label className="reservar-date-label">
               <CalendarDays size={18} />
               Fecha de atención
-
               <input
                 type="date"
                 value={fecha}
@@ -654,10 +708,16 @@ export default function ReservarCita() {
               </p>
 
               <p>
-                <span>Paciente</span>
+                <span>Centro de atención</span>
                 <strong>
-                  {paciente === "Yo" ? "Para mí" : "Familiar"}
+                  {obtenerUsuarioActivo()?.centro?.nombre ||
+                    "Centro de atención asignado"}
                 </strong>
+              </p>
+
+              <p>
+                <span>Paciente</span>
+                <strong>{paciente === "Yo" ? "Para mí" : "Familiar"}</strong>
               </p>
 
               <p>
@@ -670,11 +730,6 @@ export default function ReservarCita() {
                 <strong>{horario}</strong>
               </p>
             </div>
-
-            <p className="reservar-demo-note">
-              Esta confirmación es demostrativa. No se ha reservado una cita
-              real.
-            </p>
 
             <button
               className="reservar-primary"
@@ -714,23 +769,7 @@ export default function ReservarCita() {
       )}
 
       {/* NAVEGACIÓN INFERIOR */}
-      <BottomNavigation
-        active="citas"
-        onNavigate={(id) => {
-          const rutas = {
-            inicio: "/essalud/inicio",
-            citas: "/essalud/citas",
-          };
-
-          if (rutas[id]) {
-            navigate(rutas[id]);
-          } else {
-            window.alert(
-              "Esta sección estará disponible en el siguiente avance del prototipo."
-            );
-          }
-        }}
-      />
+      <BottomNavigation active="citas" onNavigate={navegarMenu} />
     </main>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
-  HelpCircle,
+  CircleHelp,
   CalendarPlus,
   CalendarDays,
   Clock3,
@@ -10,6 +10,7 @@ import {
   Star,
   FileText,
   CheckCircle2,
+  MapPin,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BottomNavigation from "../components/BottomNavigation";
@@ -17,43 +18,57 @@ import logoEssalud from "../assets/digital-logo.png";
 import emptyAppointments from "../assets/empty-appointments.png";
 
 import {
-  obtenerCitas,
+  obtenerCitasUsuario,
   cancelarCita,
   calificarCita,
-} from "../utils/citasStorage";
+} from "../services/citasService.js";
+
+import { obtenerUsuarioActivo } from "../services/usuariosService.js";
 
 export default function MisCitas() {
   const [activeTab, setActiveTab] = useState("Virtual");
   const [citas, setCitas] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setCitas(obtenerCitas());
-  }, []);
+  const usuario = obtenerUsuarioActivo();
 
   const actualizarCitas = () => {
-    setCitas(obtenerCitas());
+    if (!usuario) {
+      setCitas([]);
+      return;
+    }
+
+    setCitas(obtenerCitasUsuario(usuario.id));
   };
 
+  useEffect(() => {
+    if (!usuario) {
+      navigate("/essalud");
+      return;
+    }
+
+    actualizarCitas();
+  }, []);
+
   const esAnterior = (cita) => {
-    const fechaCita = new Date(`${cita.fecha}T${cita.horario}`);
+    const hora = cita.hora || "00:00";
+    const fechaCita = new Date(`${cita.fecha}T${hora}:00`);
+
     return !Number.isNaN(fechaCita.getTime()) && fechaCita < new Date();
   };
 
-  const citasFiltradas = citas.filter(
-    (cita) => cita.tipo === activeTab
-  );
+  const citasFiltradas = citas.filter((cita) => cita.tipo === activeTab);
 
   const proximasCitas = citasFiltradas.filter(
-    (cita) => !esAnterior(cita) && cita.estado === "Pendiente"
+    (cita) => !esAnterior(cita) && cita.estado === "Pendiente",
   );
 
   const citasAnteriores = citasFiltradas.filter(
-    (cita) => esAnterior(cita) || cita.estado === "Atendida"
+    (cita) => esAnterior(cita) || cita.estado === "Atendida",
   );
 
   const citasCanceladas = citasFiltradas.filter(
-    (cita) => cita.estado === "Cancelada"
+    (cita) => cita.estado === "Cancelada",
   );
 
   const manejarCancelacion = (id) => {
@@ -64,9 +79,7 @@ export default function MisCitas() {
   };
 
   const manejarCalificacion = (id) => {
-    const puntuacion = window.prompt(
-      "Califica tu atención del 1 al 5:"
-    );
+    const puntuacion = window.prompt("Califica tu atención del 1 al 5:");
 
     if (puntuacion === null) return;
 
@@ -77,9 +90,7 @@ export default function MisCitas() {
       return;
     }
 
-    const comentario = window.prompt(
-      "¿Deseas dejar un comentario? (Opcional)"
-    );
+    const comentario = window.prompt("¿Deseas dejar un comentario? (Opcional)");
 
     calificarCita(id, valor, comentario || "");
     actualizarCitas();
@@ -102,17 +113,18 @@ export default function MisCitas() {
   const formatearHorario = (horario) => {
     if (!horario) return "Horario pendiente";
 
-    const partes = horario.split(":");
+    // Si la hora ya tiene a. m. o p. m., no volver a formatearla
+    if (/a\.\s*m\.|p\.\s*m\.|AM|PM/i.test(horario)) {
+      return horario;
+    }
 
-    if (partes.length < 2) return horario;
+    const [hora, minutos] = horario.split(":");
+    const numeroHora = Number(hora);
 
-    const hora = Number(partes[0]);
-    const minutos = partes[1];
+    if (Number.isNaN(numeroHora) || !minutos) return horario;
 
-    if (Number.isNaN(hora)) return horario;
-
-    const sufijo = hora >= 12 ? "p. m." : "a. m.";
-    const hora12 = hora % 12 || 12;
+    const hora12 = numeroHora % 12 || 12;
+    const sufijo = numeroHora >= 12 ? "p. m." : "a. m.";
 
     return `${hora12}:${minutos} ${sufijo}`;
   };
@@ -122,12 +134,12 @@ export default function MisCitas() {
   const renderizarTarjeta = (cita) => (
     <article className="appointment-card" key={cita.id}>
       <div className="appointment-card-top">
-        <span className={`appointment-type ${cita.tipo === "Virtual" ? "virtual" : "presencial"}`}>
-          {cita.tipo === "Virtual" ? (
-            <Video size={16} />
-          ) : (
-            <CalendarDays size={16} />
-          )}
+        <span
+          className={`appointment-type ${
+            cita.tipo === "Virtual" ? "virtual" : "presencial"
+          }`}
+        >
+          {cita.tipo === "Virtual" ? <Video size={16} /> : <MapPin size={16} />}
           {cita.tipo}
         </span>
 
@@ -136,8 +148,8 @@ export default function MisCitas() {
             cita.estado === "Cancelada"
               ? "cancelled"
               : cita.estado === "Atendida"
-              ? "attended"
-              : "pending"
+                ? "attended"
+                : "pending"
           }`}
         >
           {cita.estado === "Cancelada" ? (
@@ -154,7 +166,10 @@ export default function MisCitas() {
 
       <div className="appointment-doctor">
         <div className="appointment-avatar">
-          {(cita.medico || "M").replace(/^Dra?\.\s*/i, "").charAt(0).toUpperCase()}
+          {(cita.medico || "M")
+            .replace(/^Dra?\.\s*/i, "")
+            .charAt(0)
+            .toUpperCase()}
         </div>
 
         <div className="appointment-doctor-info">
@@ -185,6 +200,17 @@ export default function MisCitas() {
           </small>
         </div>
       )}
+      <button
+        type="button"
+        className="appointment-rate"
+        onClick={() =>
+          navigate("/essalud/detalle-cita", {
+            state: { cita },
+          })
+        }
+      >
+        Ver detalles
+      </button>
 
       <div className="appointment-actions">
         {cita.estado === "Pendiente" && !esAnterior(cita) && (
@@ -210,15 +236,11 @@ export default function MisCitas() {
         )}
 
         {cita.estado === "Pendiente" && esAnterior(cita) && (
-          <span className="appointment-note">
-            Fecha de cita transcurrida
-          </span>
+          <span className="appointment-note">Fecha de cita transcurrida</span>
         )}
 
         {cita.estado === "Cancelada" && (
-          <span className="appointment-note">
-            Esta cita fue cancelada.
-          </span>
+          <span className="appointment-note">Esta cita fue cancelada.</span>
         )}
       </div>
     </article>
@@ -245,14 +267,16 @@ export default function MisCitas() {
         />
 
         <button
+          className="reservar-help"
           type="button"
-          className="appointments-help"
           aria-label="Ayuda"
           onClick={() =>
-            window.alert("Aquí puedes consultar y gestionar tus citas médicas.")
+            window.alert(
+              "Aquí puedes consultar la información de tu cita médica.",
+            )
           }
         >
-          <HelpCircle size={23} />
+          <CircleHelp size={18} />
         </button>
       </header>
 
@@ -353,7 +377,8 @@ export default function MisCitas() {
               <div className="appointments-banner-text">
                 <h3>¿Necesitas una nueva cita?</h3>
                 <p>
-                  Encuentra una especialidad y agenda tu próxima atención médica.
+                  Encuentra una especialidad y agenda tu próxima atención
+                  médica.
                 </p>
               </div>
 
