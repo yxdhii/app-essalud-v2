@@ -1,40 +1,46 @@
 import React from "react";
-import { ChevronRight, Video } from "lucide-react";
-import doctoraOnline from "../assets/doctora-online.png";
+import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function OnlineAttention({ gender = "female" }) {
+// Cambia el nombre del archivo si guardaste la ilustración con otro nombre.
+import reservarCitaImage from "../assets/reservar-cita.png";
+
+export default function OnlineAttention() {
+  const navigate = useNavigate();
+
+  const handleReservar = () => {
+    navigate("/essalud/reservar-cita");
+  };
+
   return (
     <button
-      className="online-attention"
       type="button"
-      aria-label="Acceder a la atención médica virtual"
-      onClick={() => {
-        console.log("Acceder a atención médica virtual");
-      }}
+      className="online-attention"
+      onClick={handleReservar}
+      aria-label="Reservar cita médica"
     >
       <span className="online-attention-text">
         <span className="online-eyebrow">
-          <Video size={15} />
-          ATENCIÓN EN LÍNEA
+          TU SALUD MÁS CERCA DE TI
         </span>
 
-        <strong>Atención médica virtual</strong>
+        <strong>Reservar cita</strong>
 
         <span>
-          Conéctate por videollamada con un médico.
-        </span>
-
-        <span className="online-attention-link">
-          Conocer más
-          <ChevronRight size={17} />
+          Encuentra una especialidad y agenda tu próxima cita médica.
         </span>
       </span>
 
       <img
-        src={doctoraOnline}
-        alt="Doctora con una tableta para atención médica virtual"
+        src={reservarCitaImage}
+        alt=""
+        aria-hidden="true"
         className="online-doctor-image"
       />
+
+      <span className="online-attention-arrow">
+        <ChevronRight size={24} strokeWidth={2.5} />
+      </span>
     </button>
   );
 }

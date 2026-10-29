@@ -175,7 +175,7 @@ export default function ReservarCita() {
     } else if (paso === 5) {
       setPaso(4);
     } else {
-      navigate("/essalud/citas");
+      navigate("/essalud/inicio");
     }
   };
 

@@ -1,24 +1,18 @@
 import React from "react";
 import {
-  CalendarDays,
   UsersRound,
   FileText,
   FlaskConical,
+  Hospital,
   ChevronRight,
 } from "lucide-react";
 
 const services = [
   {
-    title: "Reservar cita",
-    description: "Agenda o reprograma tu cita médica",
-    icon: CalendarDays,
-    color: "blue",
-  },
-  {
     title: "Mis familiares",
     description: "Gestiona las cuentas de tu familia",
     icon: UsersRound,
-    color: "turquoise",
+    color: "blue",
   },
   {
     title: "Recetas",
@@ -30,7 +24,13 @@ const services = [
     title: "Exámenes",
     description: "Revisa tus resultados de laboratorio",
     icon: FlaskConical,
-    color: "orange",
+    color: "blue",
+  },
+  {
+    title: "Centros de atención",
+    description: "Busca hospitales, policlínicos y más",
+    icon: Hospital,
+    color: "pink",
   },
 ];
 
@@ -40,69 +40,41 @@ export default function ServicesGrid() {
   };
 
   return (
-    <section
-      className="services-section"
-      aria-labelledby="services-title"
-    >
+    <section className="services-section" aria-labelledby="services-title">
       <div className="services-heading">
-        <div className="services-heading-text">
-          <span className="section-eyebrow">
-            TUS GESTIONES
-          </span>
-
-          <h2 id="services-title">
-            Servicios principales
-          </h2>
-
-          <p>
-            Todo lo que necesitas para cuidar tu salud.
-          </p>
-        </div>
+        <h2 id="services-title">Servicios principales</h2>
 
         <button
-          className="services-view-all"
           type="button"
-          onClick={() =>
-            console.log("Mostrar todos los servicios")
-          }
+          className="services-view-all"
+          onClick={() => console.log("Mostrar todos los servicios")}
         >
           Ver todos
-          <ChevronRight size={17} />
+          <ChevronRight size={18} />
         </button>
       </div>
 
       <div className="services-grid">
-        {services.map(
-          ({ title, description, icon: Icon, color }) => (
-            <button
-              className="service-card"
-              key={title}
-              type="button"
-              aria-label={`${title}. ${description}`}
-              onClick={() => handleServiceClick(title)}
-            >
-              <span
-                className={`service-icon service-icon-${color}`}
-              >
-                <Icon size={25} strokeWidth={1.8} />
-              </span>
+        {services.map(({ title, description, icon: Icon, color }) => (
+          <button
+            className="service-card"
+            key={title}
+            type="button"
+            onClick={() => handleServiceClick(title)}
+            aria-label={`${title}. ${description}`}
+          >
+            <span className={`service-icon service-icon-${color}`}>
+              <Icon size={27} strokeWidth={1.8} />
+            </span>
 
-              <span className="service-title">
-                {title}
-              </span>
+            <span className="service-card-content">
+              <span className="service-title">{title}</span>
+              <span className="service-description">{description}</span>
+            </span>
 
-              <span className="service-description">
-                {description}
-              </span>
-
-              <ChevronRight
-                className="service-arrow"
-                size={19}
-                aria-hidden="true"
-              />
-            </button>
-          )
-        )}
+            <ChevronRight className="service-arrow" size={21} />
+          </button>
+        ))}
       </div>
     </section>
   );

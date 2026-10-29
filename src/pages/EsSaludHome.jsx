@@ -5,36 +5,32 @@ import NextAppointment from "../components/NextAppointment";
 import ServicesGrid from "../components/ServicesGrid";
 import OnlineAttention from "../components/OnlineAttention";
 import BottomNavigation from "../components/BottomNavigation";
+import HealthTip from "../components/HealthTip";
 
 export default function EsSaludHome() {
-  // Datos del usuario activo
-  const user = {
-    name: "María Guadalupe",
-    gender: "female",
-  };
+const user = {
+name: "María Guadalupe",
+gender: "female",
+};
 
-  return (
-    <main className="essalud-home">
-      {/* Encabezado, logo y bienvenida */}
-      <HomeHeader user={user} />
+return (
+<main className="essalud-home">
+<HomeHeader user={user} />
 
-      {/* Contenido principal */}
-      <div className="home-content">
-        {/* Buscador de servicios */}
-        <SearchBar />
+  <div className="home-content">
+    <SearchBar />
 
-        {/* Próxima cita médica */}
-        <NextAppointment />
+    <HealthTip />
 
-        {/* Accesos a los servicios */}
-        <ServicesGrid />
+    <OnlineAttention />
 
-        {/* Atención médica en línea */}
-        <OnlineAttention gender={user.gender} />
-      </div>
+    <ServicesGrid />
 
-      {/* Navegación inferior */}
-      <BottomNavigation active="inicio" />
-    </main>
-  );
+    <NextAppointment />
+  </div>
+
+  <BottomNavigation />
+</main>
+
+);
 }
