@@ -90,8 +90,8 @@ export default function SeleccionarPerfil() {
         <button
           type="button"
           className="appointments-back"
-          onClick={() => navigate(-1)}
-          aria-label="Regresar"
+          onClick={() => navigate("/essalud/inicio")}
+          aria-label="Volver al inicio"
         >
           <ArrowLeft size={23} />
         </button>

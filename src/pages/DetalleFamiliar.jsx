@@ -73,38 +73,38 @@ export default function DetalleFamiliar() {
 
   if (!familiar) {
     return (
-      <main className="detalle-familiar-page">
-  <header className="appointments-header">
-    <button
-      type="button"
-      className="appointments-back"
-      onClick={volverAFamiliares}
-      aria-label="Volver a familiares"
-    >
-      <ArrowLeft size={23} />
-    </button>
+      <main className="appointments-screen detalle-familiar-page">
+        <header className="appointments-header">
+          <button
+            type="button"
+            className="appointments-back"
+            onClick={volverAFamiliares}
+            aria-label="Volver a familiares"
+          >
+            <ArrowLeft size={23} />
+          </button>
 
-    <h1>Detalle del familiar</h1>
+          <h1>Detalle del familiar</h1>
 
-    <img
-      src={logoEssalud}
-      alt="EsSalud Digital"
-      className="appointments-logo"
-    />
+          <img
+            src={logoEssalud}
+            alt="EsSalud Digital"
+            className="appointments-logo"
+          />
 
-    <button
-      className="reservar-help"
-      type="button"
-      aria-label="Ayuda"
-      onClick={() =>
-        window.alert(
-          "Aquí puedes consultar la información y los servicios disponibles para tu familiar."
-        )
-      }
-    >
-      <CircleHelp size={18} />
-    </button>
-  </header>
+          <button
+            className="reservar-help"
+            type="button"
+            aria-label="Ayuda"
+            onClick={() =>
+              window.alert(
+                "Aquí puedes consultar la información y los servicios disponibles para tu familiar.",
+              )
+            }
+          >
+            <CircleHelp size={18} />
+          </button>
+        </header>
 
         <section className="detalle-familiar-error">
           <UsersRound size={40} />
@@ -361,9 +361,6 @@ export default function DetalleFamiliar() {
           Volver al inicio
         </button>
       </section>
-
-      {/* NAVEGACIÓN INFERIOR */}
-      <BottomNavigation active="perfil" onNavigate={navegarMenu} />
     </main>
   );
 }
