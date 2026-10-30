@@ -38,6 +38,10 @@ import MisCitas from "./pages/MisCitas";
 import ReservarCita from "./pages/ReservarCita";
 import DetalleCita from "./pages/DetalleCita";
 import CitaVirtual from "./pages/CitaVirtual";
+import SeleccionarPerfil from "./pages/SeleccionarPerfil";
+import DetalleFamiliar from "./pages/DetalleFamiliar";
+import AgregarFamiliar from "./pages/AgregarFamiliar";
+import CambiarCuenta from "./pages/CambiarCuenta";
 import "./App.css";
 
 function App() {
@@ -83,6 +87,16 @@ function App() {
           <Route path="/essalud/reservar-cita" element={<ReservarCita />} />
           <Route path="/essalud/detalle-cita" element={<DetalleCita />} />
           <Route path="/essalud/cita-virtual" element={<CitaVirtual />} />
+          <Route path="/essalud/familiares" element={<SeleccionarPerfil />} />
+
+          <Route path="/essalud/familiar/:dni" element={<DetalleFamiliar />} />
+
+          <Route
+            path="/essalud/agregar-familiar"
+            element={<AgregarFamiliar />}
+          />
+
+          <Route path="/essalud/cambiar-cuenta" element={<CambiarCuenta />} />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

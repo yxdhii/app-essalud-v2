@@ -38,25 +38,54 @@ export default function NextAppointment() {
         </div>
 
         <button
-          type="button"
-          className="services-view-all"
-          onClick={() => navigate("/essalud/mis-citas")}
-        >
-          Ver todas <ChevronRight size={16} />
-        </button>
+  type="button"
+  className="services-view-all"
+  onClick={() =>
+    navigate("/essalud/citas", {
+      state: {
+        activeTab: "Virtual",
+      },
+    })
+  }
+>
+  Ver todas <ChevronRight size={16} />
+</button>
       </div>
 
       {cita ? (
-        <div className="next-appointment">
+        <div
+          className="next-appointment"
+          role="button"
+          tabIndex={0}
+          onClick={() =>
+            navigate("/essalud/detalle-cita", {
+              state: {
+                cita,
+                activeTab:
+                  cita.tipo === "Presencial" ? "Presencial" : "Virtual",
+              },
+            })
+          }
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              navigate("/essalud/detalle-cita", {
+                state: {
+                  cita,
+                  activeTab:
+                    cita.tipo === "Presencial" ? "Presencial" : "Virtual",
+                },
+              });
+            }
+          }}
+          style={{ cursor: "pointer" }}
+        >
           <div className="appointment-icon">
             <CalendarCheck size={28} />
           </div>
 
           <div className="appointment-info">
-            <span className="section-eyebrow">
-              TU PRÓXIMA CITA
-            </span>
-
+            <span className="section-eyebrow">TU PRÓXIMA CITA</span>
             <h2>{cita.especialidad}</h2>
             <p>{cita.centroNombre}</p>
           </div>
@@ -75,10 +104,7 @@ export default function NextAppointment() {
           </div>
 
           <div className="appointment-info">
-            <span className="section-eyebrow">
-              TU PRÓXIMA CITA
-            </span>
-
+            <span className="section-eyebrow">TU PRÓXIMA CITA</span>
             <h2>Sin citas programadas</h2>
             <p>Cuando reserves una cita, aparecerá aquí.</p>
           </div>

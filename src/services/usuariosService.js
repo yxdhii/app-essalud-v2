@@ -109,6 +109,158 @@ export function obtenerUsuarioActivo() {
   }
 }
 
+// ============================================
+// FAMILIARES VINCULADOS
+// ============================================
+
+const CLAVE_FAMILIARES = "essalud_familiares_vinculados";
+
+// Obtener todas las vinculaciones guardadas.
+function obtenerTodasLasVinculaciones() {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_FAMILIARES)) || {};
+  } catch {
+    return {};
+  }
+}
+
+// Guardar las vinculaciones.
+function guardarTodasLasVinculaciones(vinculaciones) {
+  localStorage.setItem(
+    CLAVE_FAMILIARES,
+    JSON.stringify(vinculaciones)
+  );
+}
+
+// Obtener los familiares del titular actual.
+export function obtenerFamiliaresVinculados(dniTitular) {
+  const titular = String(
+    dniTitular || obtenerUsuarioActivo()?.dni || ""
+  ).trim();
+
+  if (!titular) return [];
+
+  const vinculaciones = obtenerTodasLasVinculaciones();
+
+  return (vinculaciones[titular] || [])
+    .map((vinculo) => {
+      const asegurado = buscarAsegurado(vinculo.dni);
+
+      if (!asegurado) return null;
+
+      return {
+        ...asegurado,
+        relation: vinculo.relation,
+        avatar: vinculo.avatar || "👤",
+        color: vinculo.color || "#d8edff",
+      };
+    })
+    .filter(Boolean);
+}
+
+// Vincular un familiar.
+export function vincularFamiliar(dniFamiliar, parentesco) {
+  const usuarioActivo = obtenerUsuarioActivo();
+
+  if (!usuarioActivo) {
+    return {
+      correcto: false,
+      mensaje: "Debes iniciar sesión para vincular familiares.",
+    };
+  }
+
+  const dniTitular = String(usuarioActivo.dni);
+  const dni = String(dniFamiliar || "").trim();
+  const relation = String(parentesco || "").trim();
+
+  if (!dni || !relation) {
+    return {
+      correcto: false,
+      mensaje: "Ingresa el DNI y el parentesco del familiar.",
+    };
+  }
+
+  if (dni === dniTitular) {
+    return {
+      correcto: false,
+      mensaje: "No puedes vincular tu propia cuenta como familiar.",
+    };
+  }
+
+  const asegurado = buscarAsegurado(dni);
+
+  if (!asegurado) {
+    return {
+      correcto: false,
+      mensaje: "No se encontró ese DNI entre los asegurados de prueba.",
+    };
+  }
+
+  const vinculaciones = obtenerTodasLasVinculaciones();
+  const familiaresActuales = vinculaciones[dniTitular] || [];
+
+  if (familiaresActuales.some((familiar) => familiar.dni === dni)) {
+    return {
+      correcto: false,
+      mensaje: "Este familiar ya está vinculado a tu cuenta.",
+    };
+  }
+
+  vinculaciones[dniTitular] = [
+    ...familiaresActuales,
+    {
+      dni,
+      relation,
+      avatar: relation.toLowerCase() === "hijo" ? "👦🏻" : "👤",
+      color: "#d8edff",
+    },
+  ];
+
+  guardarTodasLasVinculaciones(vinculaciones);
+
+  return {
+    correcto: true,
+    mensaje: "Familiar vinculado correctamente.",
+    familiar: asegurado,
+  };
+}
+
+// Desvincular un familiar.
+export function desvincularFamiliar(dniFamiliar) {
+  const usuarioActivo = obtenerUsuarioActivo();
+
+  if (!usuarioActivo) {
+    return {
+      correcto: false,
+      mensaje: "Debes iniciar sesión para gestionar tus familiares.",
+    };
+  }
+
+  const dniTitular = String(usuarioActivo.dni);
+  const dni = String(dniFamiliar || "").trim();
+
+  const vinculaciones = obtenerTodasLasVinculaciones();
+  const familiaresActuales = vinculaciones[dniTitular] || [];
+
+  if (!familiaresActuales.some((familiar) => familiar.dni === dni)) {
+    return {
+      correcto: false,
+      mensaje: "Este familiar no está vinculado a tu cuenta.",
+    };
+  }
+
+  vinculaciones[dniTitular] = familiaresActuales.filter(
+    (familiar) => familiar.dni !== dni
+  );
+
+  guardarTodasLasVinculaciones(vinculaciones);
+
+  return {
+    correcto: true,
+    mensaje: "Se eliminó la vinculación familiar.",
+  };
+}
+
 // Cerrar sesión.
 export function cerrarSesion() {
   localStorage.removeItem(CLAVE_SESION);

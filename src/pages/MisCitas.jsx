@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 import {
   ArrowLeft,
   CircleHelp,
@@ -12,7 +14,7 @@ import {
   CheckCircle2,
   MapPin,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
 import BottomNavigation from "../components/BottomNavigation";
 import logoEssalud from "../assets/digital-logo.png";
 import emptyAppointments from "../assets/empty-appointments.png";
@@ -26,12 +28,19 @@ import {
 import { obtenerUsuarioActivo } from "../services/usuariosService.js";
 
 export default function MisCitas() {
-  const [activeTab, setActiveTab] = useState("Virtual");
-  const [citas, setCitas] = useState([]);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  // Recuperar la pestaña enviada desde DetalleCita.
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || "Virtual"
+  );
+
+  const [citas, setCitas] = useState([]);
 
   const usuario = obtenerUsuarioActivo();
 
+  // Obtener las citas del usuario activo.
   const actualizarCitas = () => {
     if (!usuario) {
       setCitas([]);
@@ -50,52 +59,75 @@ export default function MisCitas() {
     actualizarCitas();
   }, []);
 
+  // Comprobar si la cita ya pasó.
   const esAnterior = (cita) => {
-    const hora = cita.hora || "00:00";
+    const hora = cita.horario || cita.hora || "00:00";
     const fechaCita = new Date(`${cita.fecha}T${hora}:00`);
 
-    return !Number.isNaN(fechaCita.getTime()) && fechaCita < new Date();
+    return (
+      !Number.isNaN(fechaCita.getTime()) &&
+      fechaCita < new Date()
+    );
   };
 
-  const citasFiltradas = citas.filter((cita) => cita.tipo === activeTab);
+  // Filtrar las citas según la pestaña seleccionada.
+  const citasFiltradas = citas.filter(
+    (cita) => cita.tipo === activeTab
+  );
 
   const proximasCitas = citasFiltradas.filter(
-    (cita) => !esAnterior(cita) && cita.estado === "Pendiente",
+    (cita) => !esAnterior(cita) && cita.estado === "Pendiente"
   );
 
   const citasAnteriores = citasFiltradas.filter(
-    (cita) => esAnterior(cita) || cita.estado === "Atendida",
+    (cita) =>
+      esAnterior(cita) || cita.estado === "Atendida"
   );
 
   const citasCanceladas = citasFiltradas.filter(
-    (cita) => cita.estado === "Cancelada",
+    (cita) => cita.estado === "Cancelada"
   );
 
+  // Cancelar una cita.
   const manejarCancelacion = (id) => {
-    if (window.confirm("¿Estás segura de que deseas cancelar esta cita?")) {
+    if (
+      window.confirm(
+        "¿Estás segura de que deseas cancelar esta cita?"
+      )
+    ) {
       cancelarCita(id);
       actualizarCitas();
     }
   };
 
+  // Calificar la atención.
   const manejarCalificacion = (id) => {
-    const puntuacion = window.prompt("Califica tu atención del 1 al 5:");
+    const puntuacion = window.prompt(
+      "Califica tu atención del 1 al 5:"
+    );
 
     if (puntuacion === null) return;
 
     const valor = Number(puntuacion);
 
-    if (!Number.isInteger(valor) || valor < 1 || valor > 5) {
+    if (
+      !Number.isInteger(valor) ||
+      valor < 1 ||
+      valor > 5
+    ) {
       window.alert("Ingresa una calificación del 1 al 5.");
       return;
     }
 
-    const comentario = window.prompt("¿Deseas dejar un comentario? (Opcional)");
+    const comentario = window.prompt(
+      "¿Deseas dejar un comentario? (Opcional)"
+    );
 
     calificarCita(id, valor, comentario || "");
     actualizarCitas();
   };
 
+  // Formatear fecha.
   const formatearFecha = (fecha) => {
     if (!fecha) return "Fecha pendiente";
 
@@ -110,18 +142,24 @@ export default function MisCitas() {
     });
   };
 
+  // Formatear horario.
   const formatearHorario = (horario) => {
     if (!horario) return "Horario pendiente";
 
-    // Si la hora ya tiene a. m. o p. m., no volver a formatearla
-    if (/a\.\s*m\.|p\.\s*m\.|AM|PM/i.test(horario)) {
+    if (/\b(a\.?\s*m\.?|p\.?\s*m\.?)$/i.test(horario.trim())) {
+      return horario.trim();
+    }
+
+    if (/\b(AM|PM)\b/i.test(horario)) {
       return horario;
     }
 
     const [hora, minutos] = horario.split(":");
     const numeroHora = Number(hora);
 
-    if (Number.isNaN(numeroHora) || !minutos) return horario;
+    if (Number.isNaN(numeroHora) || !minutos) {
+      return horario;
+    }
 
     const hora12 = numeroHora % 12 || 12;
     const sufijo = numeroHora >= 12 ? "p. m." : "a. m.";
@@ -131,6 +169,17 @@ export default function MisCitas() {
 
   const tieneCitas = citas.length > 0;
 
+  // Abrir el detalle conservando la pestaña actual.
+  const verDetalle = (cita) => {
+    navigate("/essalud/detalle-cita", {
+      state: {
+        cita,
+        activeTab,
+      },
+    });
+  };
+
+  // Renderizar tarjeta de cita.
   const renderizarTarjeta = (cita) => (
     <article className="appointment-card" key={cita.id}>
       <div className="appointment-card-top">
@@ -139,7 +188,12 @@ export default function MisCitas() {
             cita.tipo === "Virtual" ? "virtual" : "presencial"
           }`}
         >
-          {cita.tipo === "Virtual" ? <Video size={16} /> : <MapPin size={16} />}
+          {cita.tipo === "Virtual" ? (
+            <Video size={16} />
+          ) : (
+            <MapPin size={16} />
+          )}
+
           {cita.tipo}
         </span>
 
@@ -175,6 +229,7 @@ export default function MisCitas() {
         <div className="appointment-doctor-info">
           <h3>{cita.especialidad || "Consulta médica"}</h3>
           <p>{cita.medico || "Médico por confirmar"}</p>
+
           {cita.cmp && <small>CMP {cita.cmp}</small>}
         </div>
       </div>
@@ -187,7 +242,9 @@ export default function MisCitas() {
 
         <div>
           <Clock3 size={19} />
-          <span>{formatearHorario(cita.horario)}</span>
+          <span>
+            {formatearHorario(cita.horario || cita.hora)}
+          </span>
         </div>
       </div>
 
@@ -195,19 +252,19 @@ export default function MisCitas() {
         <div className="appointment-rating">
           {"★".repeat(cita.calificacion)}
           {"☆".repeat(5 - cita.calificacion)}
+
           <small>
-            {cita.comentario ? ` ${cita.comentario}` : " Tu calificación"}
+            {cita.comentario
+              ? ` ${cita.comentario}`
+              : " Tu calificación"}
           </small>
         </div>
       )}
+
       <button
         type="button"
         className="appointment-rate"
-        onClick={() =>
-          navigate("/essalud/detalle-cita", {
-            state: { cita },
-          })
-        }
+        onClick={() => verDetalle(cita)}
       >
         Ver detalles
       </button>
@@ -236,15 +293,33 @@ export default function MisCitas() {
         )}
 
         {cita.estado === "Pendiente" && esAnterior(cita) && (
-          <span className="appointment-note">Fecha de cita transcurrida</span>
+          <span className="appointment-note">
+            Fecha de cita transcurrida
+          </span>
         )}
 
         {cita.estado === "Cancelada" && (
-          <span className="appointment-note">Esta cita fue cancelada.</span>
+          <span className="appointment-note">
+            Esta cita fue cancelada.
+          </span>
         )}
       </div>
     </article>
   );
+
+  // Navegación inferior.
+  const navegarMenu = (id) => {
+    if (id === "inicio") navigate("/essalud/inicio");
+
+    if (id === "citas") {
+      navigate("/essalud/citas", {
+        state: { activeTab },
+      });
+    }
+
+    if (id === "recetas") navigate("/essalud/recetas");
+    if (id === "perfil") navigate("/essalud/perfil");
+  };
 
   return (
     <main className="appointments-screen">
@@ -272,7 +347,7 @@ export default function MisCitas() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Aquí puedes consultar la información de tu cita médica.",
+              "Aquí puedes consultar la información de tu cita médica."
             )
           }
         >
@@ -280,6 +355,7 @@ export default function MisCitas() {
         </button>
       </header>
 
+      {/* PESTAÑAS */}
       <div className="appointments-tabs" role="tablist">
         <button
           type="button"
@@ -328,6 +404,7 @@ export default function MisCitas() {
           </section>
         ) : (
           <>
+            {/* PRÓXIMAS CITAS */}
             <section className="appointments-section">
               <div className="appointments-section-title">
                 <h2>Próximas citas</h2>
@@ -343,6 +420,7 @@ export default function MisCitas() {
               )}
             </section>
 
+            {/* CITAS ANTERIORES */}
             <section className="appointments-section">
               <div className="appointments-section-title">
                 <h2>Citas anteriores</h2>
@@ -358,6 +436,7 @@ export default function MisCitas() {
               )}
             </section>
 
+            {/* CITAS CANCELADAS */}
             {citasCanceladas.length > 0 && (
               <section className="appointments-section">
                 <div className="appointments-section-title">
@@ -369,6 +448,7 @@ export default function MisCitas() {
               </section>
             )}
 
+            {/* BANNER DE RESERVA */}
             <section className="appointments-banner">
               <div className="appointments-banner-icon">
                 <FileText size={24} />
@@ -376,6 +456,7 @@ export default function MisCitas() {
 
               <div className="appointments-banner-text">
                 <h3>¿Necesitas una nueva cita?</h3>
+
                 <p>
                   Encuentra una especialidad y agenda tu próxima atención
                   médica.
@@ -396,12 +477,7 @@ export default function MisCitas() {
 
       <BottomNavigation
         active="citas"
-        onNavigate={(id) => {
-          if (id === "inicio") navigate("/essalud/inicio");
-          if (id === "citas") navigate("/essalud/citas");
-          if (id === "recetas") navigate("/essalud/recetas");
-          if (id === "perfil") navigate("/essalud/perfil");
-        }}
+        onNavigate={navegarMenu}
       />
     </main>
   );
