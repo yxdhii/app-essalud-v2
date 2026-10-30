@@ -1,9 +1,67 @@
-
 import { asegurados } from "../data/asegurados.js";
 import { centrosAtencion } from "../data/centrosAtencion.js";
 
 const CLAVE_USUARIOS = "essalud_usuarios";
 const CLAVE_SESION = "essalud_usuario_activo";
+
+// ============================================
+// AVATARES PREDETERMINADOS
+// ============================================
+
+function obtenerEdad(fechaNacimiento) {
+  if (!fechaNacimiento) return null;
+
+  const nacimiento = new Date(fechaNacimiento);
+  const hoy = new Date();
+
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+
+  const faltaCumplir =
+    hoy.getMonth() < nacimiento.getMonth() ||
+    (hoy.getMonth() === nacimiento.getMonth() &&
+      hoy.getDate() < nacimiento.getDate());
+
+  if (faltaCumplir) edad--;
+
+  return edad;
+}
+
+function obtenerAvatar(asegurado, parentesco = "") {
+  // Priorizar el avatar definido en asegurados.js.
+  if (asegurado?.avatar) {
+    return asegurado.avatar;
+  }
+
+  const edad = obtenerEdad(asegurado?.fechaNacimiento);
+  const relacion = parentesco.toLowerCase().trim();
+  const sexo = asegurado?.sexo;
+
+  // Adultos mayores.
+  if (edad !== null && edad >= 60) {
+    return sexo === "F" ? "👵🏻" : "👨🏻‍🦳";
+  }
+
+  // Niños y adolescentes.
+  if (edad !== null && edad < 18) {
+    return sexo === "F" ? "👧🏻" : "👦🏻";
+  }
+
+  // Adultos según el parentesco.
+  if (["madre", "hermana", "hija"].includes(relacion)) {
+    return "👩🏻";
+  }
+
+  if (["padre", "hermano", "hijo"].includes(relacion)) {
+    return "👨🏻";
+  }
+
+  // Adultos según el sexo registrado.
+  if (sexo === "F") return "👩🏻";
+  if (sexo === "M") return "👨🏻";
+
+  // Si no hay información suficiente, mostrar un icono genérico.
+  return null;
+}
 
 // Obtener los usuarios registrados en el navegador.
 export function obtenerUsuarios() {
@@ -43,6 +101,8 @@ export function registrarUsuario(datos) {
     id: asegurado.id,
     dni: asegurado.dni,
     nombres: asegurado.nombres,
+    sexo: asegurado.sexo,
+    avatar: asegurado.avatar || null,
     email: datos.email,
     phone: datos.phone,
     birthDate: datos.birthDate,
@@ -74,9 +134,7 @@ export function iniciarSesion(dni, password) {
     };
   }
 
-  const centro = centrosAtencion.find(
-    (item) => item.id === usuario.centroId,
-  );
+  const centro = centrosAtencion.find((item) => item.id === usuario.centroId);
 
   if (!centro) {
     return {
@@ -87,8 +145,12 @@ export function iniciarSesion(dni, password) {
 
   const { password: _, ...usuarioPublico } = usuario;
 
+  const asegurado = buscarAsegurado(usuario.dni);
+
   const sesion = {
     ...usuarioPublico,
+    sexo: usuarioPublico.sexo || asegurado?.sexo,
+    avatar: usuarioPublico.avatar || obtenerAvatar(asegurado),
     centro,
   };
 
@@ -126,16 +188,13 @@ function obtenerTodasLasVinculaciones() {
 
 // Guardar las vinculaciones.
 function guardarTodasLasVinculaciones(vinculaciones) {
-  localStorage.setItem(
-    CLAVE_FAMILIARES,
-    JSON.stringify(vinculaciones)
-  );
+  localStorage.setItem(CLAVE_FAMILIARES, JSON.stringify(vinculaciones));
 }
 
 // Obtener los familiares del titular actual.
 export function obtenerFamiliaresVinculados(dniTitular) {
   const titular = String(
-    dniTitular || obtenerUsuarioActivo()?.dni || ""
+    dniTitular || obtenerUsuarioActivo()?.dni || "",
   ).trim();
 
   if (!titular) return [];
@@ -151,7 +210,10 @@ export function obtenerFamiliaresVinculados(dniTitular) {
       return {
         ...asegurado,
         relation: vinculo.relation,
-        avatar: vinculo.avatar || "👤",
+        avatar:
+          vinculo.avatar ||
+          asegurado.avatar ||
+          obtenerAvatar(asegurado, vinculo.relation),
         color: vinculo.color || "#d8edff",
       };
     })
@@ -211,7 +273,7 @@ export function vincularFamiliar(dniFamiliar, parentesco) {
     {
       dni,
       relation,
-      avatar: relation.toLowerCase() === "hijo" ? "👦🏻" : "👤",
+      avatar: asegurado.avatar || obtenerAvatar(asegurado, relation),
       color: "#d8edff",
     },
   ];
@@ -250,7 +312,7 @@ export function desvincularFamiliar(dniFamiliar) {
   }
 
   vinculaciones[dniTitular] = familiaresActuales.filter(
-    (familiar) => familiar.dni !== dni
+    (familiar) => familiar.dni !== dni,
   );
 
   guardarTodasLasVinculaciones(vinculaciones);

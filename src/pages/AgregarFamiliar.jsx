@@ -193,8 +193,7 @@ export default function AgregarFamiliar() {
           <AlertCircle size={19} />
 
           <p>
-            Recuerda que el DNI debe corresponder a un asegurado incluido en los
-            datos de prueba de la aplicación.
+            Recuerda que el DNI debe corresponder a un asegurado
           </p>
         </div>
       </section>

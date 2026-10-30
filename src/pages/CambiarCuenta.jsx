@@ -1,11 +1,75 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, LogIn, Plus, ChevronRight, CircleHelp } from "lucide-react";
+import { asegurados } from "../data/asegurados.js";
+import {
+  ArrowLeft,
+  Plus,
+  ChevronRight,
+  CircleHelp,
+  UserRound,
+  Check,
+  ShieldCheck,
+} from "lucide-react";
 
 import logoEssalud from "../assets/digital-logo.png";
+import { obtenerUsuarioActivo } from "../services/usuariosService.js";
 
 export default function CambiarCuenta() {
   const navigate = useNavigate();
+
+  const [usuarioActivo, setUsuarioActivo] = useState(null);
+  const [cuentas, setCuentas] = useState([]);
+
+  useEffect(() => {
+    const usuario = obtenerUsuarioActivo();
+    setUsuarioActivo(usuario);
+
+    try {
+      const cuentasGuardadas = JSON.parse(
+        localStorage.getItem("essalud_cuentas_agregadas") || "[]",
+      );
+
+      const todasLasCuentas = cuentasGuardadas.map((cuenta) => {
+        const asegurado = asegurados.find(
+          (item) => String(item.dni) === String(cuenta.dni),
+        );
+
+        const esUsuarioActivo =
+          usuario && String(cuenta.dni) === String(usuario.dni);
+
+        return {
+          ...cuenta,
+          avatar:
+            cuenta.avatar ||
+            asegurado?.avatar ||
+            (esUsuarioActivo ? usuario.avatar : null),
+          sexo: cuenta.sexo || asegurado?.sexo || null,
+        };
+      });
+
+      // Añadir al usuario activo si todavía no está guardado.
+      if (
+        usuario &&
+        !todasLasCuentas.some(
+          (cuenta) => String(cuenta.dni) === String(usuario.dni),
+        )
+      ) {
+        const aseguradoActivo = asegurados.find(
+          (item) => String(item.dni) === String(usuario.dni),
+        );
+
+        todasLasCuentas.unshift({
+          ...usuario,
+          avatar: usuario.avatar || aseguradoActivo?.avatar || null,
+        });
+      }
+
+      setCuentas(todasLasCuentas);
+    } catch (error) {
+      console.error("Error al cargar las cuentas guardadas:", error);
+      setCuentas(usuario ? [usuario] : []);
+    }
+  }, []);
 
   const encabezado = (
     <header className="appointments-header">
@@ -32,7 +96,7 @@ export default function CambiarCuenta() {
         aria-label="Ayuda"
         onClick={() =>
           window.alert(
-            "Desde aquí puedes iniciar sesión con otra cuenta o crear una nueva cuenta en EsSalud Digital.",
+            "Selecciona una cuenta guardada o agrega otra cuenta para continuar.",
           )
         }
       >
@@ -41,60 +105,126 @@ export default function CambiarCuenta() {
     </header>
   );
 
+  const obtenerIniciales = (nombre = "") => {
+    return nombre
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((parte) => parte.charAt(0))
+      .join("")
+      .toUpperCase();
+  };
+
+  const formatearDni = (dni = "") => {
+    const documento = String(dni);
+
+    if (documento.length <= 2) {
+      return documento;
+    }
+
+    return `${"•".repeat(documento.length - 2)}${documento.slice(-2)}`;
+  };
+
+  const agregarCuenta = () => {
+    navigate("/essalud/login", {
+      state: { cambiarCuenta: true },
+    });
+  };
+
   return (
     <main className="appointments-screen cambiar-cuenta-screen">
       {encabezado}
 
       <section className="cambiar-cuenta-content">
         <div className="cambiar-cuenta-intro">
-          <h2>¿Qué deseas hacer?</h2>
-          <p>Selecciona una opción para continuar en EsSalud Digital.</p>
+          <h2>Tus cuentas</h2>
+          <p>Selecciona una cuenta para continuar.</p>
         </div>
 
-        <div className="cambiar-cuenta-options">
-          <button
-            type="button"
-            className="cambiar-cuenta-option"
-            onClick={() =>
-              navigate("/essalud/login", {
-                state: { cambiarCuenta: true },
-              })
-            }
-          >
-            <span className="cambiar-cuenta-option-icon">
-              <LogIn size={24} />
-            </span>
+        <div className="cambiar-cuenta-list">
+          {cuentas.map((cuenta) => {
+            const esActiva =
+              usuarioActivo && String(cuenta.dni) === String(usuarioActivo.dni);
 
-            <span className="cambiar-cuenta-option-text">
-              <strong>Iniciar sesión en otra cuenta</strong>
-              <small>
-                Ingresa con el DNI y la contraseña de otro asegurado.
-              </small>
-            </span>
+            return (
+              <button
+                type="button"
+                key={cuenta.dni}
+                className={`cuenta-guardada ${
+                  esActiva ? "cuenta-guardada-activa" : ""
+                }`}
+                onClick={() => {
+                  if (esActiva) {
+                    navigate("/essalud/inicio");
+                  } else {
+                    window.alert(
+                      "El cambio de cuenta estará disponible cuando conectemos esta tarjeta con el servicio de cuentas guardadas.",
+                    );
+                  }
+                }}
+                aria-current={esActiva ? "true" : undefined}
+              >
+                <span
+                  className="cuenta-avatar"
+                  style={{
+                    backgroundColor: cuenta.color || "#EAF4FF",
+                  }}
+                >
+                  <span className="cuenta-avatar-inner">
+                    {cuenta.avatar || <UserRound size={28} strokeWidth={1.8} />}
+                  </span>
+                </span>
 
-            <ChevronRight size={21} className="cambiar-cuenta-chevron" />
-          </button>
+                <span className="cuenta-guardada-info">
+                  <strong>{cuenta.nombres || cuenta.name || "Usuario"}</strong>
 
-          <button
-            type="button"
-            className="cambiar-cuenta-option"
-            onClick={() =>
-              navigate("/essalud/registro", {
-                state: { agregarCuenta: true },
-              })
-            }
-          >
-            <span className="cambiar-cuenta-option-icon">
-              <Plus size={25} />
-            </span>
+                  {esActiva && (
+                    <span className="cuenta-activa-badge">
+                      <Check size={13} />
+                      Cuenta activa
+                    </span>
+                  )}
 
-            <span className="cambiar-cuenta-option-text">
-              <strong>Crear nueva cuenta</strong>
-              <small>Regístrate para acceder a EsSalud Digital.</small>
-            </span>
+                  <small>DNI: {formatearDni(cuenta.dni)}</small>
+                </span>
 
-            <ChevronRight size={21} className="cambiar-cuenta-chevron" />
-          </button>
+                {esActiva ? (
+                  <span className="cuenta-check">
+                    <Check size={19} strokeWidth={3} />
+                  </span>
+                ) : (
+                  <ChevronRight size={22} className="cuenta-chevron" />
+                )}
+              </button>
+            );
+          })}
+
+          {cuentas.length === 0 && (
+            <div className="cuentas-vacias">
+              <UserRound size={30} />
+              <strong>No hay cuentas guardadas</strong>
+              <p>Inicia sesión para agregar tu primera cuenta.</p>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="cambiar-cuenta-add"
+          onClick={agregarCuenta}
+        >
+          <span className="cambiar-cuenta-add-icon">
+            <Plus size={24} />
+          </span>
+          <span>Agregar otra cuenta</span>
+        </button>
+
+        <div className="cambiar-cuenta-notice">
+          <span className="cambiar-cuenta-notice-icon">
+            <ShieldCheck size={24} />
+          </span>
+
+          <p>Tus cuentas guardadas se mantienen en este dispositivo.</p>
         </div>
 
         <button

@@ -1,3 +1,4 @@
+
 export const asegurados = [
   {
     id: "U001",
@@ -6,6 +7,8 @@ export const asegurados = [
     nombres: "Ricardo Huamán",
     fechaNacimiento: "1958-04-15",
     centroId: "CENTRO001",
+    sexo: "M",
+    avatar: "👨🏻‍🦳",
   },
   {
     id: "U002",
@@ -14,6 +17,8 @@ export const asegurados = [
     nombres: "Javier Salazar",
     fechaNacimiento: "1998-06-20",
     centroId: "CENTRO002",
+    sexo: "M",
+    avatar: "👨🏻",
   },
   {
     id: "U003",
@@ -22,6 +27,8 @@ export const asegurados = [
     nombres: "Fiorella Ramos",
     fechaNacimiento: "1991-09-12",
     centroId: "CENTRO003",
+    sexo: "F",
+    avatar: "👩🏻",
   },
   {
     id: "U004",
@@ -30,6 +37,8 @@ export const asegurados = [
     nombres: "Carlos Mendoza",
     fechaNacimiento: "1984-03-25",
     centroId: "CENTRO004",
+    sexo: "M",
+    avatar: "👨🏻",
   },
   {
     id: "U005",
@@ -38,5 +47,7 @@ export const asegurados = [
     nombres: "Elena Torres",
     fechaNacimiento: "1971-11-08",
     centroId: "CENTRO001",
+    sexo: "F",
+    avatar: "👩🏻",
   },
 ];
