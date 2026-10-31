@@ -1,4 +1,5 @@
 
+import { useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -13,18 +14,18 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-import html2pdf from "html2pdf.js";
-
 import logoEssalud from "../assets/digital-logo.png";
 
 import { obtenerRecetaPorId } from "../services/recetasService.js";
 import { obtenerUsuarioActivo } from "../services/usuariosService.js";
-
+import { descargarReceta as generarPDF } from "../utils/descargarReceta.js";
 
 export default function DetalleReceta() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+
+  const documentoRef = useRef(null);
 
   const usuario = obtenerUsuarioActivo();
 
@@ -58,72 +59,12 @@ export default function DetalleReceta() {
     });
   };
 
-  // Descargar receta en PDF
-  
-const descargarReceta = async () => {
-  const elemento = document.getElementById("receta-pdf");
+  // Descargar PDF utilizando la función compartida
+  const descargar = async () => {
+    await generarPDF(documentoRef.current, receta);
+  };
 
-  if (!elemento) {
-    window.alert("No se encontró la receta.");
-    return;
-  }
-
-  elemento.classList.add("generando-pdf");
-
-  try {
-    // Esperar a que las imágenes estén cargadas
-    const imagenes = Array.from(elemento.querySelectorAll("img"));
-
-    await Promise.all(
-      imagenes.map((img) => {
-        if (img.complete) return Promise.resolve();
-
-        return new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve;
-        });
-      })
-    );
-
-    const opciones = {
-      margin: [10, 10, 10, 10],
-      filename: `Receta_${receta.id}.pdf`,
-      image: {
-        type: "jpeg",
-        quality: 0.98,
-      },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        scrollY: 0,
-        windowWidth: 794,
-      },
-      jsPDF: {
-        unit: "mm",
-        format: "a4",
-        orientation: "portrait",
-      },
-      pagebreak: {
-        mode: ["css", "legacy"],
-      },
-    };
-
-    await html2pdf()
-      .set(opciones)
-      .from(elemento)
-      .save();
-
-  } catch (error) {
-    console.error("Error al generar el PDF:", error);
-    window.alert("No se pudo descargar la receta. Inténtalo nuevamente.");
-  } finally {
-    elemento.classList.remove("generando-pdf");
-  }
-};
-
-
-  // Encabezado compartido con Mis citas
+  // Encabezado
   const renderizarEncabezado = () => (
     <header className="appointments-header">
       <button
@@ -174,10 +115,7 @@ const descargarReceta = async () => {
               No pudimos encontrar la información de esta receta médica.
             </p>
 
-            <button
-              type="button"
-              onClick={volverARecetas}
-            >
+            <button type="button" onClick={volverARecetas}>
               Volver a mis recetas
             </button>
           </div>
@@ -188,17 +126,28 @@ const descargarReceta = async () => {
 
   const medicamentos = receta.medicamentos || [];
 
+  const nombrePaciente =
+    receta.paciente ||
+    paciente?.nombres ||
+    paciente?.nombre ||
+    "No disponible";
+
+  const dniPaciente =
+    receta.dni ||
+    paciente?.dni ||
+    "No disponible";
+
   return (
     <main className="appointments-screen detalle-receta-screen">
 
       {/* ENCABEZADO */}
       {renderizarEncabezado()}
 
-      {/* CONTENIDO */}
       <section className="detalle-receta-content">
 
         {/* DOCUMENTO QUE SE DESCARGARÁ */}
         <div
+          ref={documentoRef}
           id="receta-pdf"
           className="detalle-receta-documento"
         >
@@ -252,38 +201,22 @@ const descargarReceta = async () => {
 
             <div className="detalle-receta-row">
               <span>Paciente</span>
-
-              <strong>
-                {receta.paciente ||
-                  paciente?.nombres ||
-                  "No disponible"}
-              </strong>
+              <strong>{nombrePaciente}</strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>DNI</span>
-
-              <strong>
-                {receta.dni ||
-                  paciente?.dni ||
-                  "No disponible"}
-              </strong>
+              <strong>{dniPaciente}</strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>Fecha de atención</span>
-
-              <strong>
-                {formatearFecha(receta.fecha)}
-              </strong>
+              <strong>{formatearFecha(receta.fecha)}</strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>Tipo de atención</span>
-
-              <strong>
-                {receta.tipoCita || "No especificado"}
-              </strong>
+              <strong>{receta.tipoCita || "No especificado"}</strong>
             </div>
           </article>
 
@@ -296,18 +229,12 @@ const descargarReceta = async () => {
 
             <div className="detalle-receta-row">
               <span>Médico</span>
-
-              <strong>
-                {receta.medico || "No disponible"}
-              </strong>
+              <strong>{receta.medico || "No disponible"}</strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>Especialidad</span>
-
-              <strong>
-                {receta.especialidad || "No disponible"}
-              </strong>
+              <strong>{receta.especialidad || "No disponible"}</strong>
             </div>
 
             {receta.cmp && (
@@ -335,7 +262,6 @@ const descargarReceta = async () => {
           <article className="detalle-receta-card">
             <div className="detalle-receta-card-title">
               <Pill size={19} />
-
               <h3>Medicamentos indicados</h3>
 
               <span className="detalle-receta-count">
@@ -397,9 +323,7 @@ const descargarReceta = async () => {
             </p>
           </article>
 
-
-
-          {/* PIE DEL DOCUMENTO PDF */}
+          {/* PIE DEL DOCUMENTO */}
           <div className="detalle-receta-pdf-footer">
             <CheckCircle2 size={16} />
 
@@ -414,7 +338,7 @@ const descargarReceta = async () => {
         <button
           type="button"
           className="detalle-receta-print"
-          onClick={descargarReceta}
+          onClick={descargar}
         >
           <Download size={19} />
           Descargar receta PDF
