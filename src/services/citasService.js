@@ -1,4 +1,4 @@
-
+import { generarRecetaDesdeCita } from "./recetasService.js";
 const CLAVE_CITAS = "essalud_citas";
 
 function obtenerTodasLasCitas() {
@@ -154,6 +154,7 @@ export function reprogramarCita(id, nuevaFecha, nuevaHora, nuevoHorario) {
 }
 
 // Marcar una cita como atendida al finalizar la videoconsulta
+
 export function completarCita(id) {
   const citas = obtenerTodasLasCitas();
 
@@ -168,11 +169,25 @@ export function completarCita(id) {
 
   const actualizadas = citas.map((cita) =>
     cita.id === id
-      ? { ...cita, estado: "Atendida" }
+      ? {
+          ...cita,
+          estado: "Atendida",
+          fechaAtencion: new Date().toISOString(),
+        }
       : cita
   );
 
-  localStorage.setItem(CLAVE_CITAS, JSON.stringify(actualizadas));
+  localStorage.setItem(
+    CLAVE_CITAS,
+    JSON.stringify(actualizadas)
+  );
 
-  return { correcto: true };
+  // Generar la receta automáticamente para el paciente atendido.
+  const resultadoReceta = generarRecetaDesdeCita(citaExistente);
+
+  return {
+    correcto: true,
+    mensaje: "La cita se completó correctamente.",
+    recetaGenerada: resultadoReceta.correcto,
+  };
 }

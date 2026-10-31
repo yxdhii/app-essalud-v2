@@ -48,6 +48,8 @@ import CentrosAtencion from "./pages/CentrosAtencion";
 import Chat from "./pages/Chat";
 import Perfil from "./pages/Perfil";
 import DatosPersonales from "./pages/DatosPersonales";
+import SeguridadCuenta from "./pages/SeguridadCuenta";
+import DetalleReceta from "./pages/DetalleReceta";
 import "./App.css";
 
 function App() {
@@ -116,6 +118,8 @@ function App() {
             path="/essalud/datos-personales"
             element={<DatosPersonales />}
           />
+          <Route path="/essalud/seguridad" element={<SeguridadCuenta />} />
+          <Route path="/essalud/receta/:id" element={<DetalleReceta />} />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

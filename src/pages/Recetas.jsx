@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -10,6 +9,7 @@ import {
   CalendarDays,
   UserRound,
   ChevronRight,
+  Pill,
 } from "lucide-react";
 
 import BottomNavigation from "../components/BottomNavigation";
@@ -18,6 +18,7 @@ import logoEssalud from "../assets/digital-logo.png";
 import emptyPrescriptions from "../assets/empty-prescriptions.png";
 
 import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+import { obtenerRecetasPaciente } from "../services/recetasService.js";
 
 export default function Recetas() {
   const navigate = useNavigate();
@@ -26,53 +27,54 @@ export default function Recetas() {
   const usuario = obtenerUsuarioActivo();
   const paciente = location.state?.paciente || null;
   const pacienteActual = paciente || usuario;
+  const pacienteId = pacienteActual?.id;
 
-  const [activeTab, setActiveTab] = useState("actual");
+  const [activeTab, setActiveTab] = useState("nuevas");
   const [recetas, setRecetas] = useState([]);
 
-  // Inicializar las recetas del paciente.
-  // Por ahora se utiliza una lista vacía.
-  // Posteriormente se conectará con recetasService.js.
+  // Cargar las recetas del paciente seleccionado.
+  const cargarDatos = () => {
+    if (!pacienteId) {
+      setRecetas([]);
+      return;
+    }
+
+    setRecetas(obtenerRecetasPaciente(pacienteId));
+  };
+
   useEffect(() => {
-    setRecetas([]);
-  }, [pacienteActual?.id, pacienteActual?.dni]);
+    cargarDatos();
+  }, [pacienteId]);
 
-  // Filtrar recetas según el periodo seleccionado.
+  // Clasificar recetas en nuevas y anteriores.
   const recetasFiltradas = recetas.filter((receta) => {
-    if (!receta.fecha) return false;
+    const fechaReferencia =
+      receta.fechaRegistro || (receta.fecha ? `${receta.fecha}T12:00:00` : "");
 
-    const fechaReceta = new Date(`${receta.fecha}T12:00:00`);
-    const ahora = new Date();
+    if (!fechaReferencia) return false;
+
+    const fechaReceta = new Date(fechaReferencia);
 
     if (Number.isNaN(fechaReceta.getTime())) return false;
 
-    const inicioMesActual = new Date(
-      ahora.getFullYear(),
-      ahora.getMonth(),
-      1
-    );
+    const ahora = new Date();
+
+    const inicioMesActual = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
 
     const inicioMesSiguiente = new Date(
       ahora.getFullYear(),
       ahora.getMonth() + 1,
-      1
+      1,
     );
 
-    if (activeTab === "actual") {
-      return (
-        fechaReceta >= inicioMesActual &&
-        fechaReceta < inicioMesSiguiente
-      );
+    if (activeTab === "nuevas") {
+      return fechaReceta >= inicioMesActual && fechaReceta < inicioMesSiguiente;
     }
 
-    if (activeTab === "anteriores") {
-      return fechaReceta < inicioMesActual;
-    }
-
-    return fechaReceta >= inicioMesSiguiente;
+    return fechaReceta < inicioMesActual;
   });
 
-  // Formatear fecha.
+  // Formatear fechas.
   const formatearFecha = (fecha) => {
     if (!fecha) return "Fecha no disponible";
 
@@ -87,46 +89,178 @@ export default function Recetas() {
     });
   };
 
-  // Descargar una receta.
+  // Escapar contenido HTML antes de generar el documento.
+  const escaparHTML = (valor) => {
+    return String(valor ?? "").replace(/[&<>"']/g, (caracter) => {
+      const entidades = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      };
+
+      return entidades[caracter];
+    });
+  };
+
+  // Imprimir o guardar receta como PDF.
   const descargarReceta = (receta) => {
-    if (!receta.archivoUrl) {
-      window.alert(
-        "El archivo de esta receta todavía no está disponible para descargar."
-      );
+    const ventana = window.open("", "_blank");
+
+    if (!ventana) {
+      window.alert("Permite las ventanas emergentes para imprimir la receta.");
       return;
     }
 
-    const enlace = document.createElement("a");
+    const medicamentos = receta.medicamentos || [];
 
-    enlace.href = receta.archivoUrl;
-    enlace.download =
-      receta.nombreArchivo || `receta-${receta.id}.pdf`;
-    enlace.target = "_blank";
-    enlace.rel = "noopener noreferrer";
+    const pacienteNombre =
+      receta.paciente || pacienteActual?.nombres || "Paciente";
 
-    document.body.appendChild(enlace);
-    enlace.click();
-    enlace.remove();
+    const pacienteDni = receta.dni || pacienteActual?.dni || "";
+
+    const medicamentosHTML = medicamentos
+      .map(
+        (medicamento) => `
+          <div class="medicamento">
+            <strong>${escaparHTML(medicamento.nombre)}</strong>
+            <p>Dosis: ${escaparHTML(medicamento.dosis)}</p>
+            <p>Frecuencia: ${escaparHTML(medicamento.frecuencia)}</p>
+            <p>Duración: ${escaparHTML(medicamento.duracion)}</p>
+          </div>
+        `,
+      )
+      .join("");
+
+    ventana.document.write(`
+      <!DOCTYPE html>
+      <html lang="es">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Receta ${escaparHTML(receta.id)}</title>
+
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            color: #426b88;
+            padding: 35px;
+            max-width: 750px;
+            margin: auto;
+          }
+
+          h1 {
+            color: #3998d2;
+          }
+
+          .dato {
+            margin: 12px 0;
+          }
+
+          .medicamento {
+            border: 1px solid #dcebf4;
+            border-radius: 10px;
+            padding: 14px;
+            margin: 12px 0;
+          }
+
+          .aviso {
+            background: #eaf7fd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 25px;
+            font-size: 12px;
+          }
+
+          button {
+            background: #3998d2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+          }
+
+          @media print {
+            button {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+
+      <body>
+        <h1>EsSalud Digital</h1>
+        <h2>Receta médica - Documento demostrativo</h2>
+
+        <div class="dato">
+          <strong>Paciente:</strong>
+          ${escaparHTML(pacienteNombre)}
+        </div>
+
+        <div class="dato">
+          <strong>DNI:</strong>
+          ${escaparHTML(pacienteDni)}
+        </div>
+
+        <div class="dato">
+          <strong>Especialidad:</strong>
+          ${escaparHTML(receta.especialidad)}
+        </div>
+
+        <div class="dato">
+          <strong>Profesional:</strong>
+          ${escaparHTML(receta.medico)}
+        </div>
+
+        <div class="dato">
+          <strong>Fecha:</strong>
+          ${escaparHTML(formatearFecha(receta.fecha))}
+        </div>
+
+        <div class="dato">
+          <strong>Diagnóstico:</strong>
+          ${escaparHTML(receta.diagnostico || "No especificado")}
+        </div>
+
+        <h3>Medicamentos</h3>
+
+        ${medicamentosHTML}
+
+        <p>
+          <strong>Indicaciones:</strong>
+          ${escaparHTML(receta.indicaciones || "Sin indicaciones adicionales")}
+        </p>
+
+        <div class="aviso">
+          DOCUMENTO FICTICIO DE DEMOSTRACIÓN.
+          No constituye una receta médica real.
+        </div>
+
+        <button onclick="window.print()">
+          Imprimir / Guardar como PDF
+        </button>
+      </body>
+      </html>
+    `);
+
+    ventana.document.close();
+    ventana.focus();
   };
 
   // Navegación inferior.
   const navegarMenu = (id) => {
-    if (id === "inicio") {
-      navigate("/essalud/inicio");
-    }
+    const rutas = {
+      inicio: "/essalud/inicio",
+      citas: "/essalud/citas",
+      chat: "/essalud/chat",
+      perfil: "/essalud/perfil",
+    };
 
-    if (id === "citas") {
-      navigate("/essalud/citas");
-    }
-
-    if (id === "recetas") {
-      navigate("/essalud/recetas", {
-        state: paciente ? { paciente } : {},
-      });
-    }
-
-    if (id === "perfil") {
-      navigate("/essalud/perfil");
+    if (rutas[id]) {
+      navigate(rutas[id]);
     }
   };
 
@@ -139,9 +273,7 @@ export default function Recetas() {
 
           <h2>Inicia sesión</h2>
 
-          <p>
-            Necesitas iniciar sesión para consultar tus recetas médicas.
-          </p>
+          <p>Necesitas iniciar sesión para consultar tus recetas médicas.</p>
 
           <button
             type="button"
@@ -155,20 +287,17 @@ export default function Recetas() {
     );
   }
 
-  // Textos del estado vacío.
+  const nombrePaciente = pacienteActual?.nombres || "tus";
+
   const tituloVacio =
-    activeTab === "actual"
-      ? "¡Aún no tienes recetas médicas!"
-      : activeTab === "anteriores"
-        ? "No tienes recetas anteriores"
-        : "No tienes recetas próximas";
+    activeTab === "nuevas"
+      ? "¡Aún no tienes recetas nuevas!"
+      : "No tienes recetas anteriores";
 
   const mensajeVacio =
-    activeTab === "actual"
-      ? "Aquí aparecerán tus recetas médicas cuando el profesional de salud las emita después de tu atención."
-      : activeTab === "anteriores"
-        ? "Aquí encontrarás las recetas emitidas en meses anteriores."
-        : "Cuando tengas recetas registradas para este periodo, aparecerán aquí.";
+    activeTab === "nuevas"
+      ? `Aquí aparecerán las recetas de ${nombrePaciente} cuando finalice una atención médica y se registre una prescripción.`
+      : "Aquí encontrarás las recetas emitidas durante meses anteriores.";
 
   return (
     <main className="appointments-screen prescriptions-page">
@@ -197,7 +326,7 @@ export default function Recetas() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Aquí puedes consultar las recetas médicas emitidas después de tus atenciones."
+              "Aquí puedes consultar las recetas médicas registradas después de tus atenciones.",
             )
           }
         >
@@ -205,12 +334,18 @@ export default function Recetas() {
         </button>
       </header>
 
-      {/* PESTAÑAS */}
-      <div
-        className="prescriptions-tabs"
-        role="tablist"
-        aria-label="Periodo de recetas"
-      >
+      {/* PESTAÑAS - MISMO DISEÑO QUE MIS CITAS */}
+      <div className="appointments-tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={activeTab === "nuevas"}
+          className={activeTab === "nuevas" ? "active" : ""}
+          onClick={() => setActiveTab("nuevas")}
+        >
+          Nuevas
+        </button>
+
         <button
           type="button"
           role="tab"
@@ -220,95 +355,75 @@ export default function Recetas() {
         >
           Anteriores
         </button>
+      </div>
 
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === "actual"}
-          className={activeTab === "actual" ? "active" : ""}
-          onClick={() => setActiveTab("actual")}
-        >
-          Mes actual
-        </button>
+      {/* PACIENTE */}
+      <div className="prescriptions-patient">
+        <UserRound size={17} />
 
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === "siguientes"}
-          className={activeTab === "siguientes" ? "active" : ""}
-          onClick={() => setActiveTab("siguientes")}
-        >
-          Siguientes
-        </button>
+        <span>
+          Recetas de{" "}
+          <strong>
+            {pacienteActual?.nombres || pacienteActual?.nombre || "Paciente"}
+          </strong>
+        </span>
       </div>
 
       {/* CONTENIDO */}
       <div className="prescriptions-content">
         {recetasFiltradas.length === 0 ? (
-          /* ESTADO VACÍO */
           <section className="prescriptions-empty">
             <div className="prescriptions-empty-main">
               <img
                 src={emptyPrescriptions}
-                alt="Doctora sosteniendo una receta médica"
+                alt="Ilustración de una profesional de salud"
                 className="prescriptions-empty-image"
               />
 
               <h2>{tituloVacio}</h2>
 
-              <p className="prescriptions-empty-description">
-                {mensajeVacio}
-              </p>
+              <p className="prescriptions-empty-description">{mensajeVacio}</p>
             </div>
 
-            {/* BANNER INFORMATIVO */}
-            <section
-              className="prescriptions-info-banner"
-              aria-labelledby="prescriptions-info-title"
-            >
+            <section className="prescriptions-info-banner">
               <div className="prescriptions-info-icon">
                 <FileText size={24} />
               </div>
 
               <div className="prescriptions-info-text">
-                <h3 id="prescriptions-info-title">
-                  ¿Cómo obtener una receta?
-                </h3>
+                <h3>¿Cómo obtener una receta?</h3>
 
                 <p>
-                  Después de tu consulta médica, el profesional de
-                  salud podrá emitir una receta digital. Cuando esté
-                  disponible, podrás consultarla y descargarla desde aquí.
+                  Después de completar tu atención médica, si el profesional
+                  registra una prescripción, podrás consultarla y descargarla
+                  desde aquí.
                 </p>
               </div>
             </section>
           </section>
         ) : (
-          /* RECETAS DISPONIBLES */
           <section className="appointments-section">
             <div className="appointments-section-title">
-              <h2>Recetas médicas</h2>
+              <h2>
+                {activeTab === "nuevas"
+                  ? "Recetas nuevas"
+                  : "Recetas anteriores"}
+              </h2>
+
               <span>{recetasFiltradas.length}</span>
             </div>
 
             {recetasFiltradas.map((receta) => (
-              <article
-                className="prescription-card"
-                key={receta.id}
-              >
+              <article className="prescription-card" key={receta.id}>
                 <div className="prescription-card-heading">
                   <span className="prescription-icon">
                     <FileText size={23} />
                   </span>
 
                   <div>
-                    <h3>
-                      {receta.medicamento || "Receta médica"}
-                    </h3>
+                    <h3>{receta.especialidad || "Receta médica"}</h3>
 
-                    <p>
-                      {receta.medico || "Profesional de salud"}
-                    </p>
+                    <p>{receta.medico || "Profesional de salud"}</p>
                   </div>
                 </div>
 
@@ -318,12 +433,17 @@ export default function Recetas() {
                   <span>{formatearFecha(receta.fecha)}</span>
                 </div>
 
-                {receta.indicaciones && (
-                  <p className="prescription-instructions">
-                    <strong>Indicaciones:</strong>{" "}
-                    {receta.indicaciones}
-                  </p>
-                )}
+                <div className="prescription-details">
+                  <Pill size={18} />
+
+                  <span>
+                    {(receta.medicamentos || []).length} medicamento(s)
+                  </span>
+                </div>
+
+                <span className="prescription-status">
+                  {receta.estado || "Emitida"}
+                </span>
 
                 <button
                   type="button"
@@ -331,7 +451,7 @@ export default function Recetas() {
                   onClick={() => descargarReceta(receta)}
                 >
                   <Download size={18} />
-                  Descargar receta
+                  Imprimir / Guardar PDF
                 </button>
 
                 <button
@@ -339,7 +459,10 @@ export default function Recetas() {
                   className="prescription-details-button"
                   onClick={() =>
                     navigate(`/essalud/receta/${receta.id}`, {
-                      state: { receta, paciente },
+                      state: {
+                        receta,
+                        paciente: pacienteActual,
+                      },
                     })
                   }
                 >

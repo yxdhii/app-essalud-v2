@@ -20451,51 +20451,6 @@ button:active {
   flex-shrink: 0;
 }
 
-/* =========================================
-   PESTAÑAS DE RECETAS
-========================================= */
-
-.prescriptions-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  background: #e8f1fc;
-  border-bottom: 1px solid #dce8f6;
-}
-
-.prescriptions-tabs button {
-  position: relative;
-  min-height: 48px;
-  padding: 12px 5px;
-  border: none;
-  background: transparent;
-  color: #526d91;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.prescriptions-tabs button.active {
-  background: #d9ebff;
-  color: #0878e8;
-  font-weight: 700;
-}
-
-.prescriptions-tabs button.active::after {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: #0878e8;
-  content: "";
-}
-
-.prescriptions-tabs button:focus-visible {
-  outline: 2px solid #0878e8;
-  outline-offset: -3px;
-}
 
 /* =========================================
    CONTENIDO
@@ -21296,6 +21251,7 @@ button:active {
     font-size: 13px;
   }
 }
+
 
 
 /* =========================================
@@ -24359,3 +24315,1034 @@ button:active {
   }
 }
 
+
+
+
+/* ==========================================
+   SEGURIDAD DE MI CUENTA - ESSALUD DIGITAL
+   Identidad visual: azul, celeste y pastel
+========================================== */
+
+/* ==========================================
+   ESTRUCTURA PRINCIPAL
+========================================== */
+
+.seguridad-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: #f3f9ff;
+}
+
+/* ==========================================
+   CONTENIDO CON SCROLL INVISIBLE
+========================================== */
+
+.seguridad-content {
+  width: 100%;
+  max-width: 650px;
+  flex: 1;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 20px 20px 25px;
+  box-sizing: border-box;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Ocultar barra de desplazamiento */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  /* Desplazamiento táctil */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+.seguridad-content::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ==========================================
+   PRESENTACIÓN - PROTEGE TU CUENTA
+========================================== */
+
+.seguridad-intro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px;
+  margin-bottom: 20px;
+
+  background: linear-gradient(
+    135deg,
+    #dff1ff,
+    #f0f8ff
+  );
+
+  border: 1px solid #d3eaff;
+  border-radius: 16px;
+}
+
+.seguridad-intro-icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0875f5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seguridad-intro h2 {
+  margin: 0 0 5px;
+  color: #123f78;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.seguridad-intro p {
+  margin: 0;
+  color: #6383a6;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* ==========================================
+   TARJETA DEL FORMULARIO
+========================================== */
+
+.seguridad-card {
+  padding: 21px 19px;
+  background: #ffffff;
+
+  border: 1px solid #dfebf8;
+  border-radius: 17px;
+
+  box-shadow: 0 4px 16px rgba(25, 91, 160, 0.06);
+}
+
+/* ==========================================
+   ENCABEZADO DEL FORMULARIO
+========================================== */
+
+.seguridad-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.seguridad-heading-icon {
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+  background: #e5f2ff;
+  color: #0875f5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seguridad-heading h2 {
+  margin: 0 0 4px;
+  color: #123f78;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+.seguridad-heading p {
+  margin: 0;
+  color: #829bb5;
+  font-size: 12px;
+}
+
+/* ==========================================
+   CAMPOS DEL FORMULARIO
+========================================== */
+
+.seguridad-field {
+  margin-bottom: 18px;
+}
+
+.seguridad-field label {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #244e7c;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.seguridad-input-wrapper {
+  width: 100%;
+  min-height: 49px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+
+  border: 1px solid #dce9f7;
+  border-radius: 11px;
+
+  background: #f8fbff;
+  color: #6485a8;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.seguridad-input-wrapper:focus-within {
+  border-color: #168cf0;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(8, 102, 245, 0.10);
+}
+
+.seguridad-input-wrapper.input-error {
+  border-color: #e5a0a0;
+  background: #fffafa;
+}
+
+.seguridad-input-wrapper > svg {
+  flex-shrink: 0;
+  color: #5e8ab5;
+}
+
+.seguridad-input-wrapper input {
+  width: 100%;
+  min-width: 0;
+  height: 45px;
+
+  border: none;
+  outline: none;
+  background: transparent;
+
+  color: #234b79;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.seguridad-input-wrapper input::placeholder {
+  color: #a3b8cc;
+}
+
+.seguridad-input-wrapper button {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #7898b8;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  padding: 0;
+  transition: 0.2s ease;
+}
+
+.seguridad-input-wrapper button:hover {
+  background: #e5f2ff;
+  color: #0866f5;
+}
+
+/* ==========================================
+   REQUISITOS DE CONTRASEÑA
+========================================== */
+
+.seguridad-requisitos {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.seguridad-requisitos span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #8da2b6;
+  font-size: 11px;
+  line-height: 1.4;
+
+  transition: color 0.2s ease;
+}
+
+.seguridad-requisitos span svg {
+  width: 14px;
+  height: 14px;
+  color: #bdcbd5;
+  flex-shrink: 0;
+}
+
+.seguridad-requisitos span.cumplido {
+  color: #4f987b;
+}
+
+.seguridad-requisitos span.cumplido svg {
+  color: #4f987b;
+}
+
+/* ==========================================
+   MENSAJES DE VALIDACIÓN
+========================================== */
+
+.seguridad-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+
+  color: #cf6565;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.seguridad-error svg {
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   MENSAJES DE RESULTADO
+========================================== */
+
+.seguridad-mensaje {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  padding: 12px;
+  margin: 5px 0 17px;
+
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.seguridad-mensaje svg {
+  flex-shrink: 0;
+}
+
+.mensaje-exito {
+  background: #eff9f4;
+  border: 1px solid #d5eddf;
+  color: #548c70;
+}
+
+.mensaje-error {
+  background: #fff3f3;
+  border: 1px solid #f2dada;
+  color: #c76b6b;
+}
+
+/* ==========================================
+   BOTÓN ACTUALIZAR CONTRASEÑA
+========================================== */
+
+.seguridad-save-button {
+  width: 100%;
+  min-height: 49px;
+  margin-top: 5px;
+  padding: 0 15px;
+
+  border: none;
+  border-radius: 11px;
+
+  background: linear-gradient(
+    110deg,
+    #0866f5,
+    #12a4ed
+  );
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  box-shadow: 0 5px 12px rgba(8, 102, 245, 0.18);
+}
+
+.seguridad-save-button:hover {
+  background: linear-gradient(
+    110deg,
+    #0759df,
+    #0795df
+  );
+
+  box-shadow: 0 5px 13px rgba(8, 102, 245, 0.24);
+}
+
+.seguridad-save-button:active {
+  transform: scale(0.98);
+}
+
+.seguridad-save-button:focus-visible {
+  outline: 3px solid #b9dcff;
+  outline-offset: 3px;
+}
+
+/* ==========================================
+   AVISO DE SEGURIDAD
+========================================== */
+
+.seguridad-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  padding: 14px;
+  margin-top: 17px;
+
+  background: #eaf5ff;
+  border: 1px solid #d7eaff;
+  border-radius: 12px;
+
+  color: #55799e;
+}
+
+.seguridad-info svg {
+  flex-shrink: 0;
+  color: #0875f5;
+}
+
+.seguridad-info p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   NAVEGACIÓN INFERIOR
+========================================== */
+
+.seguridad-screen > *:last-child {
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   RESPONSIVE - CELULARES
+========================================== */
+
+@media (max-width: 480px) {
+  .seguridad-content {
+    padding: 16px 15px 22px;
+  }
+
+  .seguridad-intro {
+    padding: 15px;
+    margin-bottom: 17px;
+    gap: 12px;
+  }
+
+  .seguridad-intro-icon {
+    width: 47px;
+    height: 47px;
+  }
+
+  .seguridad-intro h2 {
+    font-size: 15px;
+  }
+
+  .seguridad-intro p {
+    font-size: 11px;
+  }
+
+  .seguridad-card {
+    padding: 18px 15px;
+    border-radius: 16px;
+  }
+
+  .seguridad-heading {
+    margin-bottom: 19px;
+  }
+
+  .seguridad-heading h2 {
+    font-size: 15px;
+  }
+
+  .seguridad-field {
+    margin-bottom: 16px;
+  }
+
+  .seguridad-input-wrapper {
+    min-height: 46px;
+  }
+
+  .seguridad-input-wrapper input {
+    height: 42px;
+    font-size: 12px;
+  }
+
+  .seguridad-save-button {
+    min-height: 47px;
+  }
+
+  .seguridad-info {
+    padding: 12px;
+    margin-top: 14px;
+  }
+}
+
+
+
+
+/* ==========================================
+   DETALLE DE RECETA
+========================================== */
+
+.detalle-receta-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.detalle-receta-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f5f8fd;
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+.detalle-receta-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================
+   ENCABEZADO PDF
+   Solo aparece al descargar
+========================================== */
+
+.detalle-receta-pdf-header,
+.detalle-receta-pdf-footer {
+  display: none;
+}
+
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-header,
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-footer {
+  display: flex;
+}
+
+/* ==========================================
+   BANNER PRINCIPAL
+========================================== */
+
+.detalle-receta-banner {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #e9f4ff, #f3f8ff);
+  border: 1px solid #dcecff;
+  border-radius: 15px;
+}
+
+.detalle-receta-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  color: #087cf0;
+  background: #ffffff;
+  border-radius: 13px;
+}
+
+.detalle-receta-banner-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.detalle-receta-banner-info > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #087cf0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.detalle-receta-banner-info h2 {
+  margin: 0;
+  color: #174477;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.detalle-receta-banner-info p {
+  margin: 5px 0 0;
+  color: #7188a3;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.detalle-receta-id {
+  display: none;
+}
+
+/* ==========================================
+   TARJETAS
+========================================== */
+
+.detalle-receta-card {
+  padding: 16px;
+  margin-bottom: 14px;
+  background: #ffffff;
+  border: 1px solid #e6edf6;
+  border-radius: 15px;
+  box-shadow: 0 3px 12px rgba(40, 78, 120, 0.04);
+}
+
+.detalle-receta-card-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  color: #1680e8;
+  border-bottom: 1px solid #edf2f8;
+}
+
+.detalle-receta-card-title h3 {
+  flex: 1;
+  margin: 0;
+  color: #24486f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   INFORMACIÓN DEL PACIENTE Y MÉDICO
+========================================== */
+
+.detalle-receta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.detalle-receta-row span {
+  color: #8294aa;
+  font-size: 12px;
+}
+
+.detalle-receta-row strong {
+  max-width: 62%;
+  color: #24486f;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   DIAGNÓSTICO E INDICACIONES
+========================================== */
+
+.detalle-receta-diagnostico,
+.detalle-receta-indicaciones {
+  margin: 0;
+  padding: 12px;
+  color: #58718e;
+  background: #f5f8fc;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* ==========================================
+   MEDICAMENTOS
+========================================== */
+
+.detalle-receta-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #087cf0;
+  background: #eaf4ff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.detalle-receta-medicamentos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detalle-medicamento {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px;
+  background: #f7faff;
+  border: 1px solid #e9f0fa;
+  border-radius: 12px;
+}
+
+.detalle-medicamento-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: #1680e8;
+  background: #e7f2ff;
+  border-radius: 11px;
+}
+
+.detalle-medicamento-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.detalle-medicamento-info h4 {
+  margin: 0 0 8px;
+  color: #24486f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.detalle-medicamento-info p {
+  margin: 5px 0;
+  color: #71849b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.detalle-medicamento-info p strong {
+  color: #405f80;
+  font-weight: 600;
+}
+
+.detalle-receta-sin-medicamentos {
+  margin: 0;
+  color: #8294aa;
+  font-size: 12px;
+}
+
+/* ==========================================
+   AVISO
+========================================== */
+
+.detalle-receta-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  margin-bottom: 16px;
+  background: #edf6ff;
+  border: 1px solid #dceeff;
+  border-radius: 12px;
+}
+
+.detalle-receta-aviso svg {
+  flex-shrink: 0;
+  color: #1680e8;
+}
+
+.detalle-receta-aviso p {
+  margin: 0;
+  color: #557b9e;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   DESCARGAR RECETA
+========================================== */
+
+.detalle-receta-print {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 47px;
+  padding: 12px;
+  margin-top: 3px;
+  color: #ffffff;
+  background: #087cf0;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.detalle-receta-print:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================
+   RECETA NO ENCONTRADA
+========================================== */
+
+.detalle-receta-no-encontrada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 24px;
+  color: #1680e8;
+  text-align: center;
+}
+
+.detalle-receta-no-encontrada h2 {
+  color: #24486f;
+  font-size: 17px;
+}
+
+.detalle-receta-no-encontrada p {
+  color: #8294aa;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.detalle-receta-no-encontrada button {
+  padding: 11px 18px;
+  color: white;
+  background: #087cf0;
+  border: none;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   PDF
+========================================== */
+
+.detalle-receta-documento.generando-pdf {
+  padding: 10px;
+  background: #ffffff;
+}
+
+.detalle-receta-documento.generando-pdf .detalle-receta-card {
+  break-inside: avoid;
+}
+
+.detalle-receta-documento.generando-pdf .detalle-receta-banner {
+  break-inside: avoid;
+}
+
+
+
+/* ==========================================
+   DOCUMENTO PDF - FORMATO A4
+========================================== */
+
+.detalle-receta-documento.generando-pdf {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #24486f;
+}
+
+/* Evitar que las imágenes se expandan */
+.detalle-receta-documento.generando-pdf img {
+  display: block;
+  width: 42px !important;
+  height: 42px !important;
+  max-width: 42px !important;
+  max-height: 42px !important;
+  object-fit: contain;
+}
+
+/* Encabezado del documento */
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #087cf0;
+}
+
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-logo div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-logo strong {
+  color: #174477;
+  font-size: 14px;
+}
+
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-logo span {
+  color: #71849b;
+  font-size: 10px;
+}
+
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-label {
+  color: #087cf0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Banner */
+.detalle-receta-documento.generando-pdf
+.detalle-receta-banner {
+  margin-bottom: 16px;
+  break-inside: avoid;
+}
+
+/* Tarjetas */
+.detalle-receta-documento.generando-pdf
+.detalle-receta-card {
+  margin-bottom: 13px;
+  padding: 15px;
+  background: #ffffff;
+  border: 1px solid #e3ebf5;
+  border-radius: 10px;
+  box-shadow: none;
+  break-inside: avoid;
+}
+
+/* Medicamentos */
+.detalle-receta-documento.generando-pdf
+.detalle-medicamento {
+  break-inside: avoid;
+}
+
+/* Pie */
+.detalle-receta-documento.generando-pdf
+.detalle-receta-pdf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding-top: 13px;
+  margin-top: 15px;
+  border-top: 1px solid #e7edf5;
+  color: #71849b;
+  font-size: 10px;
+}
+
+/* Mostrar identificador solamente en el PDF */
+.detalle-receta-documento.generando-pdf
+.detalle-receta-id {
+  display: inline-block;
+  color: #71849b;
+  font-size: 10px;
+  position: static;
+}
+
+/* Ocultar elementos que no pertenecen al documento */
+.detalle-receta-documento.generando-pdf
+.detalle-receta-print {
+  display: none !important;
+}
+
+
+
+/* ==========================================
+   AJUSTE INFERIOR DEL DETALLE DE RECETA
+========================================== */
+
+.detalle-receta-content {
+  padding-bottom: 30px;
+  box-sizing: border-box;
+}
+
+/* Botón de descarga */
+.detalle-receta-print {
+  margin-top: 4px;
+  margin-bottom: 18px;
+  min-height: 46px;
+  flex-shrink: 0;
+}
+
+/* Espacio para la zona inferior del celular */
+.detalle-receta-documento {
+  margin-bottom: 0;
+}
+
+.prescriptions-patient {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 16px 4px;
+  padding: 11px 13px;
+  background: #eaf4ff;
+  border: 1px solid #d6e8ff;
+  border-radius: 12px;
+  color: #2879cf;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.prescriptions-patient svg {
+  flex-shrink: 0;
+  color: #2584e8;
+}
+
+.prescriptions-patient strong {
+  color: #174b83;
+  font-weight: 700;
+}

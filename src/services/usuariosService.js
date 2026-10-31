@@ -1,8 +1,10 @@
+
 import { asegurados } from "../data/asegurados.js";
 import { centrosAtencion } from "../data/centrosAtencion.js";
 
 const CLAVE_USUARIOS = "essalud_usuarios";
 const CLAVE_SESION = "essalud_usuario_activo";
+const CLAVE_FAMILIARES = "essalud_familiares_vinculados";
 
 // ============================================
 // AVATARES PREDETERMINADOS
@@ -59,9 +61,12 @@ function obtenerAvatar(asegurado, parentesco = "") {
   if (sexo === "F") return "👩🏻";
   if (sexo === "M") return "👨🏻";
 
-  // Si no hay información suficiente, mostrar un icono genérico.
   return null;
 }
+
+// ============================================
+// GESTIÓN DE USUARIOS
+// ============================================
 
 // Obtener los usuarios registrados en el navegador.
 export function obtenerUsuarios() {
@@ -74,12 +79,15 @@ export function obtenerUsuarios() {
 
 // Buscar un asegurado de prueba por su DNI.
 export function buscarAsegurado(dni) {
-  return asegurados.find((usuario) => usuario.dni === dni);
+  return asegurados.find(
+    (usuario) => String(usuario.dni) === String(dni)
+  );
 }
 
-// Registrar las credenciales de un asegurado autorizado para la simulación.
+// Registrar las credenciales de un asegurado autorizado.
 export function registrarUsuario(datos) {
-  const asegurado = buscarAsegurado(datos.documentNumber);
+  const dni = String(datos.documentNumber || "").trim();
+  const asegurado = buscarAsegurado(dni);
 
   if (!asegurado) {
     return {
@@ -90,7 +98,7 @@ export function registrarUsuario(datos) {
 
   const usuarios = obtenerUsuarios();
 
-  if (usuarios.some((usuario) => usuario.dni === datos.documentNumber)) {
+  if (usuarios.some((usuario) => usuario.dni === dni)) {
     return {
       correcto: false,
       mensaje: "Este DNI ya tiene una cuenta registrada.",
@@ -113,7 +121,7 @@ export function registrarUsuario(datos) {
 
   localStorage.setItem(
     CLAVE_USUARIOS,
-    JSON.stringify([...usuarios, nuevoUsuario]),
+    JSON.stringify([...usuarios, nuevoUsuario])
   );
 
   return {
@@ -122,10 +130,15 @@ export function registrarUsuario(datos) {
   };
 }
 
-// Validar las credenciales.
+// ============================================
+// INICIO DE SESIÓN
+// ============================================
+
 export function iniciarSesion(dni, password) {
   const usuario = obtenerUsuarios().find(
-    (item) => item.dni === dni && item.password === password,
+    (item) =>
+      String(item.dni) === String(dni) &&
+      item.password === password
   );
 
   if (!usuario) {
@@ -135,7 +148,9 @@ export function iniciarSesion(dni, password) {
     };
   }
 
-  const centro = centrosAtencion.find((item) => item.id === usuario.centroId);
+  const centro = centrosAtencion.find(
+    (item) => item.id === usuario.centroId
+  );
 
   if (!centro) {
     return {
@@ -173,10 +188,76 @@ export function obtenerUsuarioActivo() {
 }
 
 // ============================================
-// FAMILIARES VINCULADOS
+// ACTUALIZAR DATOS PERSONALES
 // ============================================
 
-const CLAVE_FAMILIARES = "essalud_familiares_vinculados";
+export function actualizarDatosPersonales(datos) {
+  const usuarioActivo = obtenerUsuarioActivo();
+
+  if (!usuarioActivo) {
+    return {
+      correcto: false,
+      mensaje: "Debes iniciar sesión para actualizar tus datos.",
+    };
+  }
+
+  const telefono = String(datos.phone || "").trim();
+  const direccion = String(datos.direccion || "").trim();
+
+  if (!/^9\d{8}$/.test(telefono)) {
+    return {
+      correcto: false,
+      mensaje: "Ingresa un celular válido de 9 dígitos.",
+    };
+  }
+
+  if (direccion.length < 5) {
+    return {
+      correcto: false,
+      mensaje: "Ingresa una dirección válida.",
+    };
+  }
+
+  // Actualizar la cuenta guardada.
+  const usuarios = obtenerUsuarios();
+
+  const usuariosActualizados = usuarios.map((usuario) =>
+    usuario.id === usuarioActivo.id
+      ? {
+          ...usuario,
+          phone: telefono,
+          direccion,
+        }
+      : usuario
+  );
+
+  localStorage.setItem(
+    CLAVE_USUARIOS,
+    JSON.stringify(usuariosActualizados)
+  );
+
+  // Actualizar la sesión activa.
+  const nuevaSesion = {
+    ...usuarioActivo,
+    phone: telefono,
+    direccion,
+  };
+
+  localStorage.setItem(
+    CLAVE_SESION,
+    JSON.stringify(nuevaSesion)
+  );
+
+  return {
+    correcto: true,
+    mensaje: "Tus datos se actualizaron correctamente.",
+    usuario: nuevaSesion,
+  };
+}
+
+// ============================================
+// FAMILIARES VINCULADOS
+// ============================================
 
 // Obtener todas las vinculaciones guardadas.
 function obtenerTodasLasVinculaciones() {
@@ -189,13 +270,16 @@ function obtenerTodasLasVinculaciones() {
 
 // Guardar las vinculaciones.
 function guardarTodasLasVinculaciones(vinculaciones) {
-  localStorage.setItem(CLAVE_FAMILIARES, JSON.stringify(vinculaciones));
+  localStorage.setItem(
+    CLAVE_FAMILIARES,
+    JSON.stringify(vinculaciones)
+  );
 }
 
 // Obtener los familiares del titular actual.
 export function obtenerFamiliaresVinculados(dniTitular) {
   const titular = String(
-    dniTitular || obtenerUsuarioActivo()?.dni || "",
+    dniTitular || obtenerUsuarioActivo()?.dni || ""
   ).trim();
 
   if (!titular) return [];
@@ -313,7 +397,7 @@ export function desvincularFamiliar(dniFamiliar) {
   }
 
   vinculaciones[dniTitular] = familiaresActuales.filter(
-    (familiar) => familiar.dni !== dni,
+    (familiar) => familiar.dni !== dni
   );
 
   guardarTodasLasVinculaciones(vinculaciones);
@@ -324,70 +408,10 @@ export function desvincularFamiliar(dniFamiliar) {
   };
 }
 
+// ============================================
+// CERRAR SESIÓN
+// ============================================
 
-
-export function actualizarDatosPersonales(datos) {
-  const usuarioActivo = obtenerUsuarioActivo();
-
-  if (!usuarioActivo) {
-    return {
-      correcto: false,
-      mensaje: "Debes iniciar sesión para actualizar tus datos.",
-    };
-  }
-
-  const telefono = String(datos.phone || "").trim();
-  const direccion = String(datos.direccion || "").trim();
-
-  if (!/^9\d{8}$/.test(telefono)) {
-    return {
-      correcto: false,
-      mensaje: "Ingresa un celular válido de 9 dígitos.",
-    };
-  }
-
-  if (direccion.length < 5) {
-    return {
-      correcto: false,
-      mensaje: "Ingresa una dirección válida.",
-    };
-  }
-
-  // Actualizar la cuenta guardada.
-  const usuarios = obtenerUsuarios();
-
-  const usuariosActualizados = usuarios.map((usuario) =>
-    usuario.id === usuarioActivo.id
-      ? { ...usuario, phone: telefono, direccion }
-      : usuario
-  );
-
-  localStorage.setItem(
-    CLAVE_USUARIOS,
-    JSON.stringify(usuariosActualizados)
-  );
-
-  // Actualizar la sesión activa.
-  const nuevaSesion = {
-    ...usuarioActivo,
-    phone: telefono,
-    direccion,
-  };
-
-  localStorage.setItem(
-    CLAVE_SESION,
-    JSON.stringify(nuevaSesion)
-  );
-
-  return {
-    correcto: true,
-    mensaje: "Tus datos se actualizaron correctamente.",
-    usuario: nuevaSesion,
-  };
-}
-
-// Cerrar sesión.
 export function cerrarSesion() {
   localStorage.removeItem(CLAVE_SESION);
 }
-

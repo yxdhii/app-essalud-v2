@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -35,14 +34,10 @@ export default function Perfil() {
   const inputFotoRef = useRef(null);
 
   // Foto de perfil
-  const [fotoPerfil, setFotoPerfil] = useState(
-    usuario?.fotoPerfil || ""
-  );
+  const [fotoPerfil, setFotoPerfil] = useState(usuario?.fotoPerfil || "");
 
   const [modalFotoAbierto, setModalFotoAbierto] = useState(false);
-  const [fotoTemporal, setFotoTemporal] = useState(
-    usuario?.fotoPerfil || ""
-  );
+  const [fotoTemporal, setFotoTemporal] = useState(usuario?.fotoPerfil || "");
   const [fotoEliminada, setFotoEliminada] = useState(false);
   const [errorFoto, setErrorFoto] = useState("");
 
@@ -114,12 +109,10 @@ export default function Perfil() {
 
     try {
       const usuarios = JSON.parse(
-        localStorage.getItem("essalud_usuarios") || "[]"
+        localStorage.getItem("essalud_usuarios") || "[]",
       );
 
-      const existeUsuario = usuarios.some(
-        (item) => item.id === usuario.id
-      );
+      const existeUsuario = usuarios.some((item) => item.id === usuario.id);
 
       if (!existeUsuario) {
         setErrorFoto("No se encontró tu cuenta registrada.");
@@ -127,9 +120,7 @@ export default function Perfil() {
       }
 
       const usuariosActualizados = usuarios.map((item) =>
-        item.id === usuario.id
-          ? { ...item, fotoPerfil: fotoTemporal }
-          : item
+        item.id === usuario.id ? { ...item, fotoPerfil: fotoTemporal } : item,
       );
 
       const usuarioActualizado = {
@@ -139,12 +130,12 @@ export default function Perfil() {
 
       localStorage.setItem(
         "essalud_usuarios",
-        JSON.stringify(usuariosActualizados)
+        JSON.stringify(usuariosActualizados),
       );
 
       localStorage.setItem(
         "essalud_usuario_activo",
-        JSON.stringify(usuarioActualizado)
+        JSON.stringify(usuarioActualizado),
       );
 
       setFotoPerfil(fotoTemporal);
@@ -154,7 +145,7 @@ export default function Perfil() {
     } catch (error) {
       console.error("Error al guardar la foto:", error);
       setErrorFoto(
-        "No se pudo guardar la foto. Prueba con una imagen más pequeña."
+        "No se pudo guardar la foto. Prueba con una imagen más pequeña.",
       );
     }
   };
@@ -208,9 +199,7 @@ export default function Perfil() {
           type="button"
           aria-label="Ayuda"
           onClick={() =>
-            window.alert(
-              "Aquí puedes consultar la información de tu perfil."
-            )
+            window.alert("Aquí puedes consultar la información de tu perfil.")
           }
         >
           <CircleHelp size={18} />
@@ -220,7 +209,6 @@ export default function Perfil() {
       {/* CONTENIDO DEL PERFIL */}
 
       <div className="perfil-content">
-
         {/* INFORMACIÓN DEL ASEGURADO */}
 
         <section className="perfil-user-card">
@@ -283,9 +271,7 @@ export default function Perfil() {
         <button
           type="button"
           className="perfil-option-card"
-          onClick={() =>
-            window.alert("Próximamente podrás cambiar tu contraseña.")
-          }
+          onClick={() => navigate("/essalud/seguridad")}
         >
           <div className="perfil-option-icon">
             <LockKeyhole size={23} />
@@ -298,16 +284,13 @@ export default function Perfil() {
 
           <ChevronRight size={21} />
         </button>
-
         {/* ACCESIBILIDAD */}
 
         <section className="perfil-access-card">
           <button
             type="button"
             className="perfil-access-header"
-            onClick={() =>
-              setAccesibilidadAbierta(!accesibilidadAbierta)
-            }
+            onClick={() => setAccesibilidadAbierta(!accesibilidadAbierta)}
             aria-expanded={accesibilidadAbierta}
           >
             <div className="perfil-option-icon">
@@ -328,7 +311,6 @@ export default function Perfil() {
 
           {accesibilidadAbierta && (
             <div className="perfil-access-content">
-
               <div className="perfil-access-row">
                 <div className="perfil-access-icon">
                   <Volume2 size={21} />
@@ -472,7 +454,6 @@ export default function Perfil() {
                   </button>
                 </div>
               </div>
-
             </div>
           )}
         </section>
@@ -497,7 +478,6 @@ export default function Perfil() {
 
           <ChevronRight size={21} />
         </button>
-
       </div>
 
       {/* MODAL DE FOTO DE PERFIL */}
@@ -536,7 +516,6 @@ export default function Perfil() {
             </div>
 
             <div className="foto-modal-body">
-
               <div className="foto-preview-container">
                 <div className="foto-preview">
                   {fotoTemporal ? (
@@ -606,9 +585,7 @@ export default function Perfil() {
 
               <div className="foto-modal-hint">
                 <ShieldCheck size={17} />
-                <span>
-                  Formatos JPG, PNG o WEBP. Tamaño máximo: 2 MB.
-                </span>
+                <span>Formatos JPG, PNG o WEBP. Tamaño máximo: 2 MB.</span>
               </div>
             </div>
 
@@ -637,10 +614,7 @@ export default function Perfil() {
 
       {/* NAVEGACIÓN INFERIOR */}
 
-      <BottomNavigation
-        active="perfil"
-        onNavigate={navegarMenu}
-      />
+      <BottomNavigation active="perfil" onNavigate={navegarMenu} />
     </main>
   );
 }
