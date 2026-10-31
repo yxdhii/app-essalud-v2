@@ -1,4 +1,3 @@
-
 export const asegurados = [
   {
     id: "U001",
@@ -6,6 +5,7 @@ export const asegurados = [
     digitoVerificador: "1",
     nombres: "Ricardo Huamán",
     fechaNacimiento: "1958-04-15",
+    direccion: "Av. Los Olivos 123, Lima",
     centroId: "CENTRO001",
     sexo: "M",
     avatar: "👨🏻‍🦳",
@@ -16,6 +16,7 @@ export const asegurados = [
     digitoVerificador: "2",
     nombres: "Javier Salazar",
     fechaNacimiento: "1998-06-20",
+    direccion: "Jr. Las Flores 245, Lima",
     centroId: "CENTRO002",
     sexo: "M",
     avatar: "👨🏻",
@@ -26,6 +27,7 @@ export const asegurados = [
     digitoVerificador: "3",
     nombres: "Fiorella Ramos",
     fechaNacimiento: "1991-09-12",
+    direccion: "Calle Los Pinos 456, Lima",
     centroId: "CENTRO003",
     sexo: "F",
     avatar: "👩🏻",
@@ -36,6 +38,7 @@ export const asegurados = [
     digitoVerificador: "4",
     nombres: "Carlos Mendoza",
     fechaNacimiento: "1984-03-25",
+    direccion: "Av. Central 789, Lima",
     centroId: "CENTRO004",
     sexo: "M",
     avatar: "👨🏻",
@@ -46,6 +49,7 @@ export const asegurados = [
     digitoVerificador: "5",
     nombres: "Elena Torres",
     fechaNacimiento: "1971-11-08",
+    direccion: "Jr. Los Jardines 321, Lima",
     centroId: "CENTRO001",
     sexo: "F",
     avatar: "👩🏻",

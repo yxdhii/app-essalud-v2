@@ -46,6 +46,8 @@ import Recetas from "./pages/Recetas";
 import Examenes from "./pages/Examenes";
 import CentrosAtencion from "./pages/CentrosAtencion";
 import Chat from "./pages/Chat";
+import Perfil from "./pages/Perfil";
+import DatosPersonales from "./pages/DatosPersonales";
 import "./App.css";
 
 function App() {
@@ -109,7 +111,11 @@ function App() {
             element={<CentrosAtencion />}
           />
           <Route path="/essalud/chat" element={<Chat />} />
-          
+          <Route path="/essalud/perfil" element={<Perfil />} />
+          <Route
+            path="/essalud/datos-personales"
+            element={<DatosPersonales />}
+          />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

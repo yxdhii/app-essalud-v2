@@ -105,7 +105,8 @@ export function registrarUsuario(datos) {
     avatar: asegurado.avatar || null,
     email: datos.email,
     phone: datos.phone,
-    birthDate: datos.birthDate,
+    birthDate: asegurado.fechaNacimiento,
+    direccion: asegurado.direccion || "",
     password: datos.password,
     centroId: asegurado.centroId,
   };
@@ -323,7 +324,70 @@ export function desvincularFamiliar(dniFamiliar) {
   };
 }
 
+
+
+export function actualizarDatosPersonales(datos) {
+  const usuarioActivo = obtenerUsuarioActivo();
+
+  if (!usuarioActivo) {
+    return {
+      correcto: false,
+      mensaje: "Debes iniciar sesión para actualizar tus datos.",
+    };
+  }
+
+  const telefono = String(datos.phone || "").trim();
+  const direccion = String(datos.direccion || "").trim();
+
+  if (!/^9\d{8}$/.test(telefono)) {
+    return {
+      correcto: false,
+      mensaje: "Ingresa un celular válido de 9 dígitos.",
+    };
+  }
+
+  if (direccion.length < 5) {
+    return {
+      correcto: false,
+      mensaje: "Ingresa una dirección válida.",
+    };
+  }
+
+  // Actualizar la cuenta guardada.
+  const usuarios = obtenerUsuarios();
+
+  const usuariosActualizados = usuarios.map((usuario) =>
+    usuario.id === usuarioActivo.id
+      ? { ...usuario, phone: telefono, direccion }
+      : usuario
+  );
+
+  localStorage.setItem(
+    CLAVE_USUARIOS,
+    JSON.stringify(usuariosActualizados)
+  );
+
+  // Actualizar la sesión activa.
+  const nuevaSesion = {
+    ...usuarioActivo,
+    phone: telefono,
+    direccion,
+  };
+
+  localStorage.setItem(
+    CLAVE_SESION,
+    JSON.stringify(nuevaSesion)
+  );
+
+  return {
+    correcto: true,
+    mensaje: "Tus datos se actualizaron correctamente.",
+    usuario: nuevaSesion,
+  };
+}
+
 // Cerrar sesión.
 export function cerrarSesion() {
   localStorage.removeItem(CLAVE_SESION);
 }
+
