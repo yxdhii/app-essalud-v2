@@ -769,7 +769,7 @@ export default function ReservarCita() {
       )}
 
       {/* NAVEGACIÓN INFERIOR */}
-      <BottomNavigation active="citas" onNavigate={navegarMenu} />
+      <BottomNavigation onNavigate={navegarMenu} />
     </main>
   );
 }

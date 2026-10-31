@@ -42,6 +42,10 @@ import SeleccionarPerfil from "./pages/SeleccionarPerfil";
 import DetalleFamiliar from "./pages/DetalleFamiliar";
 import AgregarFamiliar from "./pages/AgregarFamiliar";
 import CambiarCuenta from "./pages/CambiarCuenta";
+import Recetas from "./pages/Recetas";
+import Examenes from "./pages/Examenes";
+import CentrosAtencion from "./pages/CentrosAtencion";
+import Chat from "./pages/Chat";
 import "./App.css";
 
 function App() {
@@ -88,15 +92,24 @@ function App() {
           <Route path="/essalud/detalle-cita" element={<DetalleCita />} />
           <Route path="/essalud/cita-virtual" element={<CitaVirtual />} />
           <Route path="/essalud/familiares" element={<SeleccionarPerfil />} />
-
           <Route path="/essalud/familiar/:dni" element={<DetalleFamiliar />} />
-
           <Route
             path="/essalud/agregar-familiar"
             element={<AgregarFamiliar />}
           />
-
           <Route path="/essalud/cambiar-cuenta" element={<CambiarCuenta />} />
+          <Route
+            path="/essalud/seleccionar-perfil"
+            element={<SeleccionarPerfil />}
+          />
+          <Route path="/essalud/recetas" element={<Recetas />} />
+          <Route path="/essalud/examenes" element={<Examenes />} />
+          <Route
+            path="/essalud/centros-atencion"
+            element={<CentrosAtencion />}
+          />
+          <Route path="/essalud/chat" element={<Chat />} />
+          
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

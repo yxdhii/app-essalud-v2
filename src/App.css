@@ -20380,3 +20380,2347 @@ button:active {
 .detalle-familiar-page .bottom-navigation {
   flex-shrink: 0;
 }
+
+
+/* =========================================
+   MIS RECETAS — PANTALLA PRINCIPAL
+========================================= */
+
+.prescriptions-screen {
+  min-height: 100vh;
+  background: #f3f8ff;
+  padding-bottom: 90px;
+  color: #123c70;
+  font-family: inherit;
+}
+
+/* =========================================
+   ENCABEZADO REUTILIZADO
+========================================= */
+
+.prescriptions-screen .appointments-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5edf7;
+}
+
+.prescriptions-screen .appointments-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #0878e8;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.prescriptions-screen .appointments-header h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #123c70;
+}
+
+.prescriptions-screen .appointments-logo {
+  width: 78px;
+  height: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.prescriptions-screen .reservar-help {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dcecff;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0878e8;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   PESTAÑAS DE RECETAS
+========================================= */
+
+.prescriptions-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: #e8f1fc;
+  border-bottom: 1px solid #dce8f6;
+}
+
+.prescriptions-tabs button {
+  position: relative;
+  min-height: 48px;
+  padding: 12px 5px;
+  border: none;
+  background: transparent;
+  color: #526d91;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.prescriptions-tabs button.active {
+  background: #d9ebff;
+  color: #0878e8;
+  font-weight: 700;
+}
+
+.prescriptions-tabs button.active::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #0878e8;
+  content: "";
+}
+
+.prescriptions-tabs button:focus-visible {
+  outline: 2px solid #0878e8;
+  outline-offset: -3px;
+}
+
+/* =========================================
+   CONTENIDO
+========================================= */
+
+.prescriptions-content {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 22px 16px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   ENCABEZADOS DE SECCIÓN
+========================================= */
+
+.prescriptions-section {
+  margin-bottom: 26px;
+}
+
+.prescriptions-section-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+
+.prescriptions-section-title h2 {
+  margin: 0;
+  color: #123c70;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.prescriptions-section-title span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 25px;
+  height: 25px;
+  padding: 0 7px;
+  border-radius: 20px;
+  background: #dceeff;
+  color: #0878e8;
+  font-size: 12px;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   TARJETAS DE RECETAS
+========================================= */
+
+.prescription-card {
+  margin-bottom: 15px;
+  padding: 17px;
+  border: 1px solid #e0ebf9;
+  border-radius: 19px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgb(35 93 153 / 5%);
+}
+
+.prescription-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.prescription-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.prescription-status.active {
+  background: #dcf9f1;
+  color: #008f7b;
+}
+
+.prescription-status.completed {
+  background: #edf2f8;
+  color: #64748b;
+}
+
+.prescription-doctor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.prescription-doctor-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #e0efff;
+  color: #0878e8;
+  flex-shrink: 0;
+}
+
+.prescription-doctor-info {
+  min-width: 0;
+}
+
+.prescription-doctor-info h3 {
+  margin: 0 0 5px;
+  color: #123c70;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.prescription-doctor-info p {
+  margin: 0 0 4px;
+  color: #587394;
+  font-size: 13px;
+}
+
+.prescription-doctor-info small {
+  color: #8498b2;
+  font-size: 11px;
+}
+
+.prescription-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid #e8eff8;
+  border-bottom: 1px solid #e8eff8;
+}
+
+.prescription-details div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #587394;
+  font-size: 12px;
+}
+
+.prescription-details svg {
+  color: #0878e8;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   MEDICAMENTOS
+========================================= */
+
+.prescription-medicines {
+  padding: 14px 0;
+}
+
+.prescription-medicines h4 {
+  margin: 0 0 10px;
+  color: #123c70;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.prescription-medicine {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.prescription-medicine:last-child {
+  margin-bottom: 0;
+}
+
+.prescription-medicine svg {
+  margin-top: 2px;
+  color: #0878e8;
+  flex-shrink: 0;
+}
+
+.prescription-medicine div {
+  flex: 1;
+  min-width: 0;
+}
+
+.prescription-medicine strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #23466e;
+  font-size: 13px;
+}
+
+.prescription-medicine p {
+  margin: 0;
+  color: #7186a1;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN
+========================================= */
+
+.prescription-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.prescription-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid #bfddff;
+  border-radius: 11px;
+  background: #edf6ff;
+  color: #0878e8;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.prescription-actions button:hover {
+  background: #dceeff;
+}
+
+.prescription-actions button:first-child {
+  flex: 1;
+}
+
+.prescription-actions button:last-child {
+  flex: 1;
+}
+
+.prescription-actions button:focus-visible {
+  outline: 2px solid #0878e8;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   ESTADO VACÍO: SIN RECETAS
+========================================= */
+
+.prescriptions-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 30px 15px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.prescriptions-empty-image {
+  display: block;
+  width: min(230px, 70%);
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+  margin-bottom: 24px;
+}
+
+.prescriptions-empty h2 {
+  max-width: 290px;
+  margin: 0 0 10px;
+  color: #123c70;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.prescriptions-empty p {
+  max-width: 300px;
+  margin: 0;
+  color: #6c819d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.prescriptions-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: #e0efff;
+  color: #0878e8;
+}
+
+/* =========================================
+   BOTÓN DE ACCIÓN EN ESTADO VACÍO
+========================================= */
+
+.prescriptions-empty-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 22px;
+  padding: 12px 18px;
+  border: 1px solid #bfddff;
+  border-radius: 12px;
+  background: #edf6ff;
+  color: #0878e8;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =========================================
+   MENSAJES SIN RESULTADOS
+========================================= */
+
+.prescriptions-message {
+  margin: 0;
+  padding: 20px 15px;
+  border: 1px solid #e0ebf9;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #7186a1;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 380px) {
+  .prescriptions-screen .appointments-header {
+    gap: 8px;
+    padding: 14px 10px;
+  }
+
+  .prescriptions-screen .appointments-header h1 {
+    font-size: 17px;
+  }
+
+  .prescriptions-screen .appointments-logo {
+    width: 66px;
+  }
+
+  .prescriptions-screen .reservar-help {
+    width: 32px;
+    height: 32px;
+  }
+
+  .prescriptions-content {
+    padding: 18px 12px;
+  }
+
+  .prescription-card {
+    padding: 14px;
+  }
+
+  .prescription-actions {
+    flex-direction: column;
+  }
+
+  .prescription-actions button {
+    width: 100%;
+  }
+
+  .prescriptions-tabs button {
+    font-size: 12px;
+  }
+}
+
+/* CONTENEDOR DE LA PANTALLA */
+.prescriptions-page {
+  min-height: 100vh;
+  background: #f3f8ff;
+}
+
+/* CONTENIDO PRINCIPAL */
+.prescriptions-content {
+  padding: 20px 16px 30px;
+}
+
+/* ESTADO SIN RECETAS */
+.prescriptions-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+/* ILUSTRACIÓN Y MENSAJE */
+.prescriptions-empty-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 8px 0;
+}
+
+.prescriptions-empty-image {
+  display: block;
+  width: 170px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.prescriptions-empty-main h2 {
+  margin: 0 0 10px;
+  color: #084783;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.prescriptions-empty-main p {
+  max-width: 340px;
+  margin: 0;
+  color: #607b9c;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* BANNER INFORMATIVO, SIMILAR AL DE MIS CITAS */
+.prescriptions-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px;
+  background: #dceeff;
+  border: 1px solid #c6e2ff;
+  border-radius: 17px;
+}
+
+.prescriptions-info-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  color: #0783ff;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.prescriptions-info-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.prescriptions-info-text h3 {
+  margin: 0 0 6px;
+  color: #084783;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.prescriptions-info-text p {
+  margin: 0;
+  color: #567391;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ADAPTACIÓN A MÓVILES */
+@media (max-width: 380px) {
+  .prescriptions-content {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .prescriptions-empty-image {
+    width: 145px;
+    height: 135px;
+  }
+
+  .prescriptions-info-banner {
+    gap: 9px;
+    padding: 13px;
+  }
+
+  .prescriptions-info-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Pantalla de recetas */
+.prescriptions-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+/* Área desplazable */
+.prescriptions-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 20px;
+}
+
+/* Estado sin recetas */
+.prescriptions-empty {
+  width: 100%;
+  max-width: 440px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 28px 18px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Imagen y mensajes */
+.prescriptions-empty-main {
+  width: 100%;
+  min-height: 335px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.prescriptions-empty-image {
+  display: block;
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  margin: 0 auto 18px;
+}
+
+.prescriptions-empty-main h2 {
+  width: 100%;
+  min-height: 28px;
+  margin: 0 0 10px;
+  color: #103f78;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.prescriptions-empty-description {
+  width: 100%;
+  max-width: 330px;
+  min-height: 46px;
+  margin: 0;
+  color: #647a9b;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* Banner informativo */
+.prescriptions-info-banner {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 16px 12px;
+  box-sizing: border-box;
+  background: #e0f0ff;
+  border: 1px solid #d2e8ff;
+  border-radius: 16px;
+}
+
+.prescriptions-info-icon {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #087cff;
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.prescriptions-info-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.prescriptions-info-text h3 {
+  margin: 0 0 6px;
+  color: #103f78;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.prescriptions-info-text p {
+  margin: 0;
+  color: #647a9b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Tarjetas de recetas */
+.prescription-card {
+  margin-bottom: 14px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #dce9f9;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgb(24 77 130 / 5%);
+}
+
+.prescription-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.prescription-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #087cff;
+  background: #e4f1ff;
+  border-radius: 14px;
+}
+
+.prescription-card-heading h3 {
+  margin: 0 0 4px;
+  color: #103f78;
+  font-size: 15px;
+}
+
+.prescription-card-heading p {
+  margin: 0;
+  color: #647a9b;
+  font-size: 13px;
+}
+
+.prescription-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  color: #087cff;
+  border-top: 1px solid #e5edf7;
+  font-size: 13px;
+}
+
+.prescription-instructions {
+  margin: 0 0 14px;
+  color: #647a9b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.prescription-download,
+.prescription-details-button {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.prescription-download {
+  margin-bottom: 10px;
+  color: #ffffff;
+  background: #087cff;
+  border: 1px solid #087cff;
+}
+
+.prescription-details-button {
+  color: #087cff;
+  background: #edf6ff;
+  border: 1px solid #c9e2ff;
+}
+
+.prescription-download:hover {
+  background: #0668d8;
+}
+
+.prescription-details-button:hover {
+  background: #deefff;
+}
+
+/* Móviles pequeños */
+@media (max-width: 380px) {
+  .prescriptions-empty {
+    padding: 24px 14px 20px;
+  }
+
+  .prescriptions-empty-main {
+    min-height: 320px;
+  }
+
+  .prescriptions-empty-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .prescriptions-empty-main h2 {
+    font-size: 17px;
+  }
+
+  .prescriptions-empty-description {
+    font-size: 13px;
+  }
+
+  .prescriptions-info-banner {
+    gap: 9px;
+    padding: 13px 10px;
+  }
+
+  .prescriptions-info-icon {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Ilustración del estado vacío */
+
+.examenes-empty-image {
+  display: block;
+  width: 190px;
+  height: 175px;
+  max-width: 75%;
+  object-fit: contain;
+  margin: 0 auto 18px;
+}
+
+/* Mantener la distribución del contenido */
+
+.examenes-empty-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.examenes-empty-main h2 {
+  margin: 0 0 10px;
+  color: #103f78;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.examenes-empty-main .prescriptions-empty-description {
+  max-width: 330px;
+  margin: 0;
+  color: #647a9b;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+@media (max-width: 380px) {
+  .examenes-empty-image {
+    width: 160px;
+    height: 150px;
+  }
+
+  .examenes-empty-main h2 {
+    font-size: 17px;
+  }
+
+  .examenes-empty-main .prescriptions-empty-description {
+    font-size: 13px;
+  }
+}
+
+
+/* =========================================
+   CENTROS DE ATENCIÓN — CONTENIDO
+   No modifica el encabezado ni el menú inferior
+========================================= */
+
+.centers-page {
+  min-height: 100vh;
+  background: #f3f8ff;
+  color: #123c70;
+  box-sizing: border-box;
+}
+
+/* CONTENEDOR PRINCIPAL */
+
+.centers-content {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 18px 16px 32px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   BUSCADOR
+========================================= */
+
+.centers-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 49px;
+  margin: 0 0 17px;
+  padding: 0 13px;
+  border: 1px solid #e2ebf7;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgb(35 93 153 / 5%);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.centers-search > svg {
+  flex-shrink: 0;
+  color: #0878e8;
+}
+
+.centers-search input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #123c70;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.centers-search input::placeholder {
+  color: #8a9db6;
+}
+
+.centers-search:focus-within {
+  border-color: #1684f8;
+  box-shadow: 0 0 0 3px rgb(8 120 232 / 10%);
+}
+
+.centers-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* BOTÓN PARA LIMPIAR */
+
+.centers-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #edf6ff;
+  color: #0878e8;
+  cursor: pointer;
+}
+
+.centers-clear:hover {
+  background: #dceeff;
+}
+
+/* =========================================
+   FILTROS
+========================================= */
+
+.centers-filters {
+  display: flex;
+  gap: 9px;
+  margin: 0 -2px 22px;
+  padding: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.centers-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.centers-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 39px;
+  padding: 9px 13px;
+  border: 1px solid #dce8f6;
+  border-radius: 24px;
+  background: #ffffff;
+  color: #627b9b;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.centers-filter svg {
+  flex-shrink: 0;
+}
+
+.centers-filter:hover {
+  border-color: #9dcaff;
+  background: #f5faff;
+}
+
+.centers-filter.active {
+  border-color: #0878e8;
+  background: #0878e8;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgb(8 120 232 / 16%);
+}
+
+.centers-filter:active {
+  transform: scale(0.97);
+}
+
+/* =========================================
+   ESTADO INICIAL
+========================================= */
+
+.centers-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0 24px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* ILUSTRACIÓN DEL HOSPITAL Y LA DOCTORA */
+
+.centers-welcome-image {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: 255px;
+  margin: 0 auto 12px;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* TÍTULO DEL ESTADO INICIAL */
+
+.centers-welcome h2 {
+  max-width: 330px;
+  margin: 0 0 12px;
+  color: #123c70;
+  font-size: 22px;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: -0.4px;
+}
+
+/* DESCRIPCIÓN */
+
+.centers-welcome-description {
+  max-width: 340px;
+  margin: 0 auto 25px;
+  color: #7288a5;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+/* =========================================
+   TARJETA INFORMATIVA
+========================================= */
+
+.centers-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 17px 15px;
+  border: 1px solid #cfe5ff;
+  border-radius: 19px;
+  background: #e1f0ff;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.centers-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0878e8;
+}
+
+.centers-info-text {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.centers-info-text h3 {
+  margin: 0 0 6px;
+  color: #123c70;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.centers-info-text p {
+  margin: 0;
+  color: #6e85a3;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* =========================================
+   RESULTADOS
+========================================= */
+
+.centers-results {
+  width: 100%;
+  animation: centersAppear 0.25s ease;
+}
+
+.centers-results-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 3px 0 15px;
+}
+
+.centers-results-heading h2 {
+  margin: 0 0 4px;
+  color: #123c70;
+  font-size: 18px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.centers-results-heading p {
+  margin: 0;
+  color: #8498b2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.centers-results-heading > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 31px;
+  height: 31px;
+  padding: 0 8px;
+  border-radius: 20px;
+  background: #dceeff;
+  color: #0878e8;
+  font-size: 13px;
+  font-weight: 750;
+  box-sizing: border-box;
+}
+
+/* LISTA DE ESTABLECIMIENTOS */
+
+.centers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+/* TARJETA DE CADA CENTRO */
+
+.center-card {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #e0ebf9;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgb(35 93 153 / 5%);
+  box-sizing: border-box;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.center-card:hover {
+  border-color: #c8e0fc;
+  box-shadow: 0 7px 20px rgb(35 93 153 / 9%);
+}
+
+/* CABECERA DE LA TARJETA */
+
+.center-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.center-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: #e5f2ff;
+  color: #0878e8;
+}
+
+.center-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 65%;
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: #edf6ff;
+  color: #0878e8;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* NOMBRE DEL ESTABLECIMIENTO */
+
+.center-card h3 {
+  margin: 0 0 10px;
+  color: #123c70;
+  font-size: 15px;
+  font-weight: 750;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* DIRECCIÓN */
+
+.center-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 15px;
+  color: #7186a1;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.center-address svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #1684f8;
+}
+
+/* BOTÓN DE UBICACIÓN */
+
+.center-location-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 13px;
+  border: 1px solid #c8e2ff;
+  border-radius: 12px;
+  background: #edf6ff;
+  color: #0878e8;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.center-location-button svg {
+  flex-shrink: 0;
+}
+
+.center-location-button svg:last-child {
+  margin-left: auto;
+}
+
+.center-location-button:hover {
+  border-color: #93c7ff;
+  background: #dceeff;
+}
+
+.center-location-button:active {
+  transform: scale(0.98);
+}
+
+/* =========================================
+   SIN RESULTADOS
+========================================= */
+
+.centers-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  border: 1px solid #e0ebf9;
+  border-radius: 18px;
+  background: #ffffff;
+  text-align: center;
+  box-shadow: 0 4px 14px rgb(35 93 153 / 4%);
+}
+
+.centers-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 15px;
+  border-radius: 18px;
+  background: #e5f2ff;
+  color: #0878e8;
+}
+
+.centers-empty h3 {
+  margin: 0 0 8px;
+  color: #123c70;
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.centers-empty p {
+  max-width: 280px;
+  margin: 0 0 17px;
+  color: #7a8fa9;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.centers-empty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 17px;
+  border: 1px solid #bcdcff;
+  border-radius: 11px;
+  background: #edf6ff;
+  color: #0878e8;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.centers-empty button:hover {
+  background: #dceeff;
+}
+
+/* AVISO DE DATOS */
+
+.centers-disclaimer {
+  margin: 17px 3px 0;
+  color: #91a2b8;
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* =========================================
+   ANIMACIÓN SUAVE
+========================================= */
+
+@keyframes centersAppear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   RESPONSIVE — CELULARES PEQUEÑOS
+========================================= */
+
+@media (max-width: 380px) {
+  .centers-content {
+    padding: 15px 12px 26px;
+  }
+
+  .centers-filters {
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .centers-filter {
+    gap: 5px;
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .centers-welcome-image {
+    max-width: 290px;
+    height: 220px;
+  }
+
+  .centers-welcome h2 {
+    max-width: 290px;
+    font-size: 20px;
+  }
+
+  .centers-welcome-description {
+    font-size: 13px;
+  }
+
+  .centers-info-banner {
+    gap: 10px;
+    padding: 14px 12px;
+  }
+
+  .centers-info-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .centers-info-text h3 {
+    font-size: 13px;
+  }
+
+  .centers-info-text p {
+    font-size: 11px;
+  }
+
+  .center-card {
+    padding: 14px;
+  }
+}
+
+/* RESPETA LAS PREFERENCIAS DE ACCESIBILIDAD */
+
+@media (prefers-reduced-motion: reduce) {
+  .centers-results,
+  .centers-filter,
+  .center-card,
+  .center-location-button {
+    animation: none;
+    transition: none;
+  }
+}
+
+
+/* Pantalla de centros de atención */
+.centers-page {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Área desplazable: buscador, filtros y resultados */
+.centers-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Ocultar la barra de desplazamiento */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  /* Desplazamiento suave en dispositivos móviles */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.centers-content::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.centers-results-heading {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  align-items: center;
+}
+
+.centers-results-heading > div:first-child {
+  display: contents;
+}
+
+.centers-results-heading h2 {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.centers-results-heading > span {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.centers-results-heading p {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: 5px;
+}
+
+
+/* =========================================
+   CHAT ESSALUD DIGITAL
+========================================= */
+
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: #f7fbff;
+  color: #123b78;
+  box-sizing: border-box;
+}
+
+.chat-page *,
+.chat-page *::before,
+.chat-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   CONTENIDO PRINCIPAL
+========================================= */
+
+.chat-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f4f9ff 0%, #ffffff 100%);
+}
+
+/* =========================================
+   PERFIL DEL ASISTENTE
+========================================= */
+
+.chat-assistant-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  min-height: 112px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #edf7ff 0%, #ffffff 100%);
+  border-bottom: 1px solid #e4effb;
+}
+
+.chat-assistant-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #d9efff;
+  border: 2px solid #d7efff;
+}
+
+.chat-assistant-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.chat-assistant-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-assistant-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chat-assistant-name h2 {
+  margin: 0;
+  color: #123b78;
+  font-size: 18px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.chat-online-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #25c77a;
+}
+
+.chat-assistant-info > p {
+  margin: 5px 0 0;
+  color: #7189ad;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* =========================================
+   MENSAJES Y DESPLAZAMIENTO INVISIBLE
+========================================= */
+
+.chat-messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  padding: 22px 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chat-messages::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.chat-message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.assistant-row {
+  justify-content: flex-start;
+}
+
+.user-row {
+  justify-content: flex-end;
+}
+
+/* Avatar al lado de los mensajes del asistente */
+
+.chat-small-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #d9efff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 7px rgba(31, 112, 196, 0.12);
+}
+
+.chat-small-assistant-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.chat-message-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 84%;
+}
+
+.assistant-row .chat-message-wrapper {
+  align-items: flex-start;
+}
+
+.user-row .chat-message-wrapper {
+  align-items: flex-end;
+}
+
+/* =========================================
+   BURBUJAS
+========================================= */
+
+.chat-bubble {
+  padding: 13px 15px;
+  border-radius: 22px;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.chat-bubble.asistente {
+  color: #123b78;
+  background: linear-gradient(135deg, #e8f5ff 0%, #dcefff 100%);
+  border: 1px solid #e0efff;
+  border-top-left-radius: 8px;
+}
+
+.chat-bubble.usuario {
+  color: #ffffff;
+  background: linear-gradient(135deg, #0878f9 0%, #168ef5 100%);
+  border: 1px solid #1684f4;
+  border-top-right-radius: 8px;
+  box-shadow: 0 5px 12px rgba(0, 117, 245, 0.12);
+}
+
+/* =========================================
+   HORA Y CONFIRMACIÓN
+========================================= */
+
+.chat-message-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 5px 4px 0;
+  color: #8297b6;
+  font-size: 11px;
+}
+
+.user-row .chat-message-meta svg {
+  color: #2994ff;
+}
+
+/* =========================================
+   INDICADOR DE RESPUESTA
+========================================= */
+
+.chat-typing {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 0 14px;
+  background: #e4f2ff;
+  border: 1px solid #d8eaff;
+  border-radius: 18px;
+  border-top-left-radius: 8px;
+}
+
+.chat-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1684f4;
+  animation: chatTyping 1s infinite ease-in-out;
+}
+
+.chat-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.chat-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes chatTyping {
+  0%,
+  60%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+/* =========================================
+   ACCESOS RÁPIDOS
+========================================= */
+
+.chat-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  padding: 10px 12px 12px;
+  flex-shrink: 0;
+  background: #ffffff;
+}
+
+.chat-quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 65px;
+  padding: 9px 4px;
+  color: #087df1;
+  background: #ffffff;
+  border: 1px solid #dceaff;
+  border-radius: 17px;
+  box-shadow: 0 3px 10px rgba(33, 106, 182, 0.05);
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.chat-quick-action svg {
+  flex-shrink: 0;
+}
+
+.chat-quick-action span {
+  color: #17447f;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.chat-quick-action:hover {
+  background: #f1f8ff;
+  border-color: #9acaff;
+}
+
+.chat-quick-action:active {
+  transform: scale(0.97);
+}
+
+/* =========================================
+   AVISO DE PRIVACIDAD
+========================================= */
+
+.chat-privacy-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0 14px 10px;
+  padding: 12px 10px;
+  flex-shrink: 0;
+  color: #6582a7;
+  background: #e8f5ff;
+  border-radius: 15px;
+}
+
+.chat-privacy-notice svg {
+  flex-shrink: 0;
+  color: #087df1;
+}
+
+.chat-privacy-notice span {
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* =========================================
+   CAMPO PARA ESCRIBIR
+========================================= */
+
+.chat-composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 12px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-top: 1px solid #eef4fb;
+}
+
+.chat-attach-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 48px;
+  flex-shrink: 0;
+  color: #315785;
+  background: transparent;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.chat-composer input {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  height: 48px;
+  padding: 0 12px;
+  color: #173e75;
+  background: #ffffff;
+  border: 1px solid #d9e8fa;
+  border-radius: 25px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  box-shadow: 0 3px 12px rgba(39, 104, 177, 0.05);
+}
+
+.chat-composer input::placeholder {
+  color: #8499b6;
+}
+
+.chat-composer input:focus {
+  border-color: #1684f4;
+  box-shadow: 0 0 0 3px rgba(22, 132, 244, 0.1);
+}
+
+.chat-send-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0878f9, #168ff5);
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 117, 245, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.chat-send-button:hover:not(:disabled) {
+  transform: scale(1.04);
+}
+
+.chat-send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   ACCESIBILIDAD
+========================================= */
+
+.chat-quick-action:focus-visible,
+.chat-send-button:focus-visible,
+.chat-attach-button:focus-visible {
+  outline: 3px solid #8bc5ff;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   PANTALLAS ESTRECHAS
+========================================= */
+
+@media (max-width: 380px) {
+  .chat-assistant-header {
+    gap: 10px;
+    padding: 15px 12px;
+    min-height: 95px;
+  }
+
+  .chat-assistant-avatar {
+    width: 58px;
+    height: 58px;
+  }
+
+  .chat-assistant-name h2 {
+    font-size: 16px;
+  }
+
+  .chat-assistant-info > p {
+    font-size: 12px;
+  }
+
+  .chat-messages {
+    padding: 16px 9px;
+    gap: 16px;
+  }
+
+  .chat-small-avatar {
+    width: 29px;
+    height: 29px;
+  }
+
+  .chat-message-wrapper {
+    max-width: 87%;
+  }
+
+  .chat-bubble {
+    padding: 11px 12px;
+    font-size: 13px;
+  }
+
+  .chat-quick-actions {
+    gap: 5px;
+    padding: 8px 8px 10px;
+  }
+
+  .chat-quick-action {
+    min-height: 60px;
+    padding: 8px 3px;
+    border-radius: 13px;
+  }
+
+  .chat-quick-action span {
+    font-size: 9px;
+  }
+
+  .chat-privacy-notice {
+    margin-right: 9px;
+    margin-left: 9px;
+  }
+
+  .chat-privacy-notice span {
+    font-size: 10px;
+  }
+
+  .chat-composer {
+    gap: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+
+  }
+
+  .chat-attach-button {
+    width: 32px;
+  }
+
+  .chat-send-button {
+    width: 43px;
+    height: 43px;
+  }
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-messages {
+    scroll-behavior: auto;
+  }
+
+  .chat-quick-action,
+  .chat-send-button,
+  .chat-typing span {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Subir todo el bloque inferior del chat */
+.chat-quick-actions {
+  padding-top: 10px;
+  padding-bottom: 8px;
+}
+
+.chat-privacy-notice {
+  margin-bottom: 8px;
+}
+
+.chat-composer {
+  margin-bottom: 10px;
+}
+
+
+
+.chat-response-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 10px;
+  padding: 11px 15px;
+  border: 1px solid #2785df;
+  border-radius: 10px;
+  background: #2785df;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.chat-response-action:hover {
+  background: #176fc4;
+  transform: translateY(-1px);
+}
+
+.chat-response-action:focus-visible {
+  outline: 3px solid #9ccfff;
+  outline-offset: 3px;
+}
+
+/* Conservar los saltos de línea de las respuestas */
+
+.chat-bubble {
+  white-space: pre-line;
+}
+
+
+
+/* =========================================
+   MENÚ DE ARCHIVOS ADJUNTOS
+========================================= */
+
+.chat-composer {
+  position: relative;
+}
+
+.chat-attachment-menu {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 0;
+  width: 265px;
+  padding: 14px;
+  background: #ffffff;
+  border: 1px solid #e2eaf3;
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgba(20, 55, 95, 0.15);
+  z-index: 50;
+  animation: attachmentAppear 0.18s ease;
+}
+
+.chat-attachment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 2px 12px;
+  margin-bottom: 5px;
+  color: #173d70;
+  font-size: 14px;
+}
+
+.chat-attachment-header button,
+.chat-selected-file button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #75869a;
+  cursor: pointer;
+}
+
+.chat-attachment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 9px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.chat-attachment-option:hover {
+  background: #f0f6ff;
+}
+
+.chat-attachment-option > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.chat-attachment-option strong {
+  color: #263b55;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chat-attachment-option small {
+  color: #8493a5;
+  font-size: 12px;
+}
+
+.attachment-option-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+
+.attachment-option-icon.document {
+  color: #8054df;
+  background: #f0eaff;
+}
+
+.attachment-option-icon.gallery {
+  color: #1689e8;
+  background: #e6f3ff;
+}
+
+.attachment-option-icon.camera {
+  color: #e84d86;
+  background: #ffedf3;
+}
+
+/* ARCHIVO SELECCIONADO */
+
+.chat-selected-file {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #dce9f8;
+  border-radius: 12px;
+  background: #f3f8ff;
+  color: #267bd1;
+  font-size: 12px;
+  z-index: 5;
+}
+
+.chat-selected-file span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.chat-selected-file button {
+  flex-shrink: 0;
+}
+
+/* ARCHIVO DENTRO DEL MENSAJE */
+
+.chat-message-attachment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  padding: 9px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+/* ANIMACIÓN */
+
+@keyframes attachmentAppear {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
