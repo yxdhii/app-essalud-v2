@@ -25346,3 +25346,17 @@ button:active {
   color: #174b83;
   font-weight: 700;
 }
+/* Pestañas de Exámenes: tres opciones en una sola fila */
+.examenes-page .appointments-tabs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.examenes-page .appointments-tabs button {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 33.333%;
+  white-space: nowrap;
+}

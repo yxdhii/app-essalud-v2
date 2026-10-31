@@ -89,42 +89,42 @@ export default function Examenes() {
         </button>
       </header>
 
-      {/* PESTAÑAS CON EL MISMO ESTILO QUE RECETAS */}
-      <div
-        className="prescriptions-tabs"
-        role="tablist"
-        aria-label="Periodo de exámenes"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === "anteriores"}
-          className={activeTab === "anteriores" ? "active" : ""}
-          onClick={() => setActiveTab("anteriores")}
-        >
-          Anteriores
-        </button>
+{/* PESTAÑAS - MISMO DISEÑO QUE RECETAS */}
+<div
+  className="appointments-tabs"
+  role="tablist"
+  aria-label="Periodo de exámenes"
+>
+  <button
+    type="button"
+    role="tab"
+    aria-selected={activeTab === "anteriores"}
+    className={activeTab === "anteriores" ? "active" : ""}
+    onClick={() => setActiveTab("anteriores")}
+  >
+    Anteriores
+  </button>
 
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === "actual"}
-          className={activeTab === "actual" ? "active" : ""}
-          onClick={() => setActiveTab("actual")}
-        >
-          Mes actual
-        </button>
+  <button
+    type="button"
+    role="tab"
+    aria-selected={activeTab === "actual"}
+    className={activeTab === "actual" ? "active" : ""}
+    onClick={() => setActiveTab("actual")}
+  >
+    Mes actual
+  </button>
 
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === "siguientes"}
-          className={activeTab === "siguientes" ? "active" : ""}
-          onClick={() => setActiveTab("siguientes")}
-        >
-          Siguientes
-        </button>
-      </div>
+  <button
+    type="button"
+    role="tab"
+    aria-selected={activeTab === "siguientes"}
+    className={activeTab === "siguientes" ? "active" : ""}
+    onClick={() => setActiveTab("siguientes")}
+  >
+    Siguientes
+  </button>
+</div>
 
       {/* CONTENIDO */}
       <div className="prescriptions-content examenes-content">
