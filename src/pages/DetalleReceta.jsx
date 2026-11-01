@@ -1,4 +1,3 @@
-
 import { useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -13,6 +12,8 @@ import {
   Stethoscope,
   CheckCircle2,
 } from "lucide-react";
+
+import { QRCodeSVG } from "qrcode.react";
 
 import logoEssalud from "../assets/digital-logo.png";
 
@@ -137,6 +138,15 @@ export default function DetalleReceta() {
     paciente?.dni ||
     "No disponible";
 
+  // Datos del QR para identificar la receta en farmacia.
+  // Es un código demostrativo para el prototipo.
+  const datosQR = JSON.stringify({
+    institucion: "EsSalud Digital",
+    tipo: "RECOJO_EN_FARMACIA",
+    receta: receta.id || id,
+    fecha: receta.fecha || "",
+  });
+
   return (
     <main className="appointments-screen detalle-receta-screen">
 
@@ -216,7 +226,9 @@ export default function DetalleReceta() {
 
             <div className="detalle-receta-row">
               <span>Tipo de atención</span>
-              <strong>{receta.tipoCita || "No especificado"}</strong>
+              <strong>
+                {receta.tipoCita || "No especificado"}
+              </strong>
             </div>
           </article>
 
@@ -229,12 +241,16 @@ export default function DetalleReceta() {
 
             <div className="detalle-receta-row">
               <span>Médico</span>
-              <strong>{receta.medico || "No disponible"}</strong>
+              <strong>
+                {receta.medico || "No disponible"}
+              </strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>Especialidad</span>
-              <strong>{receta.especialidad || "No disponible"}</strong>
+              <strong>
+                {receta.especialidad || "No disponible"}
+              </strong>
             </div>
 
             {receta.cmp && (
@@ -321,6 +337,44 @@ export default function DetalleReceta() {
               {receta.indicaciones ||
                 "No se han registrado indicaciones adicionales."}
             </p>
+          </article>
+
+          {/* CÓDIGO QR PARA RECOJO EN FARMACIA */}
+          <article className="detalle-receta-qr-card">
+
+            <div className="detalle-receta-qr-info">
+              <div className="detalle-receta-qr-icon">
+                <Pill size={21} />
+              </div>
+
+              <div>
+                <h3>Recojo de medicamentos</h3>
+
+                <p>
+                  Presenta este código QR en la farmacia para
+                  identificar tu receta médica.
+                </p>
+              </div>
+            </div>
+
+            <div className="detalle-receta-qr-code">
+              <QRCodeSVG
+                value={datosQR}
+                size={170}
+                level="H"
+                includeMargin
+              />
+            </div>
+
+            <div className="detalle-receta-qr-status">
+              <CheckCircle2 size={17} />
+              <span>QR generado para esta receta</span>
+            </div>
+
+            <p className="detalle-receta-qr-note">
+              Código demostrativo para el prototipo de EsSalud Digital.
+            </p>
+
           </article>
 
           {/* PIE DEL DOCUMENTO */}

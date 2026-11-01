@@ -216,6 +216,8 @@ export default function Perfil() {
             <div className="perfil-avatar">
               {fotoPerfil ? (
                 <img src={fotoPerfil} alt="Foto de perfil" />
+              ) : usuario?.avatar ? (
+                <span className="perfil-avatar-emoji">{usuario.avatar}</span>
               ) : (
                 <UserRound size={42} strokeWidth={1.7} />
               )}

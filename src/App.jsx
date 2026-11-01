@@ -53,6 +53,8 @@ import DetalleReceta from "./pages/DetalleReceta";
 import GestionarCuentas from "./pages/GestionarCuentas";
 import CambiarContrasena from "./pages/CambiarContrasena";
 import BiometriaCuenta from "./pages/BiometriaCuenta";
+import TodosServicios from "./pages/TodosServicios";
+import Notificaciones from "./pages/Notificaciones";
 import "./App.css";
 
 function App() {
@@ -135,6 +137,8 @@ function App() {
             path="/essalud/seguridad/biometria"
             element={<BiometriaCuenta />}
           />
+          <Route path="/essalud/servicios" element={<TodosServicios />} />
+          <Route path="/essalud/notificaciones" element={<Notificaciones />} />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

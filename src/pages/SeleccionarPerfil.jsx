@@ -96,7 +96,7 @@ export default function SeleccionarPerfil() {
           <ArrowLeft size={23} />
         </button>
 
-        <h1>Seleccionar perfil</h1>
+        <h1>Mis Familiares</h1>
 
         <img
           src={logoEssalud}
