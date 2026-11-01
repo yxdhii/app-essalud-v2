@@ -1,7 +1,7 @@
 
 <div align="center">
 
-<img src="./docs/images/screen.png" width="180" alt="EsSalud Digital Logo"/>
+<img src="./docs/images/digital-logo.png" width="180" alt="EsSalud Digital Logo"/>
 
 # 🏥 EsSalud Digital
 
@@ -25,7 +25,7 @@
 # 📸 Vista previa
 
 <p align="center">
-<img src="./docs/images/preview.png" alt="Vista previa de EsSalud Digital"/>
+<img src="./docs/images/screen.png" alt="Vista previa de EsSalud Digital"/>
 </p>
 
 ---
