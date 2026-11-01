@@ -1,3 +1,4 @@
+
 function PhoneFrame({ children }) {
   return (
     <div className="phone-frame-bg">
@@ -5,17 +6,17 @@ function PhoneFrame({ children }) {
         <span className="presentation-tag">PROTOTIPO UI/UX</span>
 
         <h1>
-          Calle<span>Go</span>
+          EsSalud <span>Digital</span>
         </h1>
 
-        <h2>Seguridad colaborativa en tiempo real</h2>
+        <h2>Tu salud más cerca de ti</h2>
 
         <div className="presentation-line"></div>
 
         <p>
-          Plataforma inteligente que permite reportar incidentes, visualizar
-          zonas de riesgo y encontrar rutas más seguras mediante la
-          participación de la comunidad.
+          Plataforma digital que facilita el acceso a los servicios de salud,
+          permitiendo gestionar citas médicas, consultar recetas, revisar
+          exámenes y administrar tu información personal desde un solo lugar.
         </p>
       </section>
 
@@ -24,6 +25,7 @@ function PhoneFrame({ children }) {
 
         <div className="phone-statusbar">
           <span className="phone-time">9:41</span>
+
           <div className="phone-statusbar-icons">
             <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
               <rect x="0" y="7" width="3" height="5" rx="0.8" fill="white" />

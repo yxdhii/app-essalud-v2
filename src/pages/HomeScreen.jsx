@@ -8,7 +8,13 @@ import wallpaper1 from "../assets/wallpaper-1.jpg";
 import wallpaper2 from "../assets/wallpaper-2.jpg";
 import wallpaper3 from "../assets/wallpaper-3.jpg";
 import wallpaper4 from "../assets/wallpaper-4.jpg";
-
+import wallpaper5 from "../assets/wallpaper-5.jpg";
+import wallpaper6 from "../assets/wallpaper-6.jpg";
+import wallpaper7 from "../assets/wallpaper-7.jpg";
+import wallpaper8 from "../assets/wallpaper-8.jpg";
+import wallpaper9 from "../assets/wallpaper-9.jpg";
+import wallpaper10 from "../assets/wallpaper-10.jpg";
+import wallpaper11 from "../assets/wallpaper-11.jpg";
 import calculatorIcon from "../assets/ios-icons/calculator.png";
 import remindersIcon from "../assets/ios-icons/reminders.png";
 import notesIcon from "../assets/ios-icons/notes.png";
@@ -158,7 +164,7 @@ function HomeScreen() {
     <main
       className="screen home-screen"
       ref={screenRef}
-      style={{ backgroundImage: `url(${wallpaper1})` }}
+      style={{ backgroundImage: `url(${wallpaper11})` }}
     >
       <section className="home-app-grid">
         {apps.map((app) => (
