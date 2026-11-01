@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -36,7 +35,7 @@ export default function MisCitas() {
 
   // Recuperar la pestaña enviada desde DetalleCita.
   const [activeTab, setActiveTab] = useState(
-    location.state?.activeTab || "Virtual"
+    location.state?.activeTab || "Virtual",
   );
 
   const [citas, setCitas] = useState([]);
@@ -71,28 +70,22 @@ export default function MisCitas() {
     const hora = cita.horario || cita.hora || "00:00";
     const fechaCita = new Date(`${cita.fecha}T${hora}:00`);
 
-    return (
-      !Number.isNaN(fechaCita.getTime()) &&
-      fechaCita < new Date()
-    );
+    return !Number.isNaN(fechaCita.getTime()) && fechaCita < new Date();
   };
 
   // Filtrar las citas según la pestaña seleccionada.
-  const citasFiltradas = citas.filter(
-    (cita) => cita.tipo === activeTab
-  );
+  const citasFiltradas = citas.filter((cita) => cita.tipo === activeTab);
 
   const proximasCitas = citasFiltradas.filter(
-    (cita) => !esAnterior(cita) && cita.estado === "Pendiente"
+    (cita) => !esAnterior(cita) && cita.estado === "Pendiente",
   );
 
   const citasAnteriores = citasFiltradas.filter(
-    (cita) =>
-      esAnterior(cita) || cita.estado === "Atendida"
+    (cita) => esAnterior(cita) || cita.estado === "Atendida",
   );
 
   const citasCanceladas = citasFiltradas.filter(
-    (cita) => cita.estado === "Cancelada"
+    (cita) => cita.estado === "Cancelada",
   );
 
   // Abrir modal para confirmar la cancelación.
@@ -126,26 +119,18 @@ export default function MisCitas() {
 
   // Calificar la atención.
   const manejarCalificacion = (id) => {
-    const puntuacion = window.prompt(
-      "Califica tu atención del 1 al 5:"
-    );
+    const puntuacion = window.prompt("Califica tu atención del 1 al 5:");
 
     if (puntuacion === null) return;
 
     const valor = Number(puntuacion);
 
-    if (
-      !Number.isInteger(valor) ||
-      valor < 1 ||
-      valor > 5
-    ) {
+    if (!Number.isInteger(valor) || valor < 1 || valor > 5) {
       window.alert("Ingresa una calificación del 1 al 5.");
       return;
     }
 
-    const comentario = window.prompt(
-      "¿Deseas dejar un comentario? (Opcional)"
-    );
+    const comentario = window.prompt("¿Deseas dejar un comentario? (Opcional)");
 
     calificarCita(id, valor, comentario || "");
     actualizarCitas();
@@ -212,11 +197,7 @@ export default function MisCitas() {
             cita.tipo === "Virtual" ? "virtual" : "presencial"
           }`}
         >
-          {cita.tipo === "Virtual" ? (
-            <Video size={16} />
-          ) : (
-            <MapPin size={16} />
-          )}
+          {cita.tipo === "Virtual" ? <Video size={16} /> : <MapPin size={16} />}
 
           {cita.tipo}
         </span>
@@ -266,9 +247,7 @@ export default function MisCitas() {
 
         <div>
           <Clock3 size={19} />
-          <span>
-            {formatearHorario(cita.horario || cita.hora)}
-          </span>
+          <span>{formatearHorario(cita.horario || cita.hora)}</span>
         </div>
       </div>
 
@@ -278,9 +257,7 @@ export default function MisCitas() {
           {"☆".repeat(5 - cita.calificacion)}
 
           <small>
-            {cita.comentario
-              ? ` ${cita.comentario}`
-              : " Tu calificación"}
+            {cita.comentario ? ` ${cita.comentario}` : " Tu calificación"}
           </small>
         </div>
       )}
@@ -317,20 +294,17 @@ export default function MisCitas() {
         )}
 
         {cita.estado === "Pendiente" && esAnterior(cita) && (
-          <span className="appointment-note">
-            Fecha de cita transcurrida
-          </span>
+          <span className="appointment-note">Fecha de cita transcurrida</span>
         )}
 
         {cita.estado === "Cancelada" && (
-          <span className="appointment-note">
-            Esta cita fue cancelada.
-          </span>
+          <span className="appointment-note">Esta cita fue cancelada.</span>
         )}
       </div>
     </article>
   );
 
+  // Navegación inferior.
   // Navegación inferior.
   const navegarMenu = (id) => {
     if (id === "inicio") navigate("/essalud/inicio");
@@ -341,10 +315,11 @@ export default function MisCitas() {
       });
     }
 
-    if (id === "recetas") navigate("/essalud/recetas");
+    if (id === "chat") navigate("/essalud/chat");
+
     if (id === "perfil") navigate("/essalud/perfil");
   };
-
+  
   return (
     <main className="appointments-screen">
       <header className="appointments-header">
@@ -371,7 +346,7 @@ export default function MisCitas() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Aquí puedes consultar la información de tu cita médica."
+              "Aquí puedes consultar la información de tu cita médica.",
             )
           }
         >
@@ -499,10 +474,7 @@ export default function MisCitas() {
         )}
       </div>
 
-      <BottomNavigation
-        active="citas"
-        onNavigate={navegarMenu}
-      />
+      <BottomNavigation active="citas" onNavigate={navegarMenu} />
 
       {/* MODAL DE CONFIRMACIÓN PARA CANCELAR CITA */}
       <ConfirmacionModal

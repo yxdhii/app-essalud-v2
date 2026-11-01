@@ -1,23 +1,22 @@
+
 <div align="center">
 
-<img src="./docs/images/logo.png" width="180"/>
+<img src="./docs/images/screen.png" width="180" alt="EsSalud Digital Logo"/>
 
-# 🚦 CalleGo
+# 🏥 EsSalud Digital
 
-### Tu seguridad, nuestra prioridad.
+### Tu salud más cerca de ti.
 
 <p>
-
 <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
 <img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white"/>
 <img src="https://img.shields.io/badge/React_Router-7-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white"/>
-<img src="https://img.shields.io/badge/Leaflet-1.9-199900?style=for-the-badge&logo=leaflet&logoColor=white"/>
 <img src="https://img.shields.io/badge/JavaScript-ES2024-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
 <img src="https://img.shields.io/badge/pnpm-Package_Manager-F69220?style=for-the-badge&logo=pnpm&logoColor=white"/>
-
+<img src="https://img.shields.io/badge/Lucide_Icons-000000?style=for-the-badge&logo=lucide&logoColor=white"/>
 </p>
 
-### Prototipo funcional de alta fidelidad para reportar incidentes, recibir alertas de proximidad y explorar rutas más seguras en tiempo real.
+### Prototipo web de alta fidelidad para facilitar el acceso a servicios de salud, gestionar citas médicas y consultar información personal y médica desde una experiencia digital intuitiva.
 
 </div>
 
@@ -26,18 +25,20 @@
 # 📸 Vista previa
 
 <p align="center">
-<img src="./docs/images/preview.png"/>
+<img src="./docs/images/preview.png" alt="Vista previa de EsSalud Digital"/>
 </p>
 
 ---
 
 # 📖 Descripción
 
-**CalleGo** es una aplicación web enfocada en mejorar la seguridad ciudadana y la experiencia de movilidad urbana. Permite a las personas **reportar incidentes** de forma rápida y anónima, **recibir alertas** según su ubicación y nivel de riesgo, y **visualizar zonas de riesgo** sobre un mapa interactivo, todo impulsado por la participación de la comunidad.
+**EsSalud Digital** es un prototipo de aplicación web orientado a mejorar la experiencia de los asegurados al momento de acceder y gestionar sus servicios de salud mediante una plataforma digital.
 
-El proyecto está construido como un prototipo de interfaz **mobile-first**, presentado dentro de un marco de teléfono interactivo (`PhoneFrame`) que simula la experiencia real de la aplicación en un dispositivo móvil.
+La aplicación busca centralizar diferentes funcionalidades relacionadas con la atención médica, permitiendo a los usuarios gestionar sus citas, consultar recetas médicas, revisar exámenes, administrar sus datos personales y gestionar los perfiles de sus familiares vinculados.
 
-> ℹ️ **Nota:** Este es un prototipo de alta fidelidad orientado a UI/UX. No representa un producto final ni está disponible en tiendas de aplicaciones.
+El proyecto está desarrollado con **React y Vite**, utilizando una interfaz moderna, intuitiva y adaptable a dispositivos móviles, priorizando la accesibilidad, la organización de la información y la facilidad de navegación.
+
+> ℹ️ **Nota:** Este proyecto es un prototipo académico de alta fidelidad. No es una aplicación oficial de EsSalud ni está integrado con los sistemas institucionales. Los datos y algunas funcionalidades son simulados con fines demostrativos.
 
 ---
 
@@ -45,57 +46,105 @@ El proyecto está construido como un prototipo de interfaz **mobile-first**, pre
 
 | Módulo | Funcionalidades |
 |--------|------------------|
-| 🔐 **Autenticación** | Inicio de sesión, registro, recuperación y cambio de contraseña, verificación por código |
-| 🗺️ **Mapa e incidentes** | Mapa de calor de zonas de riesgo, detalle de reportes, selección de rutas seguras |
-| 🚨 **Reportes** | Registro de incidentes (robo, acoso, accidente, zona oscura), reporte anónimo, confirmación de envío |
-| 🔔 **Alertas** | Alertas de proximidad configurables por distancia, tipo de incidente y nivel de riesgo |
-| 🧭 **Navegación** | Navegación guiada y resumen al finalizar el trayecto |
-| 👤 **Perfil y comunidad** | Perfil público y privado, historial de reportes, insignias, reputación y notificaciones |
-| ⚙️ **Soporte** | Centro de ayuda, políticas de privacidad, dashboard de indicadores |
+| 🔐 **Autenticación** | Inicio de sesión, registro, recuperación de contraseña, verificación de código y cambio de contraseña. |
+| 🏠 **Inicio** | Panel principal con acceso a los servicios y funcionalidades de la aplicación. |
+| 📅 **Citas médicas** | Consulta de citas, reserva de citas, selección de especialidad, profesional y horario, y visualización del detalle de cada cita. |
+| 👨‍👩‍👧 **Gestión familiar** | Vinculación de familiares, selección de pacientes y administración de cuentas asociadas. |
+| 💊 **Recetas médicas** | Consulta de recetas nuevas y anteriores, visualización del detalle e impresión o descarga en PDF. |
+| 🧪 **Exámenes médicos** | Consulta de exámenes médicos, organización por periodos y visualización de resultados disponibles. |
+| 👤 **Perfil y datos personales** | Consulta y actualización de información personal del asegurado. |
+| 🔒 **Seguridad de cuenta** | Gestión de contraseña, opciones de seguridad y funcionalidades de autenticación biométrica. |
+| 🔔 **Notificaciones** | Interfaz para consultar notificaciones relacionadas con los servicios de la aplicación. |
+| 💬 **Asistencia** | Acceso a funcionalidades de ayuda y soporte al usuario. |
 
 ---
 
 # 🖼️ Pantallas principales
 
-- 🗺️ **Mapa principal** — visualización de reportes y zonas de riesgo cercanas
-- 🔑 **Inicio de sesión** — acceso con correo, Google o Apple
-- 📝 **Reportar incidente** — formulario rápido con opción de reporte anónimo
-- 🔔 **Alertas de proximidad** — configuración de distancia y tipo de aviso
-- 👤 **Perfil** — reportes propios, insignias y nivel de reputación
+- 🏥 **Splash Screen** — presentación e identidad visual de EsSalud Digital.
+- 🔑 **Inicio de sesión** — acceso a la aplicación.
+- 📝 **Registro de usuario** — creación de una cuenta.
+- 🏠 **Inicio** — acceso centralizado a los servicios.
+- 📅 **Mis citas** — consulta y seguimiento de citas médicas.
+- 🗓️ **Reservar cita** — selección de especialidad, profesional y horario.
+- 👨‍👩‍👧 **Familiares vinculados** — selección y gestión de pacientes.
+- 💊 **Recetas médicas** — consulta y descarga de recetas.
+- 🧪 **Exámenes médicos** — consulta del historial de exámenes.
+- 👤 **Perfil** — administración de información personal.
+- 🔐 **Seguridad** — opciones para proteger la cuenta.
 
 ---
 
-# 🛠 Stack Tecnológico
+# 🛠 Stack tecnológico
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=react,vite,javascript,css,html,git,github,vscode" />
+<img src="https://skillicons.dev/icons?i=react,vite,javascript,html,css,git,github,vscode"/>
 
 <br><br>
 
-<img src="https://img.shields.io/badge/React%20Router%20DOM-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white"/>
-<img src="https://img.shields.io/badge/React%20Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white"/>
-<img src="https://img.shields.io/badge/OpenStreetMap-7EBC6F?style=for-the-badge&logo=openstreetmap&logoColor=white"/>
-<img src="https://img.shields.io/badge/Lucide%20Icons-000000?style=for-the-badge&logo=lucide&logoColor=white"/>
-<img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white"/>
+<img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white"/>
+<img src="https://img.shields.io/badge/Lucide_React-000000?style=for-the-badge&logo=lucide&logoColor=white"/>
+<img src="https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white"/>
+<img src="https://img.shields.io/badge/html2pdf.js-E34F26?style=for-the-badge&logo=adobeacrobatreader&logoColor=white"/>
 
 </div>
+
+### Tecnologías utilizadas
+
+| Tecnología | Aplicación |
+|---|---|
+| **React** | Desarrollo de interfaces mediante componentes reutilizables. |
+| **Vite** | Entorno de desarrollo y compilación. |
+| **JavaScript** | Lógica e interactividad de la aplicación. |
+| **React Router DOM** | Navegación y gestión de rutas. |
+| **CSS3** | Diseño y estilos de la interfaz. |
+| **Lucide React** | Iconografía de la aplicación. |
+| **html2pdf.js** | Generación y descarga de documentos PDF. |
+| **localStorage** | Persistencia local de datos simulados. |
+| **pnpm** | Administración de dependencias. |
+| **Git y GitHub** | Control de versiones y almacenamiento del código fuente. |
 
 ---
 
 # 🏛 Arquitectura
 
-El proyecto está organizado como una aplicación **React + Vite** basada en componentes y páginas, con enrutamiento declarativo mediante **React Router**.
+El proyecto utiliza una arquitectura basada en componentes y páginas mediante **React**, organizando la interfaz, la navegación y la lógica de negocio en módulos independientes.
+
+Se utiliza **React Router DOM** para gestionar las rutas y servicios propios para centralizar operaciones relacionadas con usuarios, familiares, citas y recetas médicas.
+
+La estructura permite mantener el código organizado, facilitar el mantenimiento y reutilizar componentes en diferentes pantallas.
 
 ```text
 📦 src
 │
-├── assets          # Íconos, wallpapers y recursos gráficos
-├── components       # Componentes reutilizables (PhoneFrame, AuthInput, ZoomControls...)
-├── pages             # Pantallas de la aplicación (Login, Dashboard, ReportIncident...)
-├── App.jsx           # Definición de rutas
-├── main.jsx          # Punto de entrada
-└── index.css         # Estilos globales
+├── assets              # Imágenes, logos y recursos gráficos
+│
+├── components          # Componentes reutilizables
+│   ├── BottomNavigation.jsx
+│   ├── ConfirmacionModal.jsx
+│   ├── LoadingOverlay.jsx
+│   └── ...
+│
+├── pages               # Pantallas de la aplicación
+│   ├── Inicio
+│   ├── Autenticación
+│   ├── Citas médicas
+│   ├── Gestión familiar
+│   ├── Recetas médicas
+│   ├── Exámenes médicos
+│   ├── Perfil
+│   └── Seguridad de cuenta
+│
+├── services            # Lógica y gestión de datos
+│   ├── usuariosService.js
+│   ├── recetasService.js
+│   └── ...
+│
+├── App.jsx             # Configuración de rutas
+├── App.css             # Estilos de la aplicación
+├── index.css           # Estilos globales
+└── main.jsx            # Punto de entrada
 ```
 
 ---
@@ -103,28 +152,20 @@ El proyecto está organizado como una aplicación **React + Vite** basada en com
 # 📂 Estructura del proyecto
 
 ```text
-app-CalleGo
+app-essalud-v2
 │
 ├── docs
-│   ├── logo.png
-│   └── preview.png
+│   └── images
+│       ├── logo.png
+│       └── preview.png
+│
+├── public
 │
 ├── src
 │   ├── assets
 │   ├── components
-│   │   ├── AuthInput.jsx
-│   │   ├── PhoneFrame.jsx
-│   │   └── ZoomControls.jsx
 │   ├── pages
-│   │   ├── Splash.jsx
-│   │   ├── Onboarding.jsx
-│   │   ├── Login.jsx / Register.jsx
-│   │   ├── ForgotPassword.jsx / VerifyCode.jsx / ResetPassword.jsx / ChangePassword.jsx
-│   │   ├── HomeScreen.jsx / HeatMap.jsx / RouteSelection.jsx / Navigation.jsx / TripComplete.jsx
-│   │   ├── ReportIncident.jsx / ReportDetail.jsx / ReportSuccess.jsx / MyReports.jsx
-│   │   ├── Alerts.jsx / Notifications.jsx
-│   │   ├── Profile.jsx / PublicProfile.jsx / Badges.jsx / Privacy.jsx / Help.jsx
-│   │   └── Dashboard.jsx
+│   ├── services
 │   ├── App.jsx
 │   ├── App.css
 │   ├── index.css
@@ -133,56 +174,83 @@ app-CalleGo
 ├── index.html
 ├── vite.config.js
 ├── eslint.config.js
-└── package.json
+├── package.json
+├── pnpm-lock.yaml
+└── README.md
 ```
 
 ---
 
-# 🚀 Instalación
+# 🚀 Instalación y ejecución
 
-## Clonar el proyecto
-
-```bash
-git clone https://github.com/yxdhii/app-CalleGo.git
-```
-
-## Acceder al proyecto
+## 1. Clonar el repositorio
 
 ```bash
-cd app-CalleGo
+git clone https://github.com/yxdhii/app-essalud-v2.git
 ```
 
-## Instalar dependencias
+## 2. Acceder al proyecto
+
+```bash
+cd app-essalud-v2
+```
+
+## 3. Instalar dependencias
 
 ```bash
 pnpm install
 ```
 
-## Ejecutar en modo desarrollo
+## 4. Ejecutar en modo desarrollo
 
 ```bash
 pnpm run dev
 ```
 
-## Compilar para producción
+## 5. Compilar para producción
 
 ```bash
 pnpm run build
 ```
 
+## 6. Previsualizar la compilación
+
+```bash
+pnpm run preview
+```
+
 ---
 
-# 🌐 Acceso
+# 🌐 Acceso local
 
-```
+Una vez iniciado el servidor de desarrollo, puedes acceder desde tu navegador:
+
+```text
 http://localhost:5173
 ```
 
 ---
 
+# 🚀 Despliegue
+
+El proyecto está preparado para su despliegue mediante **Vercel**, utilizando Vite como herramienta de compilación.
+
+Configuración de despliegue:
+
+| Configuración | Valor |
+|---|---|
+| Framework Preset | Vite |
+| Build Command | `pnpm build` |
+| Output Directory | `dist` |
+| Install Command | `pnpm install` |
+
+---
+
 # 📌 Estado del proyecto
 
-🚧 **En desarrollo activo** — nuevas funcionalidades y mejoras de UI/UX en progreso.
+🚧 **En desarrollo activo.**
+
+El prototipo continúa en proceso de implementación, incorporando mejoras en la experiencia de usuario, navegación, diseño visual y funcionalidades de los diferentes módulos.
 
 ---
 
@@ -203,8 +271,8 @@ Universidad Tecnológica del Perú (UTP)
 
 <br>
 
-⭐ **Si este proyecto te resultó útil, considera darle una estrella al repositorio.**
+⭐ **Si este proyecto te resultó interesante, considera darle una estrella al repositorio.**
 
-© 2026 · CalleGo
+© 2026 · EsSalud Digital
 
 </div>
