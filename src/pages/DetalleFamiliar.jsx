@@ -1,12 +1,13 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+
 import {
   ArrowLeft,
   UserRound,
   UsersRound,
   CalendarDays,
   CreditCard,
-  HeartPulse,
   ChevronRight,
   House,
   CircleHelp,
@@ -15,12 +16,11 @@ import {
   ClipboardList,
   Trash2,
   Info,
-  MessageCircle,
-  User,
 } from "lucide-react";
 
 import logoEssalud from "../assets/digital-logo.png";
 import BottomNavigation from "../components/BottomNavigation";
+import ConfirmacionModal from "../components/ConfirmacionModal";
 
 import {
   obtenerFamiliaresVinculados,
@@ -35,15 +35,20 @@ export default function DetalleFamiliar() {
   const usuario = obtenerUsuarioActivo();
   const pacienteRecibido = location.state?.paciente;
 
+  // Estado del modal de confirmación.
+  const [modalAbierto, setModalAbierto] = useState(false);
+
   const familiares = obtenerFamiliaresVinculados(usuario?.dni);
 
   const familiarRegistrado = familiares.find(
-    (familiar) => String(familiar.dni) === String(dni),
+    (familiar) => String(familiar.dni) === String(dni)
   );
 
   const familiar =
     familiarRegistrado ||
-    (String(pacienteRecibido?.dni) === String(dni) ? pacienteRecibido : null);
+    (String(pacienteRecibido?.dni) === String(dni)
+      ? pacienteRecibido
+      : null);
 
   const navegarMenu = (id) => {
     if (id === "inicio") navigate("/essalud/inicio");
@@ -62,8 +67,14 @@ export default function DetalleFamiliar() {
         <section className="detalle-familiar-error">
           <UserRound size={38} />
           <h2>Inicia sesión</h2>
-          <p>Necesitas iniciar sesión para consultar este perfil.</p>
-          <button type="button" onClick={() => navigate("/essalud/login")}>
+          <p>
+            Necesitas iniciar sesión para consultar este perfil.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => navigate("/essalud/login")}
+          >
             Ir al inicio de sesión
           </button>
         </section>
@@ -98,7 +109,7 @@ export default function DetalleFamiliar() {
             aria-label="Ayuda"
             onClick={() =>
               window.alert(
-                "Aquí puedes consultar la información y los servicios disponibles para tu familiar.",
+                "Aquí puedes consultar la información y los servicios disponibles para tu familiar."
               )
             }
           >
@@ -109,15 +120,23 @@ export default function DetalleFamiliar() {
         <section className="detalle-familiar-error">
           <UsersRound size={40} />
           <h2>Perfil no encontrado</h2>
+
           <p>
             Este familiar no está vinculado a tu cuenta o ya no está disponible.
           </p>
-          <button type="button" onClick={volverAFamiliares}>
+
+          <button
+            type="button"
+            onClick={volverAFamiliares}
+          >
             Volver a familiares
           </button>
         </section>
 
-        <BottomNavigation active="perfil" onNavigate={navegarMenu} />
+        <BottomNavigation
+          active="perfil"
+          onNavigate={navegarMenu}
+        />
       </main>
     );
   }
@@ -126,22 +145,30 @@ export default function DetalleFamiliar() {
   const documento = familiar.dni || dni;
   const parentesco = familiar.relation || "Familiar";
 
+  // Abrir modal de confirmación.
   const manejarDesvinculacion = () => {
-    const confirmar = window.confirm(
-      `¿Estás segura de que deseas desvincular a ${nombre} de tu cuenta?`,
-    );
+    setModalAbierto(true);
+  };
 
-    if (!confirmar) return;
+  // Confirmar la desvinculación.
+  const confirmarDesvinculacion = () => {
+    setModalAbierto(false);
 
-    // Aquí debes conectar la función de desvinculación de tu servicio.
+    // Aquí debes conectar la función de desvinculación
+    // cuando esté implementada en usuariosService.js.
     window.alert(
-      "La desvinculación todavía necesita conectarse con usuariosService.js.",
+      "La desvinculación todavía necesita conectarse con usuariosService.js."
     );
+  };
+
+  // Cerrar el modal sin desvincular.
+  const cerrarModal = () => {
+    setModalAbierto(false);
   };
 
   return (
     <main className="detalle-familiar-page">
-      {/* ENCABEZADO REUTILIZADO DE MIS CITAS */}
+
       {/* ENCABEZADO */}
       <header className="appointments-header">
         <button
@@ -167,7 +194,7 @@ export default function DetalleFamiliar() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Aquí puedes consultar la información y los servicios disponibles para tu familiar.",
+              "Aquí puedes consultar la información y los servicios disponibles para tu familiar."
             )
           }
         >
@@ -177,6 +204,7 @@ export default function DetalleFamiliar() {
 
       {/* CONTENIDO PRINCIPAL */}
       <section className="detalle-familiar-content">
+
         {/* PERFIL */}
         <div className="detalle-familiar-profile">
           <div
@@ -188,11 +216,15 @@ export default function DetalleFamiliar() {
             {familiar.avatar || <UserRound size={38} />}
           </div>
 
-          <span className="detalle-profile-label">Perfil familiar</span>
+          <span className="detalle-profile-label">
+            Perfil familiar
+          </span>
 
           <h2>{nombre}</h2>
 
-          <span className="detalle-parentesco">{parentesco}</span>
+          <span className="detalle-parentesco">
+            {parentesco}
+          </span>
 
           <p>
             Consulta la información y los servicios de salud de tu familiar.
@@ -348,7 +380,9 @@ export default function DetalleFamiliar() {
         <div className="detalle-family-info">
           <Info size={19} />
 
-          <p>Podrás volver a vincular esta cuenta cuando lo necesites.</p>
+          <p>
+            Podrás volver a vincular esta cuenta cuando lo necesites.
+          </p>
         </div>
 
         {/* VOLVER */}
@@ -360,7 +394,20 @@ export default function DetalleFamiliar() {
           <House size={19} />
           Volver al inicio
         </button>
+
       </section>
+
+      {/* MODAL DE CONFIRMACIÓN PARA DESVINCULAR */}
+      <ConfirmacionModal
+        isOpen={modalAbierto}
+        title="¿Desvincular familiar?"
+        message={`¿Estás segura de que deseas desvincular a ${nombre} de tu cuenta? Ya no podrás gestionar sus servicios médicos desde tu perfil.`}
+        cancelText="Conservar vínculo"
+        confirmText="Sí, desvincular"
+        onCancel={cerrarModal}
+        onConfirm={confirmarDesvinculacion}
+      />
+
     </main>
   );
 }

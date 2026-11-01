@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 
 import BottomNavigation from "../components/BottomNavigation";
+import ConfirmacionModal from "../components/ConfirmacionModal";
+
 import logoEssalud from "../assets/digital-logo.png";
 
 import {
@@ -46,6 +48,9 @@ export default function DatosPersonales() {
   const [mensaje, setMensaje] = useState("");
   const [guardado, setGuardado] = useState(false);
 
+  // Estado del modal de confirmación.
+  const [modalAbierto, setModalAbierto] = useState(false);
+
   // Formatear fecha de nacimiento.
   const formatearFecha = (fecha) => {
     if (!fecha) return "No registrado";
@@ -61,7 +66,7 @@ export default function DatosPersonales() {
     });
   };
 
-  // Guardar los datos editados.
+  // Validar los datos antes de mostrar la confirmación.
   const guardarCambios = (e) => {
     e.preventDefault();
 
@@ -89,18 +94,47 @@ export default function DatosPersonales() {
 
     if (!valido) return;
 
-    const resultado = actualizarDatosPersonales({
-      phone: telefonoLimpio,
-      direccion: direccionLimpia,
-    });
+    // Abrir modal después de validar los campos.
+    setModalAbierto(true);
+  };
 
-    setMensaje(resultado.mensaje);
-
-    if (resultado.correcto) {
-      setGuardado(true);
-      setTelefono(resultado.usuario.phone || "");
-      setDireccion(resultado.usuario.direccion || "");
+  // Confirmar y guardar los datos personales.
+  const confirmarGuardarCambios = () => {
+    if (!usuario) {
+      setModalAbierto(false);
+      setMensaje("No se encontró una sesión de usuario activa.");
+      setGuardado(false);
+      return;
     }
+
+    try {
+      const resultado = actualizarDatosPersonales({
+        phone: telefono.trim(),
+        direccion: direccion.trim(),
+      });
+
+      setModalAbierto(false);
+      setMensaje(resultado.mensaje);
+
+      if (resultado.correcto) {
+        setGuardado(true);
+        setTelefono(resultado.usuario.phone || "");
+        setDireccion(resultado.usuario.direccion || "");
+      } else {
+        setGuardado(false);
+      }
+    } catch (error) {
+      console.error("Error al actualizar los datos:", error);
+
+      setModalAbierto(false);
+      setGuardado(false);
+      setMensaje("No se pudieron guardar los cambios. Inténtalo nuevamente.");
+    }
+  };
+
+  // Cerrar el modal sin guardar.
+  const cerrarModal = () => {
+    setModalAbierto(false);
   };
 
   // Navegación inferior.
@@ -154,7 +188,6 @@ export default function DatosPersonales() {
       {/* CONTENIDO */}
       <div className="datos-content">
 
-        
         {/* INFORMACIÓN PERSONAL */}
         <section className="datos-heading">
           <h2>Información personal</h2>
@@ -367,6 +400,17 @@ export default function DatosPersonales() {
       <BottomNavigation
         active="perfil"
         onNavigate={navegarMenu}
+      />
+
+      {/* MODAL DE CONFIRMACIÓN PARA GUARDAR CAMBIOS */}
+      <ConfirmacionModal
+        isOpen={modalAbierto}
+        title="¿Guardar cambios?"
+        message="¿Estás segura de que deseas actualizar tus datos personales?"
+        cancelText="Seguir editando"
+        confirmText="Sí, guardar cambios"
+        onCancel={cerrarModal}
+        onConfirm={confirmarGuardarCambios}
       />
 
     </main>

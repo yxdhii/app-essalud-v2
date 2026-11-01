@@ -1,6 +1,6 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   X,
   ChevronRight,
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import logoEssalud from "../assets/digital-logo.png";
+import ConfirmacionModal from "./ConfirmacionModal";
 
 import { obtenerFamiliaresVinculados } from "../services/usuariosService.js";
 
@@ -50,9 +51,10 @@ export default function HomeSidebar({
   const nombreUsuario = user?.nombres || user?.name || "Usuario";
   const dniUsuario = String(user?.dni || "");
 
-  // Cargar los familiares vinculados al titular actual.
+  // Cargar los familiares vinculados al titular actual
   const cargarFamiliares = () => {
     const familiares = obtenerFamiliaresVinculados(dniUsuario);
+
     setFamilyMembers(Array.isArray(familiares) ? familiares : []);
   };
 
@@ -60,7 +62,7 @@ export default function HomeSidebar({
     cargarFamiliares();
   }, [dniUsuario]);
 
-  // Datos del titular.
+  // Datos del titular
   const titular = {
     id: user?.id,
     dni: dniUsuario,
@@ -71,7 +73,7 @@ export default function HomeSidebar({
     color: "#d8edff",
   };
 
-  // El titular aparece primero y luego los familiares.
+  // El titular aparece primero y luego los familiares
   const profiles = [
     titular,
     ...familyMembers.map((familiar) => ({
@@ -80,20 +82,28 @@ export default function HomeSidebar({
     })),
   ];
 
-  // Mostrar como máximo tres perfiles en el menú lateral.
+  // Mostrar como máximo tres perfiles
   const visibleProfiles = profiles.slice(0, 3);
 
+  // Navegación del menú lateral
   const handleNavigate = (label) => {
     setActiveItem(label);
 
     const rutas = {
       Inicio: "/essalud/inicio",
+      "Mis citas": "/essalud/citas",
+      Recetas: "/essalud/recetas",
+      "Mis exámenes": "/essalud/examenes",
+      "Descansos médicos": "/essalud/descansos-medicos",
+      Referencias: "/essalud/referencias",
+      TeleEduca: "/essalud/teleeduca",
+      "Riesgo de diabetes tipo 2": "/essalud/riesgo-diabetes",
+
       Familiares: "/essalud/familiares",
       "Mis familiares": "/essalud/familiares",
       "Agregar familiar": "/essalud/agregar-familiar",
       "Cambiar de cuenta": "/essalud/cambiar-cuenta",
       "Mi perfil": "/essalud/perfil",
-      "Mis citas": "/essalud/citas",
     };
 
     if (onNavigate) {
@@ -107,7 +117,7 @@ export default function HomeSidebar({
     onClose();
   };
 
-  // Seleccionar un perfil familiar.
+  // Seleccionar un perfil familiar
   const handleSelectProfile = (profile) => {
     setSelectedProfile(profile.dni);
 
@@ -123,11 +133,7 @@ export default function HomeSidebar({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="sidebar-overlay"
-      onClick={onClose}
-      role="presentation"
-    >
+    <div className="sidebar-overlay" onClick={onClose} role="presentation">
       <aside
         className="home-sidebar"
         role="dialog"
@@ -160,9 +166,7 @@ export default function HomeSidebar({
           onClick={() => handleNavigate("Mi perfil")}
         >
           <div className="sidebar-avatar">
-            {user?.avatar || (
-              <UserRound size={28} strokeWidth={1.8} />
-            )}
+            {user?.avatar || <UserRound size={28} strokeWidth={1.8} />}
           </div>
 
           <div className="sidebar-profile-info">
@@ -195,9 +199,7 @@ export default function HomeSidebar({
                   backgroundColor: profile.color || "#d8edff",
                 }}
               >
-                {profile.avatar || (
-                  <UserRound size={22} strokeWidth={1.8} />
-                )}
+                {profile.avatar || <UserRound size={22} strokeWidth={1.8} />}
               </span>
 
               <span className="sidebar-family-info">
@@ -205,82 +207,67 @@ export default function HomeSidebar({
                 <small>{profile.relation}</small>
               </span>
 
-              <ChevronRight
-                size={17}
-                className="sidebar-family-arrow"
-              />
+              <ChevronRight size={17} className="sidebar-family-arrow" />
             </button>
           ))}
 
           {/* ACCESO A TODOS LOS FAMILIARES */}
-<button
-  type="button"
-  className="sidebar-add-account"
-  onClick={() => handleNavigate("Familiares")}
->
-  <span className="sidebar-add-icon">
-    <Users size={20} strokeWidth={1.8} />
-  </span>
+          <button
+            type="button"
+            className="sidebar-add-account"
+            onClick={() => handleNavigate("Familiares")}
+          >
+            <span className="sidebar-add-icon">
+              <Users size={20} strokeWidth={1.8} />
+            </span>
 
-  <span className="sidebar-add-info">
-    <strong>Familiares</strong>
-    <small>Consultar y administrar familiares</small>
-  </span>
+            <span className="sidebar-add-info">
+              <strong>Familiares</strong>
+              <small>Consultar y administrar familiares</small>
+            </span>
 
-  <ChevronRight
-    size={17}
-    className="sidebar-add-arrow"
-  />
-</button>
+            <ChevronRight size={17} className="sidebar-add-arrow" />
+          </button>
 
-{/* AGREGAR FAMILIAR */}
-<button
-  type="button"
-  className="sidebar-add-account"
-  onClick={() => handleNavigate("Agregar familiar")}
->
-  <span className="sidebar-add-icon">
-    <Plus size={20} strokeWidth={1.8} />
-  </span>
+          {/* AGREGAR FAMILIAR */}
+          <button
+            type="button"
+            className="sidebar-add-account"
+            onClick={() => handleNavigate("Agregar familiar")}
+          >
+            <span className="sidebar-add-icon">
+              <Plus size={20} strokeWidth={1.8} />
+            </span>
 
-  <span className="sidebar-add-info">
-    <strong>Agregar familiar</strong>
-    <small>Vincula a un asegurado</small>
-  </span>
+            <span className="sidebar-add-info">
+              <strong>Agregar familiar</strong>
+              <small>Vincula a un asegurado</small>
+            </span>
 
-  <ChevronRight
-    size={17}
-    className="sidebar-add-arrow"
-  />
-</button>
+            <ChevronRight size={17} className="sidebar-add-arrow" />
+          </button>
 
-{/* CAMBIAR DE CUENTA */}
-<button
-  type="button"
-  className="sidebar-add-account"
-  onClick={() => handleNavigate("Cambiar de cuenta")}
->
-  <span className="sidebar-add-icon">
-    <Users size={20} strokeWidth={1.8} />
-  </span>
+          {/* CAMBIAR DE CUENTA */}
+          <button
+            type="button"
+            className="sidebar-add-account"
+            onClick={() => handleNavigate("Cambiar de cuenta")}
+          >
+            <span className="sidebar-add-icon">
+              <Users size={20} strokeWidth={1.8} />
+            </span>
 
-  <span className="sidebar-add-info">
-    <strong>Cambiar de cuenta</strong>
-    <small>Inicia sesión con otro titular</small>
-  </span>
+            <span className="sidebar-add-info">
+              <strong>Cambiar de cuenta</strong>
+              <small>Inicia sesión con otro titular</small>
+            </span>
 
-  <ChevronRight
-    size={17}
-    className="sidebar-add-arrow"
-  />
-</button>
+            <ChevronRight size={17} className="sidebar-add-arrow" />
+          </button>
         </section>
 
         {/* NAVEGACIÓN PRINCIPAL */}
-        <nav
-          className="sidebar-navigation"
-          aria-label="Navegación principal"
-        >
+        <nav className="sidebar-navigation" aria-label="Navegación principal">
           {menuItems.map(({ label, icon: Icon }) => (
             <button
               type="button"
@@ -289,9 +276,7 @@ export default function HomeSidebar({
                 activeItem === label ? "active" : ""
               }`}
               onClick={() => handleNavigate(label)}
-              aria-current={
-                activeItem === label ? "page" : undefined
-              }
+              aria-current={activeItem === label ? "page" : undefined}
             >
               <Icon size={19} strokeWidth={1.8} />
               <span>{label}</span>
@@ -312,53 +297,23 @@ export default function HomeSidebar({
         </div>
 
         {/* CONFIRMAR CIERRE DE SESIÓN */}
-        {showLogoutConfirm && (
-          <div
-            className="logout-confirm-overlay"
-            onClick={() => setShowLogoutConfirm(false)}
-          >
-            <div
-              className="logout-confirm-modal"
-              role="alertdialog"
-              aria-modal="true"
-              aria-labelledby="logout-confirm-title"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <h2 id="logout-confirm-title">
-                ¿Estás seguro de cerrar sesión?
-              </h2>
+        <ConfirmacionModal
+          isOpen={showLogoutConfirm}
+          title="¿Estás seguro de cerrar sesión?"
+          onCancel={() => setShowLogoutConfirm(false)}
+          onConfirm={() => {
+            setShowLogoutConfirm(false);
+            onClose();
 
-              <div className="logout-confirm-actions">
-                <button
-                  type="button"
-                  className="logout-cancel-button"
-                  onClick={() => setShowLogoutConfirm(false)}
-                >
-                  No
-                </button>
+            if (onLogout) {
+              onLogout();
+            }
 
-                <button
-                  type="button"
-                  className="logout-accept-button"
-                  onClick={() => {
-                    setShowLogoutConfirm(false);
-                    onClose();
-
-                    if (onLogout) {
-                      onLogout();
-                    }
-
-                    navigate("/essalud/login", {
-                      replace: true,
-                    });
-                  }}
-                >
-                  Sí
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+            navigate("/essalud/gestionar-cuentas", {
+              replace: true,
+            });
+          }}
+        />
       </aside>
     </div>
   );

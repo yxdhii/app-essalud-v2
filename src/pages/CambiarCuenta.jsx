@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { asegurados } from "../data/asegurados.js";
+
 import {
   ArrowLeft,
   Plus,
@@ -12,7 +14,11 @@ import {
 } from "lucide-react";
 
 import logoEssalud from "../assets/digital-logo.png";
+
 import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+
+import ConfirmacionModal from "../components/ConfirmacionModal";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 export default function CambiarCuenta() {
   const navigate = useNavigate();
@@ -20,18 +26,25 @@ export default function CambiarCuenta() {
   const [usuarioActivo, setUsuarioActivo] = useState(null);
   const [cuentas, setCuentas] = useState([]);
 
+  // Estado del modal y cuenta seleccionada
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [cuentaSeleccionada, setCuentaSeleccionada] = useState(null);
+
+  // Estado de la pantalla de carga
+  const [validando, setValidando] = useState(false);
+
   useEffect(() => {
     const usuario = obtenerUsuarioActivo();
     setUsuarioActivo(usuario);
 
     try {
       const cuentasGuardadas = JSON.parse(
-        localStorage.getItem("essalud_cuentas_agregadas") || "[]",
+        localStorage.getItem("essalud_cuentas_agregadas") || "[]"
       );
 
       const todasLasCuentas = cuentasGuardadas.map((cuenta) => {
         const asegurado = asegurados.find(
-          (item) => String(item.dni) === String(cuenta.dni),
+          (item) => String(item.dni) === String(cuenta.dni)
         );
 
         const esUsuarioActivo =
@@ -51,11 +64,11 @@ export default function CambiarCuenta() {
       if (
         usuario &&
         !todasLasCuentas.some(
-          (cuenta) => String(cuenta.dni) === String(usuario.dni),
+          (cuenta) => String(cuenta.dni) === String(usuario.dni)
         )
       ) {
         const aseguradoActivo = asegurados.find(
-          (item) => String(item.dni) === String(usuario.dni),
+          (item) => String(item.dni) === String(usuario.dni)
         );
 
         todasLasCuentas.unshift({
@@ -96,7 +109,7 @@ export default function CambiarCuenta() {
         aria-label="Ayuda"
         onClick={() =>
           window.alert(
-            "Selecciona una cuenta guardada o agrega otra cuenta para continuar.",
+            "Selecciona una cuenta guardada o agrega otra cuenta para continuar."
           )
         }
       >
@@ -105,16 +118,7 @@ export default function CambiarCuenta() {
     </header>
   );
 
-  const obtenerIniciales = (nombre = "") => {
-    return nombre
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((parte) => parte.charAt(0))
-      .join("")
-      .toUpperCase();
-  };
-
+  // Formatear DNI
   const formatearDni = (dni = "") => {
     const documento = String(dni);
 
@@ -125,11 +129,58 @@ export default function CambiarCuenta() {
     return `${"•".repeat(documento.length - 2)}${documento.slice(-2)}`;
   };
 
+  // Agregar otra cuenta
   const agregarCuenta = () => {
     navigate("/essalud/login", {
       state: { cambiarCuenta: true },
     });
   };
+
+  // Abrir modal al seleccionar una cuenta
+  const seleccionarCuenta = (cuenta) => {
+    setCuentaSeleccionada(cuenta);
+    setModalAbierto(true);
+  };
+
+  // Cerrar modal
+  const cerrarModal = () => {
+    setModalAbierto(false);
+    setCuentaSeleccionada(null);
+  };
+
+  // Confirmar selección y mostrar pantalla de carga
+  const confirmarCambioCuenta = () => {
+    if (!cuentaSeleccionada) return;
+
+    const cuenta = cuentaSeleccionada;
+
+    setModalAbierto(false);
+    setValidando(true);
+
+    setTimeout(() => {
+      setValidando(false);
+
+      const esActiva =
+        usuarioActivo &&
+        String(cuenta.dni) === String(usuarioActivo.dni);
+
+      setCuentaSeleccionada(null);
+
+      if (esActiva) {
+        navigate("/essalud/inicio");
+        return;
+      }
+
+      window.alert(
+        "El cambio de cuenta estará disponible cuando conectemos esta acción con el servicio de cuentas guardadas."
+      );
+    }, 1500);
+  };
+
+  const nombreCuenta =
+    cuentaSeleccionada?.nombres ||
+    cuentaSeleccionada?.name ||
+    "esta cuenta";
 
   return (
     <main className="appointments-screen cambiar-cuenta-screen">
@@ -144,7 +195,8 @@ export default function CambiarCuenta() {
         <div className="cambiar-cuenta-list">
           {cuentas.map((cuenta) => {
             const esActiva =
-              usuarioActivo && String(cuenta.dni) === String(usuarioActivo.dni);
+              usuarioActivo &&
+              String(cuenta.dni) === String(usuarioActivo.dni);
 
             return (
               <button
@@ -153,15 +205,7 @@ export default function CambiarCuenta() {
                 className={`cuenta-guardada ${
                   esActiva ? "cuenta-guardada-activa" : ""
                 }`}
-                onClick={() => {
-                  if (esActiva) {
-                    navigate("/essalud/inicio");
-                  } else {
-                    window.alert(
-                      "El cambio de cuenta estará disponible cuando conectemos esta tarjeta con el servicio de cuentas guardadas.",
-                    );
-                  }
-                }}
+                onClick={() => seleccionarCuenta(cuenta)}
                 aria-current={esActiva ? "true" : undefined}
               >
                 <span
@@ -171,12 +215,16 @@ export default function CambiarCuenta() {
                   }}
                 >
                   <span className="cuenta-avatar-inner">
-                    {cuenta.avatar || <UserRound size={28} strokeWidth={1.8} />}
+                    {cuenta.avatar || (
+                      <UserRound size={28} strokeWidth={1.8} />
+                    )}
                   </span>
                 </span>
 
                 <span className="cuenta-guardada-info">
-                  <strong>{cuenta.nombres || cuenta.name || "Usuario"}</strong>
+                  <strong>
+                    {cuenta.nombres || cuenta.name || "Usuario"}
+                  </strong>
 
                   {esActiva && (
                     <span className="cuenta-activa-badge">
@@ -193,7 +241,10 @@ export default function CambiarCuenta() {
                     <Check size={19} strokeWidth={3} />
                   </span>
                 ) : (
-                  <ChevronRight size={22} className="cuenta-chevron" />
+                  <ChevronRight
+                    size={22}
+                    className="cuenta-chevron"
+                  />
                 )}
               </button>
             );
@@ -224,7 +275,9 @@ export default function CambiarCuenta() {
             <ShieldCheck size={24} />
           </span>
 
-          <p>Tus cuentas guardadas se mantienen en este dispositivo.</p>
+          <p>
+            Tus cuentas guardadas se mantienen en este dispositivo.
+          </p>
         </div>
 
         <button
@@ -235,6 +288,22 @@ export default function CambiarCuenta() {
           Volver al inicio
         </button>
       </section>
+
+      {/* Modal de confirmación */}
+      <ConfirmacionModal
+        isOpen={modalAbierto}
+        title="¿Cambiar de cuenta?"
+        message={`¿Estás segura de que deseas continuar con la cuenta de ${nombreCuenta}?`}
+        cancelText="Cancelar"
+        confirmText="Sí, continuar"
+        onCancel={cerrarModal}
+        onConfirm={confirmarCambioCuenta}
+      />
+
+      {/* Pantalla de carga reutilizada del Login */}
+      {validando && (
+        <LoadingOverlay message="Cambiando de cuenta..." />
+      )}
     </main>
   );
 }

@@ -1,52 +1,94 @@
+
 import { useEffect, useState } from "react";
+
 import {
   X,
   Fingerprint,
   ScanFace,
   CheckCircle2,
   ShieldCheck,
+  AlertCircle,
 } from "lucide-react";
 
-function BiometricModal({ method, onSuccess, onClose }) {
+import {
+  verificarBiometriaSimulada,
+} from "../services/usuariosService.js";
+
+function BiometricModal({
+  method,
+  dni,
+  nombre,
+  onSuccess,
+  onClose,
+}) {
   const [status, setStatus] = useState("scanning");
+  const [mensaje, setMensaje] = useState("");
 
   const isFingerprint = method === "fingerprint";
+
   const title = isFingerprint
     ? "Autenticación con huella"
     : "Reconocimiento facial";
 
-  useEffect(() => {
-    setStatus("scanning");
-
-    const scanTimer = setTimeout(() => {
-      setStatus("success");
-    }, 2500);
-
-    const loginTimer = setTimeout(() => {
-      onSuccess();
-    }, 4000);
-
-    return () => {
-      clearTimeout(scanTimer);
-      clearTimeout(loginTimer);
-    };
-  }, [method, onSuccess]);
-
   const Icon = isFingerprint ? Fingerprint : ScanFace;
 
+  // ============================================
+  // VERIFICACIÓN BIOMÉTRICA
+  // ============================================
+
+  useEffect(() => {
+    let cancelado = false;
+    let successTimer;
+
+    const verificationTimer = setTimeout(() => {
+      if (cancelado) return;
+
+      const resultado = verificarBiometriaSimulada(
+        dni,
+        method
+      );
+
+      if (!resultado.correcto) {
+        setStatus("error");
+        setMensaje(resultado.mensaje);
+        return;
+      }
+
+      setStatus("success");
+      setMensaje(
+        "Tu identidad ha sido verificada correctamente."
+      );
+
+      successTimer = setTimeout(() => {
+        if (!cancelado) {
+          onSuccess();
+        }
+      }, 1200);
+
+    }, 2500);
+
+    return () => {
+      cancelado = true;
+      clearTimeout(verificationTimer);
+      clearTimeout(successTimer);
+    };
+  }, [dni, method, onSuccess]);
+
+  // ============================================
+  // RENDERIZADO
+  // ============================================
+
   return (
-    <div
-      className="biometric-overlay"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <section
+    <div className="biometric-modal-overlay">
+
+      <div
         className="biometric-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="biometric-title"
       >
+
+        {/* BOTÓN CERRAR */}
         <button
           type="button"
           className="biometric-close"
@@ -56,63 +98,91 @@ function BiometricModal({ method, onSuccess, onClose }) {
           <X size={21} />
         </button>
 
-        <div className="biometric-security-badge">
-          <ShieldCheck size={17} />
-          <span>ACCESO SEGURO</span>
-        </div>
-
+        {/* ICONO BIOMÉTRICO */}
         <div
-          className={`biometric-scan-icon ${
-            status === "success" ? "biometric-success" : ""
+          className={`biometric-modal-icon ${
+            status === "scanning" ? "scanning" : status
           }`}
         >
           {status === "success" ? (
-            <CheckCircle2 size={66} strokeWidth={1.5} />
+            <CheckCircle2 size={48} />
+          ) : status === "error" ? (
+            <AlertCircle size={48} />
           ) : (
-            <Icon size={72} strokeWidth={1.4} />
+            <Icon size={48} />
           )}
-
-          {status === "scanning" && <span className="biometric-scan-ring" />}
         </div>
 
+        {/* TÍTULO */}
         <h2 id="biometric-title">
-          {status === "success" ? "¡Autenticación exitosa!" : title}
+          {status === "scanning"
+            ? title
+            : status === "success"
+              ? "¡Verificación exitosa!"
+              : "No se pudo verificar"}
         </h2>
 
-        <p className="biometric-description">
-          {status === "success"
-            ? "Tu identidad ha sido verificada correctamente."
-            : isFingerprint
-              ? "Coloca tu dedo en el sensor para continuar."
-              : "Mira hacia la cámara para continuar."}
-        </p>
+        {/* NOMBRE DEL USUARIO */}
+        {nombre && status === "scanning" && (
+          <p className="biometric-modal-name">
+            {nombre}
+          </p>
+        )}
 
-        {status === "scanning" ? (
+        {/* ESTADO DE VERIFICACIÓN */}
+        {status === "scanning" && (
           <>
-            <div className="biometric-progress">
-              <span />
-            </div>
-            <p className="biometric-status">
-              {isFingerprint
-                ? "Verificando huella digital..."
-                : "Analizando rostro..."}
+            <p className="biometric-description">
+              Estamos realizando la verificación de tu identidad.
             </p>
+
+            <small className="biometric-status-text">
+              Verificando identidad...
+            </small>
           </>
-        ) : (
-          <div className="biometric-success-message">
-            <CheckCircle2 size={18} />
-            <span>Accediendo a EsSalud Digital...</span>
+        )}
+
+        {/* VERIFICACIÓN EXITOSA */}
+        {status === "success" && (
+          <div className="biometric-result success">
+            <ShieldCheck size={21} />
+
+            <p>{mensaje}</p>
+
+            <small>
+              Ingresando a EsSalud Digital...
+            </small>
           </div>
         )}
 
-        <button type="button" className="biometric-cancel" onClick={onClose}>
-          Cancelar
-        </button>
+        {/* ERROR DE VERIFICACIÓN */}
+        {status === "error" && (
+          <div className="biometric-result error">
+            <AlertCircle size={21} />
 
-        <p className="biometric-demo-note">
-          Simulación demostrativa · No utiliza sensores reales
-        </p>
-      </section>
+            <p>{mensaje}</p>
+
+            <button
+              type="button"
+              onClick={onClose}
+            >
+              Volver al inicio de sesión
+            </button>
+          </div>
+        )}
+
+        {/* CANCELAR */}
+        {status === "scanning" && (
+          <button
+            type="button"
+            className="biometric-cancel"
+            onClick={onClose}
+          >
+            Cancelar
+          </button>
+        )}
+
+      </div>
     </div>
   );
 }

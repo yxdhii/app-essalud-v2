@@ -1,5 +1,7 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   ArrowLeft,
   UserRoundPlus,
@@ -13,6 +15,8 @@ import {
 import logoEssalud from "../assets/digital-logo.png";
 import { vincularFamiliar } from "../services/usuariosService.js";
 
+import ConfirmacionModal from "../components/ConfirmacionModal";
+
 export default function AgregarFamiliar() {
   const navigate = useNavigate();
 
@@ -22,6 +26,10 @@ export default function AgregarFamiliar() {
   const [correcto, setCorrecto] = useState(false);
   const [cargando, setCargando] = useState(false);
 
+  // Estado del modal de confirmación.
+  const [modalAbierto, setModalAbierto] = useState(false);
+
+  // Validar datos antes de mostrar el modal.
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -38,7 +46,14 @@ export default function AgregarFamiliar() {
       return;
     }
 
+    // Abrir modal después de validar.
+    setModalAbierto(true);
+  };
+
+  // Confirmar y vincular al familiar.
+  const confirmarVinculacion = () => {
     setCargando(true);
+    setMensaje("");
 
     try {
       const resultado = vincularFamiliar(dni, parentesco);
@@ -46,11 +61,16 @@ export default function AgregarFamiliar() {
       setMensaje(resultado.mensaje);
       setCorrecto(resultado.correcto);
 
+      setModalAbierto(false);
+
       if (resultado.correcto) {
         setDni("");
         setParentesco("");
       }
-    } catch {
+    } catch (error) {
+      console.error("Error al vincular al familiar:", error);
+
+      setModalAbierto(false);
       setMensaje("Ocurrió un error al vincular al familiar.");
       setCorrecto(false);
     } finally {
@@ -58,9 +78,15 @@ export default function AgregarFamiliar() {
     }
   };
 
+  // Cerrar el modal sin vincular.
+  const cerrarModal = () => {
+    setModalAbierto(false);
+  };
+
   return (
     <main className="appointments-screen agregar-familiar-page">
-      {/* ENCABEZADO REUTILIZADO DE MIS CITAS */}
+
+      {/* ENCABEZADO */}
       <header className="appointments-header">
         <button
           type="button"
@@ -85,7 +111,7 @@ export default function AgregarFamiliar() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Ingresa el DNI y el parentesco para vincular a un familiar.",
+              "Ingresa el DNI y el parentesco para vincular a un familiar."
             )
           }
         >
@@ -95,6 +121,7 @@ export default function AgregarFamiliar() {
 
       {/* CONTENIDO DEL FORMULARIO */}
       <section className="agregar-familiar-content">
+
         <div className="agregar-familiar-intro">
           <div className="agregar-familiar-icon">
             <UserRoundPlus size={32} />
@@ -108,8 +135,14 @@ export default function AgregarFamiliar() {
           </p>
         </div>
 
-        <form className="agregar-familiar-form" onSubmit={handleSubmit}>
-          <label htmlFor="dni-familiar">DNI del familiar</label>
+        <form
+          className="agregar-familiar-form"
+          onSubmit={handleSubmit}
+        >
+          {/* DNI DEL FAMILIAR */}
+          <label htmlFor="dni-familiar">
+            DNI del familiar
+          </label>
 
           <div className="agregar-familiar-input">
             <CreditCard size={20} />
@@ -122,7 +155,9 @@ export default function AgregarFamiliar() {
               placeholder="Ingresa los 8 dígitos"
               value={dni}
               onChange={(event) => {
-                setDni(event.target.value.replace(/\D/g, "").slice(0, 8));
+                setDni(
+                  event.target.value.replace(/\D/g, "").slice(0, 8)
+                );
                 setMensaje("");
               }}
               maxLength={8}
@@ -130,7 +165,10 @@ export default function AgregarFamiliar() {
             />
           </div>
 
-          <label htmlFor="parentesco-familiar">Parentesco</label>
+          {/* PARENTESCO */}
+          <label htmlFor="parentesco-familiar">
+            Parentesco
+          </label>
 
           <div className="agregar-familiar-input">
             <UsersRound size={20} />
@@ -154,6 +192,7 @@ export default function AgregarFamiliar() {
             </select>
           </div>
 
+          {/* MENSAJE DE RESULTADO */}
           {mensaje && (
             <div
               className={`agregar-familiar-message ${
@@ -172,6 +211,7 @@ export default function AgregarFamiliar() {
             </div>
           )}
 
+          {/* BOTÓN VINCULAR */}
           <button
             type="submit"
             className="agregar-familiar-submit"
@@ -180,6 +220,7 @@ export default function AgregarFamiliar() {
             {cargando ? "Vinculando..." : "Vincular familiar"}
           </button>
 
+          {/* BOTÓN CANCELAR */}
           <button
             type="button"
             className="agregar-familiar-cancel"
@@ -189,14 +230,28 @@ export default function AgregarFamiliar() {
           </button>
         </form>
 
+        {/* AVISO */}
         <div className="agregar-familiar-notice">
           <AlertCircle size={19} />
 
           <p>
-            Recuerda que el DNI debe corresponder a un asegurado
+            Recuerda que el DNI debe corresponder a un asegurado.
           </p>
         </div>
+
       </section>
+
+      {/* MODAL DE CONFIRMACIÓN */}
+      <ConfirmacionModal
+        isOpen={modalAbierto}
+        title="¿Vincular familiar?"
+        message={`¿Estás segura de que deseas vincular al familiar con DNI ${dni} y parentesco ${parentesco}?`}
+        cancelText="Seguir editando"
+        confirmText="Sí, vincular familiar"
+        onCancel={cerrarModal}
+        onConfirm={confirmarVinculacion}
+      />
+
     </main>
   );
 }

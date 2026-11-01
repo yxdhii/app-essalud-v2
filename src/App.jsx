@@ -50,6 +50,9 @@ import Perfil from "./pages/Perfil";
 import DatosPersonales from "./pages/DatosPersonales";
 import SeguridadCuenta from "./pages/SeguridadCuenta";
 import DetalleReceta from "./pages/DetalleReceta";
+import GestionarCuentas from "./pages/GestionarCuentas";
+import CambiarContrasena from "./pages/CambiarContrasena";
+import BiometriaCuenta from "./pages/BiometriaCuenta";
 import "./App.css";
 
 function App() {
@@ -120,6 +123,18 @@ function App() {
           />
           <Route path="/essalud/seguridad" element={<SeguridadCuenta />} />
           <Route path="/essalud/receta/:id" element={<DetalleReceta />} />
+          <Route
+            path="/essalud/gestionar-cuentas"
+            element={<GestionarCuentas />}
+          />
+          <Route
+            path="/essalud/seguridad/contrasena"
+            element={<CambiarContrasena />}
+          />
+          <Route
+            path="/essalud/seguridad/biometria"
+            element={<BiometriaCuenta />}
+          />
         </Routes>
       </PhoneFrame>
     </BrowserRouter>

@@ -1,11 +1,17 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import HelpTutorial from "../components/HelpTutorial";
 import BiometricModal from "../components/BiometricModal";
-import { iniciarSesion } from "../services/usuariosService.js";
-import { buscarAsegurado } from "../services/usuariosService.js";
-import {
+import LoadingOverlay from "../components/LoadingOverlay";
 
+import {
+  iniciarSesion,
+  obtenerConfiguracionBiometrica,
+} from "../services/usuariosService.js";
+
+import {
   ChevronLeft,
   CircleHelp,
   IdCard,
@@ -21,10 +27,27 @@ import essaludLogo from "../assets/digital-logo1.png";
 
 function EsSaludLogin() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [dni, setDni] = useState("");
+  // ============================================
+  // ESTADO INICIAL
+  // ============================================
+
+  const requierePassword =
+    location.state?.requierePassword === true;
+
+  const nombreCuenta = location.state?.nombre || "";
+
+  const [dni, setDni] = useState(
+    location.state?.dni || ""
+  );
+
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
+
+  const [remember, setRemember] = useState(
+    requierePassword ? false : true
+  );
+
   const [showPassword, setShowPassword] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formMessage, setFormMessage] = useState("");
@@ -32,34 +55,75 @@ function EsSaludLogin() {
   const [showHelp, setShowHelp] = useState(false);
   const [biometricMethod, setBiometricMethod] = useState(null);
 
-  // Determinar cuándo debe desenfocarse el contenido.
-  const isOverlayOpen = showHelp || Boolean(biometricMethod);
+  // Configuración biométrica de la cuenta.
+  const [biometria, setBiometria] = useState({
+    fingerprint: false,
+    face: false,
+  });
 
-  // Detener la pantalla de carga después de 2 segundos.
+  const isOverlayOpen =
+    showHelp || Boolean(biometricMethod);
+
+  // ============================================
+  // CONSULTAR MÉTODOS BIOMÉTRICOS
+  // ============================================
+
+  useEffect(() => {
+    if (dni.length !== 8) {
+      setBiometria({
+        fingerprint: false,
+        face: false,
+      });
+
+      return;
+    }
+
+    const configuracion =
+      obtenerConfiguracionBiometrica(dni);
+
+    setBiometria(configuracion);
+  }, [dni]);
+
+  // ============================================
+  // PANTALLA DE CARGA
+  // ============================================
+
   useEffect(() => {
     if (!loading) return;
 
     const timer = setTimeout(() => {
-      setLoading(false);
-      navigate("/essalud/inicio");
+      navigate("/essalud/inicio", {
+        replace: true,
+      });
     }, 1500);
 
     return () => clearTimeout(timer);
   }, [loading, navigate]);
-  // Validaciones.
-  const dniError = !dni.trim()
-    ? "El número de documento no puede estar vacío"
-    : dni.length !== 8
-      ? "El DNI debe contener 8 dígitos"
-      : "";
+
+  // ============================================
+  // VALIDACIONES
+  // ============================================
+
+  const dniError = requierePassword
+    ? ""
+    : !dni.trim()
+      ? "El número de documento no puede estar vacío"
+      : dni.length !== 8
+        ? "El DNI debe contener 8 dígitos"
+        : "";
 
   const passwordError = !password.trim()
     ? "La contraseña no puede estar vacía"
     : "";
 
-  // Inicio de sesión.
+  // ============================================
+  // INICIO DE SESIÓN TRADICIONAL
+  // ============================================
+
   const handleLogin = (e) => {
     e.preventDefault();
+
+    if (loading) return;
 
     setSubmitted(true);
     setFormMessage("");
@@ -68,7 +132,11 @@ function EsSaludLogin() {
       return;
     }
 
-    const resultado = iniciarSesion(dni, password);
+    const resultado = iniciarSesion(
+      dni,
+      password,
+      requierePassword ? false : remember
+    );
 
     if (!resultado.correcto) {
       setFormMessage(resultado.mensaje);
@@ -78,48 +146,96 @@ function EsSaludLogin() {
     setLoading(true);
   };
 
-  // Cambiar DNI.
+  // ============================================
+  // CAMBIAR DNI
+  // ============================================
+
   const handleDniChange = (e) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 8);
+    const value = e.target.value
+      .replace(/\D/g, "")
+      .slice(0, 8);
 
     setDni(value);
     setFormMessage("");
+    setSubmitted(false);
   };
 
-  // Cambiar contraseña.
+  // ============================================
+  // CAMBIAR CONTRASEÑA
+  // ============================================
+
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
     setFormMessage("");
   };
 
-  // Métodos biométricos.
+  // ============================================
+  // MÉTODOS BIOMÉTRICOS
+  // ============================================
+
   const handleBiometric = (method) => {
     setFormMessage("");
+
+    if (loading) return;
+
+    if (!dni || dni.length !== 8) {
+      setFormMessage(
+        "Ingresa un DNI válido para continuar con la autenticación biométrica."
+      );
+
+      return;
+    }
+
+    if (!biometria[method]) {
+      setFormMessage(
+        "Este método biométrico no está habilitado. Ingresa con tu contraseña y actívalo desde Seguridad."
+      );
+
+      return;
+    }
+
     setBiometricMethod(method);
   };
 
-  const handleBiometricSuccess = () => {
+  // Se ejecuta cuando la verificación biométrica es correcta.
+  const handleBiometricSuccess = useCallback(() => {
     setBiometricMethod(null);
+    setLoading(true);
+  }, []);
 
-    // Cambia esta ruta por la ruta real de tu pantalla principal.
-    navigate("/essalud/inicio");
+  // ============================================
+  // REGRESAR A GESTIONAR CUENTAS
+  // ============================================
+
+  const handleBack = () => {
+    navigate("/essalud/gestionar-cuentas");
   };
+
+  // ============================================
+  // RENDERIZADO
+  // ============================================
 
   return (
     <main
-      className={`essalud-login ${isOverlayOpen ? "essalud-modal-open" : ""}`}
+      className={`essalud-login ${
+        isOverlayOpen ? "essalud-modal-open" : ""
+      }`}
     >
-      {/* CONTENIDO PRINCIPAL DEL INICIO DE SESIÓN */}
+      {/* CONTENIDO PRINCIPAL */}
       <div className="essalud-login-content">
-        {/* Barra superior */}
+
+        {/* BARRA SUPERIOR */}
         <header className="essalud-login-header">
           <button
             type="button"
             className="essalud-back-button"
-            onClick={() => navigate(-1)}
-            aria-label="Volver"
+            onClick={handleBack}
+            aria-label="Volver a gestionar cuentas"
           >
-            <ChevronLeft size={25} strokeWidth={1.8} />
+            <ChevronLeft
+              size={25}
+              strokeWidth={1.8}
+            />
           </button>
 
           <button
@@ -127,59 +243,114 @@ function EsSaludLogin() {
             className="essalud-help-button"
             onClick={() => setShowHelp(true)}
           >
-            <CircleHelp size={21} strokeWidth={2} />
+            <CircleHelp
+              size={21}
+              strokeWidth={2}
+            />
+
             <span>Ayuda</span>
           </button>
         </header>
 
-        {/* Logo */}
+        {/* LOGO */}
         <div className="essalud-login-brand">
-          <img src={essaludLogo} alt="EsSalud Digital" />
+          <img
+            src={essaludLogo}
+            alt="EsSalud Digital"
+          />
         </div>
 
-        {/* Título */}
+        {/* TÍTULO */}
         <section className="essalud-login-heading">
-          <h1>Iniciar sesión</h1>
-          <p>Ingresa tus datos para continuar</p>
+          {requierePassword ? (
+            <>
+              <h1>
+                ¡Hola
+                {nombreCuenta
+                  ? `, ${nombreCuenta.split(" ")[0]}`
+                  : ""}!
+              </h1>
+
+              <p>
+                Ingresa tu contraseña para continuar con tu cuenta.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1>Iniciar sesión</h1>
+              <p>Ingresa tus datos para continuar</p>
+            </>
+          )}
         </section>
 
-        {/* Formulario */}
-        <form className="essalud-login-form" onSubmit={handleLogin} noValidate>
+        {/* FORMULARIO */}
+        <form
+          className="essalud-login-form"
+          onSubmit={handleLogin}
+          noValidate
+        >
+
           {/* DNI */}
-          <div
-            data-tour="dni"
-            className={`essalud-field-group ${
-              submitted && dniError ? "has-error" : ""
-            }`}
-          >
-            <label className="essalud-login-input">
-              <IdCard size={27} strokeWidth={1.9} aria-hidden="true" />
-
-              <span className="essalud-input-content">
-                <span>Número de documento</span>
-
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Ej. 12345678"
-                  value={dni}
-                  onChange={handleDniChange}
-                  maxLength={8}
-                  autoComplete="username"
-                  aria-label="Número de documento"
-                  aria-invalid={submitted && Boolean(dniError)}
+          {!requierePassword && (
+            <div
+              data-tour="dni"
+              className={`essalud-field-group ${
+                submitted && dniError ? "has-error" : ""
+              }`}
+            >
+              <label className="essalud-login-input">
+                <IdCard
+                  size={27}
+                  strokeWidth={1.9}
+                  aria-hidden="true"
                 />
-              </span>
-            </label>
 
-            {submitted && dniError && (
-              <p className="essalud-field-error" role="alert">
-                {dniError}
-              </p>
-            )}
-          </div>
+                <span className="essalud-input-content">
+                  <span>Número de documento</span>
 
-          {/* Contraseña */}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Ej. 12345678"
+                    value={dni}
+                    onChange={handleDniChange}
+                    maxLength={8}
+                    autoComplete="username"
+                    aria-label="Número de documento"
+                    aria-invalid={
+                      submitted && Boolean(dniError)
+                    }
+                  />
+                </span>
+              </label>
+
+              {submitted && dniError && (
+                <p
+                  className="essalud-field-error"
+                  role="alert"
+                >
+                  {dniError}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* DNI IDENTIFICADO */}
+          {requierePassword && (
+            <div className="essalud-login-identified">
+              <IdCard
+                size={21}
+                strokeWidth={1.8}
+              />
+
+              <div>
+                <span>Cuenta identificada</span>
+                <strong>DNI: {dni}</strong>
+              </div>
+            </div>
+          )}
+
+          {/* CONTRASEÑA */}
           <div
             data-tour="password"
             className={`essalud-field-group ${
@@ -187,7 +358,11 @@ function EsSaludLogin() {
             }`}
           >
             <label className="essalud-login-input">
-              <LockKeyhole size={27} strokeWidth={1.9} aria-hidden="true" />
+              <LockKeyhole
+                size={27}
+                strokeWidth={1.9}
+                aria-hidden="true"
+              />
 
               <span className="essalud-input-content">
                 <span>Contraseña</span>
@@ -199,43 +374,64 @@ function EsSaludLogin() {
                   onChange={handlePasswordChange}
                   autoComplete="current-password"
                   aria-label="Contraseña"
-                  aria-invalid={submitted && Boolean(passwordError)}
+                  aria-invalid={
+                    submitted && Boolean(passwordError)
+                  }
                 />
               </span>
 
               <button
                 type="button"
                 className="essalud-password-toggle"
-                onClick={() => setShowPassword((previous) => !previous)}
+                onClick={() =>
+                  setShowPassword((previous) => !previous)
+                }
                 aria-label={
-                  showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  showPassword
+                    ? "Ocultar contraseña"
+                    : "Mostrar contraseña"
                 }
               >
                 {showPassword ? (
-                  <EyeOff size={20} strokeWidth={1.8} />
+                  <EyeOff
+                    size={20}
+                    strokeWidth={1.8}
+                  />
                 ) : (
-                  <Eye size={20} strokeWidth={1.8} />
+                  <Eye
+                    size={20}
+                    strokeWidth={1.8}
+                  />
                 )}
               </button>
             </label>
 
             {submitted && passwordError && (
-              <p className="essalud-field-error" role="alert">
+              <p
+                className="essalud-field-error"
+                role="alert"
+              >
                 {passwordError}
               </p>
             )}
           </div>
 
-          {/* Recordar cuenta */}
+          {/* OPCIONES DE CUENTA */}
           <div className="essalud-login-options">
-            <label className="essalud-remember">
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-              />
-              <span>Recordar mi cuenta</span>
-            </label>
+
+            {!requierePassword && (
+              <label className="essalud-remember">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) =>
+                    setRemember(e.target.checked)
+                  }
+                />
+
+                <span>Recordar mi cuenta</span>
+              </label>
+            )}
 
             <button
               data-tour="forgot"
@@ -243,7 +439,7 @@ function EsSaludLogin() {
               className="essalud-forgot-password"
               onClick={() =>
                 setFormMessage(
-                  "La recuperación de contraseña estará disponible próximamente.",
+                  "La recuperación de contraseña estará disponible próximamente."
                 )
               }
             >
@@ -251,90 +447,131 @@ function EsSaludLogin() {
             </button>
           </div>
 
-          {/* Mensaje general */}
+          {/* MENSAJE GENERAL */}
           {formMessage && (
-            <p className="essalud-login-error" role="status">
+            <p
+              className="essalud-login-error"
+              role="status"
+            >
               {formMessage}
             </p>
           )}
 
-          {/* Botón ingresar */}
+          {/* BOTÓN INGRESAR */}
           <button
             type="submit"
             className="essalud-login-submit"
             disabled={loading}
           >
             <span>Ingresar</span>
-            <ChevronRight size={22} strokeWidth={2.5} />
+
+            <ChevronRight
+              size={22}
+              strokeWidth={2.5}
+            />
           </button>
         </form>
 
-        {/* Separador */}
+        {/* ====================================== */}
+        {/* OPCIONES BIOMÉTRICAS */}
+        {/* SIEMPRE VISIBLES */}
+        {/* ====================================== */}
+
         <div className="essalud-login-divider">
           <span />
           <p>O continúa con</p>
           <span />
         </div>
 
-        {/* Métodos biométricos */}
         <div className="essalud-login-biometric">
-          <button type="button" onClick={() => handleBiometric("fingerprint")}>
-            <Fingerprint size={27} strokeWidth={1.8} aria-hidden="true" />
+
+          {/* HUELLA DIGITAL */}
+          <button
+            type="button"
+            onClick={() =>
+              handleBiometric("fingerprint")
+            }
+            disabled={loading}
+            className={
+              biometria.fingerprint
+                ? ""
+                : "biometric-disabled"
+            }
+            aria-label="Ingresar con huella digital"
+          >
+            <Fingerprint
+              size={27}
+              strokeWidth={1.8}
+              aria-hidden="true"
+            />
+
             <span>Huella digital</span>
           </button>
 
-          <button type="button" onClick={() => handleBiometric("face")}>
-            <ScanFace size={27} strokeWidth={1.8} aria-hidden="true" />
+          {/* RECONOCIMIENTO FACIAL */}
+          <button
+            type="button"
+            onClick={() =>
+              handleBiometric("face")
+            }
+            disabled={loading}
+            className={
+              biometria.face
+                ? ""
+                : "biometric-disabled"
+            }
+            aria-label="Ingresar con reconocimiento facial"
+          >
+            <ScanFace
+              size={27}
+              strokeWidth={1.8}
+              aria-hidden="true"
+            />
+
             <span>Reconocimiento facial</span>
           </button>
+
         </div>
 
-        {/* Crear cuenta */}
-        <div className="essalud-login-register">
-          <p>¿No tienes una cuenta?</p>
+        {/* CREAR CUENTA */}
+        {!requierePassword && (
+          <div className="essalud-login-register">
+            <p>¿No tienes una cuenta?</p>
 
-          <button
-            data-tour="register"
-            type="button"
-            onClick={() => navigate("/essalud/registro")}
-          >
-            Crear cuenta
-          </button>
-        </div>
-
-        {/* Pantalla de carga */}
-        {loading && (
-          <div className="essalud-loading-overlay">
-            <div className="essalud-loading-content">
-              <img
-                src={essaludLogo}
-                alt="EsSalud Digital"
-                className="essalud-loading-logo"
-              />
-
-              <div
-                className="essalud-loading-spinner"
-                role="progressbar"
-                aria-label="Validando tus datos"
-              />
-
-              <p className="essalud-loading-text">Validando tus datos...</p>
-            </div>
+            <button
+              data-tour="register"
+              type="button"
+              onClick={() =>
+                navigate("/essalud/registro")
+              }
+            >
+              Crear cuenta
+            </button>
           </div>
         )}
+
+        {/* PANTALLA DE CARGA */}
+        {loading && <LoadingOverlay />}
+
       </div>
 
-      {/* TUTORIAL: FUERA DEL CONTENIDO QUE SE DESENFOCA */}
-      <HelpTutorial isOpen={showHelp} onClose={() => setShowHelp(false)} />
+      {/* TUTORIAL */}
+      <HelpTutorial
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+      />
 
-      {/* MODAL BIOMÉTRICO: FUERA DEL CONTENIDO QUE SE DESENFOCA */}
+      {/* MODAL BIOMÉTRICO */}
       {biometricMethod && (
         <BiometricModal
           method={biometricMethod}
+          dni={dni}
+          nombre={nombreCuenta}
           onSuccess={handleBiometricSuccess}
           onClose={() => setBiometricMethod(null)}
         />
       )}
+
     </main>
   );
 }

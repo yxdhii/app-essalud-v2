@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -16,6 +17,8 @@ import {
 } from "lucide-react";
 
 import BottomNavigation from "../components/BottomNavigation";
+import ConfirmacionModal from "../components/ConfirmacionModal";
+
 import logoEssalud from "../assets/digital-logo.png";
 import emptyAppointments from "../assets/empty-appointments.png";
 
@@ -37,6 +40,10 @@ export default function MisCitas() {
   );
 
   const [citas, setCitas] = useState([]);
+
+  // Estados para el modal de confirmación.
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [citaSeleccionada, setCitaSeleccionada] = useState(null);
 
   const usuario = obtenerUsuarioActivo();
 
@@ -88,16 +95,33 @@ export default function MisCitas() {
     (cita) => cita.estado === "Cancelada"
   );
 
-  // Cancelar una cita.
+  // Abrir modal para confirmar la cancelación.
   const manejarCancelacion = (id) => {
-    if (
-      window.confirm(
-        "¿Estás segura de que deseas cancelar esta cita?"
-      )
-    ) {
-      cancelarCita(id);
+    setCitaSeleccionada(id);
+    setModalAbierto(true);
+  };
+
+  // Confirmar la cancelación de la cita.
+  const confirmarCancelacion = () => {
+    if (citaSeleccionada === null) return;
+
+    try {
+      cancelarCita(citaSeleccionada);
+
+      setModalAbierto(false);
+      setCitaSeleccionada(null);
+
       actualizarCitas();
+    } catch (error) {
+      console.error("Error al cancelar la cita:", error);
+      window.alert("No se pudo cancelar la cita. Inténtalo nuevamente.");
     }
+  };
+
+  // Cerrar el modal sin cancelar la cita.
+  const cerrarModalCancelacion = () => {
+    setModalAbierto(false);
+    setCitaSeleccionada(null);
   };
 
   // Calificar la atención.
@@ -478,6 +502,17 @@ export default function MisCitas() {
       <BottomNavigation
         active="citas"
         onNavigate={navegarMenu}
+      />
+
+      {/* MODAL DE CONFIRMACIÓN PARA CANCELAR CITA */}
+      <ConfirmacionModal
+        isOpen={modalAbierto}
+        title="¿Cancelar cita médica?"
+        message="¿Estás segura de que deseas cancelar esta cita? Esta acción no se puede deshacer."
+        cancelText="No, regresar"
+        confirmText="Sí, cancelar"
+        onCancel={cerrarModalCancelacion}
+        onConfirm={confirmarCancelacion}
       />
     </main>
   );
