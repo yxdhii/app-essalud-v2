@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { guardarCita } from "../services/citasService.js";
@@ -6,6 +7,8 @@ import {
   obtenerUsuarioActivo,
   obtenerFamiliaresVinculados,
 } from "../services/usuariosService.js";
+
+import { usePaciente } from "../context/PacienteContext";
 
 import BottomNavigation from "../components/BottomNavigation";
 import ConfirmacionModal from "../components/ConfirmacionModal";
@@ -34,14 +37,46 @@ import {
 
 // ESPECIALIDADES
 const especialidades = [
-  { nombre: "Medicina General", descripcion: "Atención integral", icono: Stethoscope },
-  { nombre: "Pediatría", descripcion: "Niños y adolescentes", icono: Baby },
-  { nombre: "Ginecología y Obstetricia", descripcion: "Salud de la mujer", icono: HeartPulse },
-  { nombre: "Psicología", descripcion: "Bienestar emocional", icono: Brain },
-  { nombre: "Medicina Interna", descripcion: "Salud del adulto", icono: UserRound },
-  { nombre: "Cardiología", descripcion: "Salud del corazón", icono: HeartPulse },
-  { nombre: "Cirugía General", descripcion: "Evaluación y tratamiento", icono: UserRoundCheck },
-  { nombre: "Dermatología", descripcion: "Cuidado de la piel", icono: Sparkles },
+  {
+    nombre: "Medicina General",
+    descripcion: "Atención integral",
+    icono: Stethoscope,
+  },
+  {
+    nombre: "Pediatría",
+    descripcion: "Niños y adolescentes",
+    icono: Baby,
+  },
+  {
+    nombre: "Ginecología y Obstetricia",
+    descripcion: "Salud de la mujer",
+    icono: HeartPulse,
+  },
+  {
+    nombre: "Psicología",
+    descripcion: "Bienestar emocional",
+    icono: Brain,
+  },
+  {
+    nombre: "Medicina Interna",
+    descripcion: "Salud del adulto",
+    icono: UserRound,
+  },
+  {
+    nombre: "Cardiología",
+    descripcion: "Salud del corazón",
+    icono: HeartPulse,
+  },
+  {
+    nombre: "Cirugía General",
+    descripcion: "Evaluación y tratamiento",
+    icono: UserRoundCheck,
+  },
+  {
+    nombre: "Dermatología",
+    descripcion: "Cuidado de la piel",
+    icono: Sparkles,
+  },
 ];
 
 // MÉDICOS
@@ -138,10 +173,16 @@ export default function ReservarCita() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // USUARIO TITULAR
+  // USUARIO TITULAR QUE TIENE LA SESIÓN ACTIVA
   const usuario = obtenerUsuarioActivo();
 
-  // FAMILIARES VINCULADOS
+  // CONTEXTO GLOBAL DEL PACIENTE
+  const {
+    pacienteSeleccionado: pacienteContexto,
+    seleccionarPaciente: cambiarPacienteActivo,
+  } = usePaciente();
+
+  // FAMILIARES VINCULADOS AL TITULAR
   const familiares = usuario
     ? obtenerFamiliaresVinculados(usuario.dni) || []
     : [];
@@ -159,25 +200,41 @@ export default function ReservarCita() {
       ) === index
   );
 
-  // SI LLEGA DESDE EL DETALLE DE UN FAMILIAR, PRESELECCIONARLO.
-  // SI LLEGA DESDE EL INICIO, PRESELECCIONAR AL TITULAR.
-  const [pacienteSeleccionado, setPacienteSeleccionado] = useState(
-    () => {
-      const pacienteRecibido = location.state?.paciente;
+  // OBTENER PACIENTE RECIBIDO O PACIENTE DEL CONTEXTO
+  const [pacienteSeleccionado, setPacienteSeleccionado] = useState(() => {
+    const pacienteRecibido =
+      location.state?.paciente || pacienteContexto;
 
-      if (pacienteRecibido) {
-        return (
-          pacientesDisponibles.find(
-            (item) =>
-              String(item.dni) === String(pacienteRecibido.dni)
-          ) || usuario
-        );
-      }
-
-      return usuario;
+    if (pacienteRecibido?.dni) {
+      return (
+        pacientesDisponibles.find(
+          (item) =>
+            String(item.dni) === String(pacienteRecibido.dni)
+        ) || usuario
+      );
     }
-  );
 
+    return usuario;
+  });
+
+  // MANTENER SINCRONIZADO EL PACIENTE CON EL CONTEXTO GLOBAL
+  useEffect(() => {
+    const pacienteRecibido =
+      location.state?.paciente || pacienteContexto;
+
+    if (!pacienteRecibido?.dni) return;
+
+    const pacienteEncontrado = pacientesDisponibles.find(
+      (item) =>
+        String(item.dni) === String(pacienteRecibido.dni)
+    );
+
+    if (pacienteEncontrado) {
+      setPacienteSeleccionado(pacienteEncontrado);
+    }
+  }, [pacienteContexto?.dni, location.state?.paciente?.dni]);
+
+  // IDENTIFICAR SI EL PACIENTE ES UN FAMILIAR
   const esFamiliar =
     pacienteSeleccionado &&
     usuario &&
@@ -213,11 +270,23 @@ export default function ReservarCita() {
     );
   }, [especialidad]);
 
+  // SELECCIONAR PACIENTE PARA LA RESERVA
+  const seleccionarPacienteReserva = (paciente) => {
+    setPacienteSeleccionado(paciente);
+
+    // Actualizar el contexto global sin cambiar la sesión del titular.
+    if (usuario?.dni && paciente?.dni) {
+      cambiarPacienteActivo(paciente, usuario);
+    }
+  };
+
   // CONTINUAR ENTRE PASOS
   const continuar = () => {
     if (paso === 1) {
       if (!pacienteSeleccionado) {
-        window.alert("Selecciona a la persona que recibirá la atención.");
+        window.alert(
+          "Selecciona a la persona que recibirá la atención."
+        );
         return;
       }
 
@@ -277,13 +346,23 @@ export default function ReservarCita() {
   // MOSTRAR MODAL ANTES DE RESERVAR
   const confirmarReserva = () => {
     if (!usuario) {
-      window.alert("Tu sesión no está activa. Inicia sesión nuevamente.");
+      window.alert(
+        "Tu sesión no está activa. Inicia sesión nuevamente."
+      );
       navigate("/essalud");
       return;
     }
 
-    if (!pacienteSeleccionado || !medico || !especialidad || !fecha || !horario) {
-      window.alert("Completa los datos de tu cita antes de continuar.");
+    if (
+      !pacienteSeleccionado ||
+      !medico ||
+      !especialidad ||
+      !fecha ||
+      !horario
+    ) {
+      window.alert(
+        "Completa los datos de tu cita antes de continuar."
+      );
       return;
     }
 
@@ -313,13 +392,17 @@ export default function ReservarCita() {
     const usuarioActual = obtenerUsuarioActivo();
 
     if (!usuarioActual) {
-      window.alert("Tu sesión no está activa. Inicia sesión nuevamente.");
+      window.alert(
+        "Tu sesión no está activa. Inicia sesión nuevamente."
+      );
       navigate("/essalud");
       return;
     }
 
     if (!pacienteSeleccionado?.dni) {
-      window.alert("No se identificó al paciente seleccionado.");
+      window.alert(
+        "No se identificó al paciente seleccionado."
+      );
       return;
     }
 
@@ -328,15 +411,18 @@ export default function ReservarCita() {
       usuarioId: usuarioActual.id,
       solicitanteId: usuarioActual.id,
       solicitanteNombre:
-        usuarioActual.nombres || usuarioActual.nombre || "Titular",
+        usuarioActual.nombres ||
+        usuarioActual.nombre ||
+        "Titular",
 
       // PACIENTE QUE RECIBE LA ATENCIÓN
-      pacienteId: pacienteSeleccionado.dni,
+      pacienteId: String(pacienteSeleccionado.dni),
       pacienteNombre:
         pacienteSeleccionado.nombres ||
         pacienteSeleccionado.nombre ||
         "Paciente",
 
+      // DATOS DE LA CITA
       tipo: tipoCita,
       paciente: esFamiliar ? "Familiar" : "Yo",
       especialidad,
@@ -354,7 +440,9 @@ export default function ReservarCita() {
     });
 
     if (!resultado.correcto) {
-      window.alert(resultado.mensaje || "No se pudo guardar la cita.");
+      window.alert(
+        resultado.mensaje || "No se pudo guardar la cita."
+      );
       return;
     }
 
@@ -404,7 +492,9 @@ export default function ReservarCita() {
           type="button"
           aria-label="Ayuda"
           onClick={() =>
-            window.alert("¿Necesitas ayuda para reservar tu cita?")
+            window.alert(
+              "¿Necesitas ayuda para reservar tu cita?"
+            )
           }
         >
           <CircleHelp size={18} />
@@ -452,7 +542,9 @@ export default function ReservarCita() {
         {/* PASO 1: TIPO DE CITA Y SELECCIÓN DEL PACIENTE */}
         {paso === 1 && (
           <div className="reservar-section">
-            <p className="reservar-step-label">PASO 1 DE 4</p>
+            <p className="reservar-step-label">
+              PASO 1 DE 4
+            </p>
 
             <h2>¿Qué tipo de cita deseas?</h2>
 
@@ -504,7 +596,8 @@ export default function ReservarCita() {
             <div className="reservar-patients-list">
               {pacientesDisponibles.map((item) => {
                 const seleccionado =
-                  String(pacienteSeleccionado?.dni) === String(item.dni);
+                  String(pacienteSeleccionado?.dni) ===
+                  String(item.dni);
 
                 const esTitular =
                   String(item.dni) === String(usuario?.dni);
@@ -516,7 +609,7 @@ export default function ReservarCita() {
                     className={`reservar-patient ${
                       seleccionado ? "selected" : ""
                     }`}
-                    onClick={() => setPacienteSeleccionado(item)}
+                    onClick={() => seleccionarPacienteReserva(item)}
                     aria-pressed={seleccionado}
                   >
                     <span className="reservar-avatar">
@@ -570,7 +663,9 @@ export default function ReservarCita() {
         {/* PASO 2: ESPECIALIDAD */}
         {paso === 2 && (
           <div className="reservar-section">
-            <p className="reservar-step-label">PASO 2 DE 4</p>
+            <p className="reservar-step-label">
+              PASO 2 DE 4
+            </p>
 
             <div className="reservar-summary">
               <span className="reservar-summary-icon">
@@ -585,12 +680,16 @@ export default function ReservarCita() {
                 <small>Tipo de cita</small>
                 <strong>{tipoCita}</strong>
                 <small>
-                  Para: {pacienteSeleccionado?.nombres ||
+                  Para:{" "}
+                  {pacienteSeleccionado?.nombres ||
                     pacienteSeleccionado?.nombre}
                 </small>
               </span>
 
-              <button type="button" onClick={() => setPaso(1)}>
+              <button
+                type="button"
+                onClick={() => setPaso(1)}
+              >
                 Editar
               </button>
             </div>
@@ -617,27 +716,29 @@ export default function ReservarCita() {
             </div>
 
             <div className="reservar-specialties">
-              {resultados.map(({ nombre, descripcion, icono: Icono }) => (
-                <button
-                  key={nombre}
-                  type="button"
-                  className={`reservar-specialty ${
-                    especialidad === nombre ? "selected" : ""
-                  }`}
-                  onClick={() => seleccionarEspecialidad(nombre)}
-                >
-                  <span className="reservar-specialty-icon">
-                    <Icono size={22} />
-                  </span>
+              {resultados.map(
+                ({ nombre, descripcion, icono: Icono }) => (
+                  <button
+                    key={nombre}
+                    type="button"
+                    className={`reservar-specialty ${
+                      especialidad === nombre ? "selected" : ""
+                    }`}
+                    onClick={() => seleccionarEspecialidad(nombre)}
+                  >
+                    <span className="reservar-specialty-icon">
+                      <Icono size={22} />
+                    </span>
 
-                  <span className="reservar-specialty-info">
-                    <strong>{nombre}</strong>
-                    <small>{descripcion}</small>
-                  </span>
+                    <span className="reservar-specialty-info">
+                      <strong>{nombre}</strong>
+                      <small>{descripcion}</small>
+                    </span>
 
-                  <ArrowRight size={18} />
-                </button>
-              ))}
+                    <ArrowRight size={18} />
+                  </button>
+                )
+              )}
 
               {resultados.length === 0 && (
                 <p className="reservar-no-results">
@@ -651,7 +752,9 @@ export default function ReservarCita() {
         {/* PASO 3: SELECCIÓN DE MÉDICO */}
         {paso === 3 && (
           <div className="reservar-section">
-            <p className="reservar-step-label">PASO 3 DE 4</p>
+            <p className="reservar-step-label">
+              PASO 3 DE 4
+            </p>
 
             <div className="reservar-summary">
               <span className="reservar-summary-icon">
@@ -662,12 +765,16 @@ export default function ReservarCita() {
                 <small>Especialidad seleccionada</small>
                 <strong>{especialidad}</strong>
                 <small>
-                  {tipoCita} · {pacienteSeleccionado?.nombres ||
+                  {tipoCita} ·{" "}
+                  {pacienteSeleccionado?.nombres ||
                     pacienteSeleccionado?.nombre}
                 </small>
               </span>
 
-              <button type="button" onClick={() => setPaso(2)}>
+              <button
+                type="button"
+                onClick={() => setPaso(2)}
+              >
                 Editar
               </button>
             </div>
@@ -697,6 +804,7 @@ export default function ReservarCita() {
                   <span className="reservar-doctor-info">
                     <strong>{item.nombre}</strong>
                     <small>{especialidad}</small>
+
                     <small className="reservar-cmp">
                       CMP {item.cmp}
                     </small>
@@ -731,7 +839,9 @@ export default function ReservarCita() {
         {/* PASO 4: FECHA Y HORARIO */}
         {paso === 4 && (
           <div className="reservar-section">
-            <p className="reservar-step-label">PASO 4 DE 4</p>
+            <p className="reservar-step-label">
+              PASO 4 DE 4
+            </p>
 
             <div className="reservar-summary">
               <span className="reservar-summary-icon">
@@ -744,7 +854,10 @@ export default function ReservarCita() {
                 <small>{especialidad}</small>
               </span>
 
-              <button type="button" onClick={() => setPaso(3)}>
+              <button
+                type="button"
+                onClick={() => setPaso(3)}
+              >
                 Editar
               </button>
             </div>
@@ -877,13 +990,7 @@ export default function ReservarCita() {
             <button
               className="reservar-primary"
               type="button"
-              onClick={() =>
-                navigate("/essalud/citas", {
-                  state: {
-                    paciente: esFamiliar ? pacienteSeleccionado : null,
-                  },
-                })
-              }
+              onClick={() => navigate("/essalud/citas")}
             >
               Ver mis citas <ArrowRight size={19} />
             </button>

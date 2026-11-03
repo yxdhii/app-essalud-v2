@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   ArrowLeft,
@@ -17,28 +18,69 @@ import {
 import logoEssalud from "../assets/digital-logo.png";
 import emptyPrescriptions from "../assets/empty-prescriptions.png";
 
-import { obtenerUsuarioActivo } from "../services/usuariosService.js";
-import { obtenerRecetasPaciente } from "../services/recetasService.js";
-import { descargarReceta as generarPDF } from "../utils/descargarReceta.js";
+import {
+  obtenerUsuarioActivo,
+  obtenerFamiliaresVinculados,
+} from "../services/usuariosService.js";
+
+import { usePaciente } from "../context/PacienteContext";
+
+import {
+  obtenerRecetasPaciente,
+} from "../services/recetasService.js";
+
+import {
+  descargarReceta as generarPDF,
+} from "../utils/descargarReceta.js";
 
 export default function Recetas() {
   const navigate = useNavigate();
-  const location = useLocation();
 
+  // Cuenta que inició sesión.
   const usuario = obtenerUsuarioActivo();
 
-  // Si se llega desde DetalleFamiliar, se recibe el familiar.
-  // Si se llega desde Inicio, se utiliza el titular.
-  const paciente = location.state?.paciente || null;
+  // Paciente seleccionado globalmente desde el menú familiar.
+  const { pacienteSeleccionado } = usePaciente();
 
-  const pacienteActual = paciente || usuario;
+  // Familiares autorizados de la cuenta autenticada.
+  const familiares = usuario
+    ? obtenerFamiliaresVinculados(usuario.dni) || []
+    : [];
 
-  // Las recetas nuevas utilizan el DNI como identificador del paciente.
-  const pacienteId = pacienteActual?.dni || pacienteActual?.id;
+  const pacientesDisponibles = [
+    usuario,
+    ...familiares,
+  ].filter(
+    (item, index, lista) =>
+      item?.dni &&
+      lista.findIndex(
+        (persona) =>
+          String(persona?.dni) === String(item.dni)
+      ) === index
+  );
 
-  // Compatibilidad con recetas antiguas del titular.
-  // No se utiliza para familiares para evitar mezclar sus recetas.
-  const identificadorAlternativo = paciente ? null : usuario?.id || null;
+  // Validar que el perfil seleccionado pertenezca a la cuenta actual.
+  const pacienteAutorizado = pacienteSeleccionado?.dni
+    ? pacientesDisponibles.find(
+        (item) =>
+          String(item.dni) === String(pacienteSeleccionado.dni)
+      )
+    : null;
+
+  // Si no existe una selección válida, se muestra el titular autenticado.
+  const pacienteActual = pacienteAutorizado || usuario;
+
+  // Las recetas se consultan por DNI del paciente.
+  const pacienteId = pacienteActual?.dni || null;
+
+  // Compatibilidad con recetas antiguas del titular únicamente
+  // cuando se consulta el propio perfil del titular.
+  const identificadorAlternativo =
+    usuario?.dni &&
+    pacienteActual?.dni &&
+    String(pacienteActual.dni) === String(usuario.dni)
+      ? usuario.id || null
+      : null;
 
   const documentoRef = useRef(null);
 
@@ -48,22 +90,28 @@ export default function Recetas() {
 
   // Cargar recetas del paciente.
   const cargarDatos = () => {
-    if (!pacienteId) {
+    if (!usuario || !pacienteId) {
       setRecetas([]);
       return;
     }
 
-    setRecetas(obtenerRecetasPaciente(pacienteId, identificadorAlternativo));
+    setRecetas(
+      obtenerRecetasPaciente(
+        pacienteId,
+        identificadorAlternativo
+      )
+    );
   };
 
   useEffect(() => {
     cargarDatos();
-  }, [pacienteId, identificadorAlternativo]);
+  }, [usuario?.id, pacienteId, identificadorAlternativo]);
 
-  // Clasificar recetas.
+  // Clasificar recetas según el periodo.
   const recetasFiltradas = recetas.filter((receta) => {
     const fechaReferencia =
-      receta.fechaRegistro || (receta.fecha ? `${receta.fecha}T12:00:00` : "");
+      receta.fechaRegistro ||
+      (receta.fecha ? `${receta.fecha}T12:00:00` : "");
 
     if (!fechaReferencia) return false;
 
@@ -73,20 +121,50 @@ export default function Recetas() {
 
     const ahora = new Date();
 
-    const inicioMesActual = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+    const inicioMesActual = new Date(
+      ahora.getFullYear(),
+      ahora.getMonth(),
+      1
+    );
 
     const inicioMesSiguiente = new Date(
       ahora.getFullYear(),
       ahora.getMonth() + 1,
-      1,
+      1
     );
 
     if (activeTab === "nuevas") {
-      return fechaReceta >= inicioMesActual && fechaReceta < inicioMesSiguiente;
+      return (
+        fechaReceta >= inicioMesActual &&
+        fechaReceta < inicioMesSiguiente
+      );
     }
 
     return fechaReceta < inicioMesActual;
   });
+
+  // Nombre del paciente actual.
+  const nombrePaciente =
+    pacienteActual?.nombres ||
+    pacienteActual?.nombre ||
+    "Paciente";
+
+  // Evitar mostrar el texto genérico "Paciente"
+  // cuando la receta no tiene el nombre registrado.
+  const obtenerNombrePacienteReceta = (receta) => {
+    const nombre =
+      receta?.pacienteNombre ||
+      receta?.paciente;
+
+    if (
+      nombre &&
+      String(nombre).trim().toLowerCase() !== "paciente"
+    ) {
+      return nombre;
+    }
+
+    return nombrePaciente;
+  };
 
   // Formatear fecha.
   const formatearFecha = (fecha) => {
@@ -111,7 +189,10 @@ export default function Recetas() {
 
     const descargar = async () => {
       try {
-        await generarPDF(documentoRef.current, recetaSeleccionada);
+        await generarPDF(
+          documentoRef.current,
+          recetaSeleccionada
+        );
       } catch (error) {
         console.error("Error al generar el PDF:", error);
         window.alert("No se pudo descargar la receta.");
@@ -129,20 +210,6 @@ export default function Recetas() {
     setRecetaSeleccionada(receta);
   };
 
-  // Navegación inferior.
-  const navegarMenu = (id) => {
-    const rutas = {
-      inicio: "/essalud/inicio",
-      citas: "/essalud/citas",
-      chat: "/essalud/chat",
-      perfil: "/essalud/perfil",
-    };
-
-    if (rutas[id]) {
-      navigate(rutas[id]);
-    }
-  };
-
   // Comprobar sesión.
   if (!usuario) {
     return (
@@ -152,7 +219,9 @@ export default function Recetas() {
 
           <h2>Inicia sesión</h2>
 
-          <p>Necesitas iniciar sesión para consultar tus recetas médicas.</p>
+          <p>
+            Necesitas iniciar sesión para consultar tus recetas médicas.
+          </p>
 
           <button
             type="button"
@@ -166,9 +235,6 @@ export default function Recetas() {
     );
   }
 
-  const nombrePaciente =
-    pacienteActual?.nombres || pacienteActual?.nombre || "tus";
-
   const tituloVacio =
     activeTab === "nuevas"
       ? "¡Aún no tienes recetas nuevas!"
@@ -181,6 +247,7 @@ export default function Recetas() {
 
   return (
     <main className="appointments-screen prescriptions-page">
+
       {/* ENCABEZADO */}
       <header className="appointments-header">
         <button
@@ -206,7 +273,7 @@ export default function Recetas() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Aquí puedes consultar las recetas médicas registradas después de tus atenciones.",
+              "Aquí puedes consultar las recetas médicas registradas después de tus atenciones."
             )
           }
         >
@@ -237,15 +304,13 @@ export default function Recetas() {
         </button>
       </div>
 
-      {/* PACIENTE */}
+      {/* PACIENTE ACTUAL */}
       <div className="prescriptions-patient">
         <UserRound size={17} />
 
         <span>
           Recetas de{" "}
-          <strong>
-            {pacienteActual?.nombres || pacienteActual?.nombre || "Paciente"}
-          </strong>
+          <strong>{nombrePaciente}</strong>
         </span>
       </div>
 
@@ -262,7 +327,9 @@ export default function Recetas() {
 
               <h2>{tituloVacio}</h2>
 
-              <p className="prescriptions-empty-description">{mensajeVacio}</p>
+              <p className="prescriptions-empty-description">
+                {mensajeVacio}
+              </p>
             </div>
 
             <section className="prescriptions-info-banner">
@@ -294,33 +361,39 @@ export default function Recetas() {
             </div>
 
             {recetasFiltradas.map((receta) => (
-              <article className="prescription-card" key={receta.id}>
+              <article
+                className="prescription-card"
+                key={receta.id}
+              >
                 <div className="prescription-card-heading">
                   <span className="prescription-icon">
                     <FileText size={23} />
                   </span>
 
                   <div>
-                    <h3>{receta.especialidad || "Receta médica"}</h3>
+                    <h3>
+                      {receta.especialidad || "Receta médica"}
+                    </h3>
 
-                    <p>{receta.medico || "Profesional de salud"}</p>
+                    <p>
+                      {receta.medico || "Profesional de salud"}
+                    </p>
                   </div>
                 </div>
 
-                {/* PACIENTE Y GESTOR */}
+                {/* PACIENTE */}
                 <div className="prescription-details">
                   <UserRound size={18} />
 
                   <span>
                     Paciente:{" "}
                     <strong>
-                      {receta.pacienteNombre ||
-                        receta.paciente ||
-                        nombrePaciente}
+                      {obtenerNombrePacienteReceta(receta)}
                     </strong>
                   </span>
                 </div>
 
+                {/* GESTOR */}
                 {receta.solicitanteNombre && (
                   <div className="prescription-details">
                     <UserRound size={18} />
@@ -398,10 +471,14 @@ export default function Recetas() {
             id="receta-pdf"
             className="detalle-receta-documento"
           >
+
             {/* ENCABEZADO DEL PDF */}
             <div className="detalle-receta-pdf-header">
               <div className="detalle-receta-pdf-logo">
-                <img src={logoEssalud} alt="EsSalud Digital" />
+                <img
+                  src={logoEssalud}
+                  alt="EsSalud Digital"
+                />
 
                 <div>
                   <strong>EsSalud Digital</strong>
@@ -409,7 +486,9 @@ export default function Recetas() {
                 </div>
               </div>
 
-              <span className="detalle-receta-pdf-label">RECETA MÉDICA</span>
+              <span className="detalle-receta-pdf-label">
+                RECETA MÉDICA
+              </span>
             </div>
 
             {/* BANNER */}
@@ -424,7 +503,9 @@ export default function Recetas() {
                 <p>Consulta los detalles de tu atención médica.</p>
               </div>
 
-              <span className="detalle-receta-id">{recetaSeleccionada.id}</span>
+              <span className="detalle-receta-id">
+                {recetaSeleccionada.id}
+              </span>
             </div>
 
             {/* PACIENTE */}
@@ -436,19 +517,18 @@ export default function Recetas() {
 
               <div className="detalle-receta-row">
                 <span>Paciente</span>
+
                 <strong>
-                  {recetaSeleccionada.pacienteNombre ||
-                    recetaSeleccionada.paciente ||
-                    pacienteActual?.nombres ||
-                    pacienteActual?.nombre ||
-                    "No disponible"}
+                  {obtenerNombrePacienteReceta(recetaSeleccionada)}
                 </strong>
               </div>
 
               <div className="detalle-receta-row">
                 <span>DNI</span>
+
                 <strong>
                   {recetaSeleccionada.dni ||
+                    recetaSeleccionada.pacienteId ||
                     pacienteActual?.dni ||
                     "No disponible"}
                 </strong>
@@ -456,11 +536,15 @@ export default function Recetas() {
 
               <div className="detalle-receta-row">
                 <span>Fecha de atención</span>
-                <strong>{formatearFecha(recetaSeleccionada.fecha)}</strong>
+
+                <strong>
+                  {formatearFecha(recetaSeleccionada.fecha)}
+                </strong>
               </div>
 
               <div className="detalle-receta-row">
                 <span>Tipo de atención</span>
+
                 <strong>
                   {recetaSeleccionada.tipoCita || "No especificado"}
                 </strong>
@@ -468,8 +552,10 @@ export default function Recetas() {
 
               <div className="detalle-receta-row">
                 <span>Gestionada por</span>
+
                 <strong>
-                  {recetaSeleccionada.solicitanteNombre || "No especificado"}
+                  {recetaSeleccionada.solicitanteNombre ||
+                    "No especificado"}
                 </strong>
               </div>
             </article>
@@ -483,11 +569,15 @@ export default function Recetas() {
 
               <div className="detalle-receta-row">
                 <span>Médico</span>
-                <strong>{recetaSeleccionada.medico || "No disponible"}</strong>
+
+                <strong>
+                  {recetaSeleccionada.medico || "No disponible"}
+                </strong>
               </div>
 
               <div className="detalle-receta-row">
                 <span>Especialidad</span>
+
                 <strong>
                   {recetaSeleccionada.especialidad || "No disponible"}
                 </strong>
@@ -527,35 +617,39 @@ export default function Recetas() {
 
               {(recetaSeleccionada.medicamentos || []).length > 0 ? (
                 <div className="detalle-receta-medicamentos">
-                  {recetaSeleccionada.medicamentos.map((medicamento, index) => (
-                    <div
-                      className="detalle-medicamento"
-                      key={medicamento.id || index}
-                    >
-                      <div className="detalle-medicamento-icon">
-                        <Pill size={20} />
+                  {recetaSeleccionada.medicamentos.map(
+                    (medicamento, index) => (
+                      <div
+                        className="detalle-medicamento"
+                        key={medicamento.id || index}
+                      >
+                        <div className="detalle-medicamento-icon">
+                          <Pill size={20} />
+                        </div>
+
+                        <div className="detalle-medicamento-info">
+                          <h4>
+                            {medicamento.nombre || "Medicamento"}
+                          </h4>
+
+                          <p>
+                            <strong>Dosis:</strong>{" "}
+                            {medicamento.dosis || "No especificada"}
+                          </p>
+
+                          <p>
+                            <strong>Frecuencia:</strong>{" "}
+                            {medicamento.frecuencia || "No especificada"}
+                          </p>
+
+                          <p>
+                            <strong>Duración:</strong>{" "}
+                            {medicamento.duracion || "No especificada"}
+                          </p>
+                        </div>
                       </div>
-
-                      <div className="detalle-medicamento-info">
-                        <h4>{medicamento.nombre || "Medicamento"}</h4>
-
-                        <p>
-                          <strong>Dosis:</strong>{" "}
-                          {medicamento.dosis || "No especificada"}
-                        </p>
-
-                        <p>
-                          <strong>Frecuencia:</strong>{" "}
-                          {medicamento.frecuencia || "No especificada"}
-                        </p>
-
-                        <p>
-                          <strong>Duración:</strong>{" "}
-                          {medicamento.duracion || "No especificada"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               ) : (
                 <p className="detalle-receta-sin-medicamentos">
@@ -580,7 +674,6 @@ export default function Recetas() {
             {/* PIE DEL DOCUMENTO */}
             <div className="detalle-receta-pdf-footer">
               <CheckCircle2 size={16} />
-
               <span>Documento generado desde EsSalud Digital</span>
             </div>
           </div>

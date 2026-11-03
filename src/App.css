@@ -29333,6 +29333,106 @@ html.tema-oscuro
 }
 
 /* =========================================
+   TEXTO DEL PACIENTE - MODO OSCURO
+========================================= */
+
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointments-patient-context {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 20px;
+  background: #111d30 !important;
+  border-bottom: 1px solid #33445c !important;
+  color: #aab8cc !important;
+  font-size: 12px;
+}
+
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointments-patient-context
+  span {
+  color: #aab8cc !important;
+}
+
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointments-patient-context
+  strong {
+  color: #60a5fa !important;
+  font-weight: 700;
+}
+
+/* =========================================
+   CORRECCIONES VISUALES - MIS CITAS DARK MODE
+========================================= */
+
+/* 1. Recuadro de "No tienes próximas citas" */
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointments-message {
+  background: #111d30 !important;
+  color: #aabbd1 !important;
+  border: 1px solid #33445c !important;
+  border-radius: 15px !important;
+  padding: 18px 14px !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+/* 2. Texto del paciente */
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointment-patient {
+  color: #cbd5e1 !important;
+  font-size: 13px !important;
+}
+
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointment-patient
+  strong {
+  color: #60a5fa !important;
+  font-weight: 700 !important;
+}
+
+/* 3. Separación visual de las tarjetas */
+html.tema-oscuro .appointments-screen:not(.reservar-screen) .appointment-card {
+  background: #111d30 !important;
+  border: 1px solid #334e70 !important;
+}
+
+/* 4. Texto secundario de las tarjetas */
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointment-doctor-info
+  small {
+  color: #aabbd1 !important;
+}
+
+/* =========================================
+   CALIFICAR ATENCIÓN - BOTÓN AZUL
+========================================= */
+
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointment-actions
+  .appointment-rate {
+  background: #1e3a5f !important;
+  color: #93c5fd !important;
+  border: 1px solid #36577d !important;
+}
+
+html.tema-oscuro
+  .appointments-screen:not(.reservar-screen)
+  .appointment-actions
+  .appointment-rate:hover {
+  background: #274b75 !important;
+  color: #ffffff !important;
+}
+
+/* =========================================
    CHAT ESSALUD — MODO OSCURO
 ========================================= */
 
@@ -30426,6 +30526,45 @@ html.tema-oscuro .detalle-cita-screen .detalle-cita-recomendaciones li {
 
 html.tema-oscuro .detalle-cita-screen .detalle-cita-recomendaciones li::marker {
   color: #60a5fa !important;
+}
+
+/* =========================================
+   RECETAS - MENSAJE INFORMATIVO DARK MODE
+========================================= */
+
+html.tema-oscuro .prescriptions-page .prescriptions-info-banner {
+  background: #172b49 !important;
+  border: 1px solid #334e70 !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+}
+
+/* Icono */
+html.tema-oscuro .prescriptions-page .prescriptions-info-icon {
+  background: #1e3a5f !important;
+  color: #60a5fa !important;
+}
+
+/* Título */
+html.tema-oscuro .prescriptions-page .prescriptions-info-text h3 {
+  color: #f8fafc !important;
+}
+
+/* Descripción */
+html.tema-oscuro .prescriptions-page .prescriptions-info-text p {
+  color: #b8c7da !important;
+}
+
+/* =========================================
+   RECETAS - MENSAJE VACÍO
+========================================= */
+
+html.tema-oscuro .prescriptions-page .prescriptions-empty h2 {
+  color: #f1f5f9 !important;
+}
+
+html.tema-oscuro .prescriptions-page .prescriptions-empty-description {
+  color: #aabbd1 !important;
 }
 
 /* ==========================================
@@ -36959,7 +37098,6 @@ html.tema-claro.contraste-alto .essalud-home .notifications-panel {
 
 /* ENCABEZADO */
 
-
 html.tema-claro.contraste-alto .essalud-home .notifications-panel-header {
   background: #ffffff !important;
   border-bottom: 2px solid #000000 !important;
@@ -38354,8 +38492,14 @@ html.tema-claro.contraste-alto .ayuda-screen .appointments-header h1 {
   color: #000000 !important;
 }
 
-html.tema-claro.contraste-alto .ayuda-screen .appointments-header .appointments-back,
-html.tema-claro.contraste-alto .ayuda-screen .appointments-header .reservar-help {
+html.tema-claro.contraste-alto
+  .ayuda-screen
+  .appointments-header
+  .appointments-back,
+html.tema-claro.contraste-alto
+  .ayuda-screen
+  .appointments-header
+  .reservar-help {
   color: #000000 !important;
   background: transparent !important;
   border: 0 !important;
@@ -38365,7 +38509,6 @@ html.tema-claro.contraste-alto .ayuda-screen .appointments-header .reservar-help
   appearance: none !important;
   -webkit-appearance: none !important;
 }
-
 
 /* CONTENIDO */
 html.tema-claro.contraste-alto .ayuda-screen .ayuda-content {
@@ -39898,7 +40041,6 @@ html.tema-claro.contraste-alto .register-page .register-field select option {
   color: #000000;
 }
 
-
 /* =========================================
    MODAL DE CONFIRMACIÓN — ALTO CONTRASTE
 ========================================= */
@@ -39949,7 +40091,6 @@ html.tema-claro.contraste-alto .logout-accept-button:focus-visible {
   outline-offset: 3px !important;
 }
 
-
 /* ================================================
    ESSALUD LOGIN — MODO OSCURO
    Diseño consistente con las pantallas internas
@@ -39957,149 +40098,152 @@ html.tema-claro.contraste-alto .logout-accept-button:focus-visible {
 
 /* Fondo principal */
 html.tema-oscuro .essalud-login {
-  background: #0B1424 !important;
-  color: #FFFFFF !important;
+  background: #0b1424 !important;
+  color: #ffffff !important;
 }
 
 /* Contenido */
 html.tema-oscuro .essalud-login-content {
-  background: #0B1424 !important;
-  color: #FFFFFF !important;
+  background: #0b1424 !important;
+  color: #ffffff !important;
 }
 
 /* Encabezado */
 html.tema-oscuro .essalud-login-header {
-  background: #0B1424 !important;
+  background: #0b1424 !important;
 }
 
 /* Botón volver y ayuda */
 html.tema-oscuro .essalud-login .essalud-back-button,
 html.tema-oscuro .essalud-login .essalud-help-button {
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border-color: transparent !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-back-button svg,
 html.tema-oscuro .essalud-login .essalud-help-button svg {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 /* Títulos y textos */
 html.tema-oscuro .essalud-login .essalud-login-heading h1,
 html.tema-oscuro .essalud-login .essalud-login-heading p,
 html.tema-oscuro .essalud-login .essalud-login-register p {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 /* Campos de formulario */
 html.tema-oscuro .essalud-login .essalud-login-input {
-  background: #18263D !important;
-  color: #FFFFFF !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  color: #ffffff !important;
+  border: 1px solid #34445d !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-login-input > svg {
-  color: #9BBCEB !important;
-  stroke: #9BBCEB !important;
+  color: #9bbceb !important;
+  stroke: #9bbceb !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-input-content > span {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-input-content input {
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border-color: transparent !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-input-content input::placeholder {
-  color: #91A2BA !important;
+  color: #91a2ba !important;
   opacity: 1 !important;
 }
 
 /* Mostrar u ocultar contraseña */
 html.tema-oscuro .essalud-login .essalud-password-toggle {
   background: transparent !important;
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 /* Cuenta identificada */
 html.tema-oscuro .essalud-login .essalud-login-identified {
-  background: #18263D !important;
-  color: #FFFFFF !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  color: #ffffff !important;
+  border: 1px solid #34445d !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-login-identified span,
 html.tema-oscuro .essalud-login .essalud-login-identified strong {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 /* Recordar cuenta */
 html.tema-oscuro .essalud-login .essalud-remember {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-remember input {
-  accent-color: #3984F7;
+  accent-color: #3984f7;
 }
 
 /* Enlaces */
 html.tema-oscuro .essalud-login .essalud-forgot-password,
 html.tema-oscuro .essalud-login .essalud-login-register button {
-  color: #69A9FF !important;
+  color: #69a9ff !important;
 }
 
 /* Botón ingresar */
 html.tema-oscuro .essalud-login .essalud-login-submit {
-  background: #3984F7 !important;
-  color: #FFFFFF !important;
-  border: 1px solid #3984F7 !important;
+  background: #3984f7 !important;
+  color: #ffffff !important;
+  border: 1px solid #3984f7 !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-login-submit svg {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 /* Separador biométrico */
 html.tema-oscuro .essalud-login .essalud-login-divider p {
-  color: #A9BAD0 !important;
+  color: #a9bad0 !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-login-divider span {
-  background: #34445D !important;
+  background: #34445d !important;
 }
 
 /* Opciones biométricas */
 html.tema-oscuro .essalud-login .essalud-login-biometric button {
-  background: #18263D !important;
-  color: #FFFFFF !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  color: #ffffff !important;
+  border: 1px solid #34445d !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-login-biometric button svg {
-  color: #69A9FF !important;
-  stroke: #69A9FF !important;
+  color: #69a9ff !important;
+  stroke: #69a9ff !important;
 }
 
 html.tema-oscuro .essalud-login .essalud-login-biometric button span {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 /* Biometría deshabilitada */
-html.tema-oscuro .essalud-login .essalud-login-biometric button.biometric-disabled {
-  background: #131E30 !important;
-  color: #91A2BA !important;
+html.tema-oscuro
+  .essalud-login
+  .essalud-login-biometric
+  button.biometric-disabled {
+  background: #131e30 !important;
+  color: #91a2ba !important;
   border-color: #293950 !important;
   opacity: 0.7;
 }
@@ -40107,174 +40251,172 @@ html.tema-oscuro .essalud-login .essalud-login-biometric button.biometric-disabl
 /* Mensajes de error */
 html.tema-oscuro .essalud-login .essalud-field-error,
 html.tema-oscuro .essalud-login .essalud-login-error {
-  color: #FF8585 !important;
+  color: #ff8585 !important;
 }
 
 /* Foco accesible */
 html.tema-oscuro .essalud-login .essalud-login-input:focus-within {
-  border-color: #69A9FF !important;
-  outline: 2px solid #69A9FF !important;
+  border-color: #69a9ff !important;
+  outline: 2px solid #69a9ff !important;
   outline-offset: 2px !important;
 }
 
 html.tema-oscuro .essalud-login button:focus-visible {
-  outline: 2px solid #69A9FF !important;
+  outline: 2px solid #69a9ff !important;
   outline-offset: 3px !important;
 }
-
 
 /* ================================================
    GESTIONAR CUENTAS — MODO OSCURO
 ================================================ */
 
 html.tema-oscuro .gestionar-cuentas-screen {
-  background: #0B1424 !important;
-  color: #FFFFFF !important;
+  background: #0b1424 !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .essalud-login-content {
-  background: #0B1424 !important;
-  color: #FFFFFF !important;
+  background: #0b1424 !important;
+  color: #ffffff !important;
 }
 
 /* Encabezado */
 html.tema-oscuro .gestionar-cuentas-screen .essalud-login-header {
-  background: #0B1424 !important;
+  background: #0b1424 !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .essalud-back-button,
 html.tema-oscuro .gestionar-cuentas-screen .essalud-help-button {
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .essalud-back-button svg,
 html.tema-oscuro .gestionar-cuentas-screen .essalud-help-button svg {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 /* Título y descripción */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-heading h1 {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-heading p {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 /* Tarjeta de cuenta */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-card {
-  background: #18263D !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  border: 1px solid #34445d !important;
   box-shadow: none !important;
 }
 
 /* Botón para seleccionar cuenta */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-select {
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-info strong {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-info small {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-status {
-  color: #69A9FF !important;
+  color: #69a9ff !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-status svg {
-  color: #69A9FF !important;
+  color: #69a9ff !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-arrow {
-  color: #9BBCEB !important;
+  color: #9bbceb !important;
 }
 
 /* Botón eliminar */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuenta-delete {
   background: #382432 !important;
-  color: #FF8585 !important;
+  color: #ff8585 !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 /* Usar otro perfil */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-other {
-  background: #18263D !important;
-  color: #69A9FF !important;
-  border: 1px solid #3984F7 !important;
+  background: #18263d !important;
+  color: #69a9ff !important;
+  border: 1px solid #3984f7 !important;
   box-shadow: none !important;
 }
 
 /* Crear cuenta nueva */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-create {
-  background: #3984F7 !important;
-  color: #FFFFFF !important;
-  border: 1px solid #3984F7 !important;
+  background: #3984f7 !important;
+  color: #ffffff !important;
+  border: 1px solid #3984f7 !important;
   box-shadow: none !important;
 }
 
 /* Iconos de los botones */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-other svg,
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-create svg {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   stroke: currentColor !important;
 }
 
 /* Aviso de seguridad */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-notice {
-  background: #18263D !important;
-  border: 1px solid #34445D !important;
-  color: #FFFFFF !important;
+  background: #18263d !important;
+  border: 1px solid #34445d !important;
+  color: #ffffff !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-notice p {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-notice svg {
-  color: #69A9FF !important;
-  stroke: #69A9FF !important;
+  color: #69a9ff !important;
+  stroke: #69a9ff !important;
 }
 
 /* Estado vacío */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-empty {
-  background: #18263D !important;
-  color: #FFFFFF !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  color: #ffffff !important;
+  border: 1px solid #34445d !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-empty strong,
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-empty p {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 /* Pie de pantalla */
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-footer p {
-  color: #69A9FF !important;
+  color: #69a9ff !important;
 }
 
 html.tema-oscuro .gestionar-cuentas-screen .gestionar-cuentas-footer span {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 /* Foco accesible */
 html.tema-oscuro .gestionar-cuentas-screen button:focus-visible {
-  outline: 2px solid #69A9FF !important;
+  outline: 2px solid #69a9ff !important;
   outline-offset: 3px !important;
 }
-
 
 /* ================================================
    REGISTRO ESSALUD — MODO OSCURO
@@ -40282,237 +40424,241 @@ html.tema-oscuro .gestionar-cuentas-screen button:focus-visible {
 
 /* Fondo principal */
 html.tema-oscuro .register-page {
-  background: #0B1424 !important;
-  color: #FFFFFF !important;
+  background: #0b1424 !important;
+  color: #ffffff !important;
 }
 
 /* Encabezado */
 html.tema-oscuro .register-page .essalud-login-header {
-  background: #0B1424 !important;
+  background: #0b1424 !important;
 }
 
 html.tema-oscuro .register-page .essalud-back-button,
 html.tema-oscuro .register-page .essalud-help-button {
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .register-page .essalud-back-button svg,
 html.tema-oscuro .register-page .essalud-help-button svg {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 /* Contenido */
 html.tema-oscuro .register-page .register-content {
-  background: #0B1424 !important;
-  color: #FFFFFF !important;
+  background: #0b1424 !important;
+  color: #ffffff !important;
 }
 
 /* Título principal */
 html.tema-oscuro .register-page .register-content > h1 {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 /* Indicador de paso */
 html.tema-oscuro .register-page .register-step {
-  color: #9BBCEB !important;
+  color: #9bbceb !important;
 }
 
 /* Títulos de sección */
 html.tema-oscuro .register-page .register-section-title h2 {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .register-page .register-section-title p {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 /* Progreso */
 html.tema-oscuro .register-page .progress-number {
-  background: #18263D !important;
-  color: #B9C9DF !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  color: #b9c9df !important;
+  border: 1px solid #34445d !important;
 }
 
 html.tema-oscuro .register-page .progress-number.active {
-  background: #3984F7 !important;
-  color: #FFFFFF !important;
-  border-color: #3984F7 !important;
+  background: #3984f7 !important;
+  color: #ffffff !important;
+  border-color: #3984f7 !important;
 }
 
 html.tema-oscuro .register-page .progress-line {
-  background: #34445D !important;
+  background: #34445d !important;
 }
 
 html.tema-oscuro .register-page .progress-line.completed {
-  background: #3984F7 !important;
+  background: #3984f7 !important;
 }
 
 /* Campos */
 html.tema-oscuro .register-page .register-field {
-  background: #18263D !important;
-  border: 1px solid #34445D !important;
-  color: #FFFFFF !important;
+  background: #18263d !important;
+  border: 1px solid #34445d !important;
+  color: #ffffff !important;
   box-shadow: none !important;
 }
 
 /* Iconos de los campos */
 html.tema-oscuro .register-page .register-field .field-icon,
 html.tema-oscuro .register-page .register-field .select-arrow {
-  color: #9BBCEB !important;
-  stroke: #9BBCEB !important;
+  color: #9bbceb !important;
+  stroke: #9bbceb !important;
 }
 
 /* Inputs y select */
 html.tema-oscuro .register-page .register-field input,
 html.tema-oscuro .register-page .register-field select,
 html.tema-oscuro .register-page .register-field .react-datepicker-wrapper,
-html.tema-oscuro .register-page .register-field .react-datepicker__input-container input {
+html.tema-oscuro
+  .register-page
+  .register-field
+  .react-datepicker__input-container
+  input {
   background: transparent !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border-color: transparent !important;
 }
 
 html.tema-oscuro .register-page .register-field input::placeholder {
-  color: #91A2BA !important;
+  color: #91a2ba !important;
   opacity: 1 !important;
 }
 
 /* Opciones del selector */
 html.tema-oscuro .register-page .register-field select option {
-  background: #18263D !important;
-  color: #FFFFFF !important;
+  background: #18263d !important;
+  color: #ffffff !important;
 }
 
 /* Botón de información */
 html.tema-oscuro .register-page .verification-info-button {
   background: transparent !important;
-  color: #69A9FF !important;
+  color: #69a9ff !important;
   border: none !important;
 }
 
 /* Botones mostrar contraseña */
 html.tema-oscuro .register-page .password-toggle {
   background: transparent !important;
-  color: #9BBCEB !important;
+  color: #9bbceb !important;
   border: none !important;
   box-shadow: none !important;
 }
 
 /* Checkbox */
 html.tema-oscuro .register-page .register-checkbox {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .register-page .register-checkbox input {
-  accent-color: #3984F7 !important;
+  accent-color: #3984f7 !important;
 }
 
 /* Enlaces */
 html.tema-oscuro .register-page .register-checkbox a {
-  color: #69A9FF !important;
+  color: #69a9ff !important;
 }
 
 /* Botón principal */
 html.tema-oscuro .register-page .register-primary-button {
-  background: #3984F7 !important;
-  color: #FFFFFF !important;
-  border: 1px solid #3984F7 !important;
+  background: #3984f7 !important;
+  color: #ffffff !important;
+  border: 1px solid #3984f7 !important;
   box-shadow: none !important;
 }
 
 html.tema-oscuro .register-page .register-primary-button svg {
-  color: #FFFFFF !important;
-  stroke: #FFFFFF !important;
+  color: #ffffff !important;
+  stroke: #ffffff !important;
 }
 
 /* Botón secundario */
 html.tema-oscuro .register-page .register-secondary-button {
-  background: #18263D !important;
-  color: #69A9FF !important;
-  border: 1px solid #3984F7 !important;
+  background: #18263d !important;
+  color: #69a9ff !important;
+  border: 1px solid #3984f7 !important;
   box-shadow: none !important;
 }
 
 /* Separador */
 html.tema-oscuro .register-page .register-divider {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 /* Información de contacto */
 html.tema-oscuro .register-page .register-contact {
-  background: #18263D !important;
-  color: #B9C9DF !important;
-  border: 1px solid #34445D !important;
+  background: #18263d !important;
+  color: #b9c9df !important;
+  border: 1px solid #34445d !important;
 }
 
 html.tema-oscuro .register-page .register-contact p {
-  color: #B9C9DF !important;
+  color: #b9c9df !important;
 }
 
 html.tema-oscuro .register-page .register-contact strong {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .register-page .contact-icon {
-  color: #69A9FF !important;
-  stroke: #69A9FF !important;
+  color: #69a9ff !important;
+  stroke: #69a9ff !important;
 }
 
 /* Versión */
 html.tema-oscuro .register-page .register-version {
-  color: #91A2BA !important;
+  color: #91a2ba !important;
 }
 
 /* Errores */
 html.tema-oscuro .register-page .register-error {
-  color: #FF8585 !important;
+  color: #ff8585 !important;
 }
 
 /* Calendario react-datepicker */
 html.tema-oscuro .react-datepicker {
-  background: #18263D !important;
-  border: 1px solid #34445D !important;
-  color: #FFFFFF !important;
+  background: #18263d !important;
+  border: 1px solid #34445d !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .react-datepicker__header {
-  background: #263B59 !important;
-  border-bottom-color: #34445D !important;
+  background: #263b59 !important;
+  border-bottom-color: #34445d !important;
 }
 
 html.tema-oscuro .react-datepicker__current-month,
 html.tema-oscuro .react-datepicker__day-name,
 html.tema-oscuro .react-datepicker__day {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .react-datepicker__day:hover {
-  background: #34445D !important;
+  background: #34445d !important;
 }
 
 html.tema-oscuro .react-datepicker__day--selected,
 html.tema-oscuro .react-datepicker__day--keyboard-selected {
-  background: #3984F7 !important;
-  color: #FFFFFF !important;
+  background: #3984f7 !important;
+  color: #ffffff !important;
 }
 
 html.tema-oscuro .react-datepicker__day--disabled {
-  color: #65758C !important;
+  color: #65758c !important;
 }
 
 /* Foco accesible */
 html.tema-oscuro .register-page .register-field:focus-within {
-  border-color: #69A9FF !important;
-  outline: 2px solid #69A9FF !important;
+  border-color: #69a9ff !important;
+  outline: 2px solid #69a9ff !important;
   outline-offset: 2px !important;
 }
 
 html.tema-oscuro .register-page button:focus-visible {
-  outline: 2px solid #69A9FF !important;
+  outline: 2px solid #69a9ff !important;
   outline-offset: 3px !important;
 }
 
@@ -40684,7 +40830,6 @@ html.tema-oscuro .register-page button:focus-visible {
   background: #000000;
 }
 
-
 /* Lista de pacientes seleccionables */
 .reservar-patients-list {
   display: flex;
@@ -40798,9 +40943,653 @@ html.tema-oscuro .register-page button:focus-visible {
 /* Botones */
 .appointment-card button {
   border-radius: 12px;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .appointment-card button:active {
   transform: scale(0.98);
+}
+
+/* ==========================================
+   DETALLE DE EXÁMENES
+========================================== */
+
+.detalle-examen-page {
+  min-height: 100vh;
+}
+
+.detalle-examen-content {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 18px 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detalle-examen-banner {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #eaf5ff;
+  border: 1px solid #d8eaff;
+}
+
+.detalle-examen-banner-icon {
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1675c9;
+  background: #ffffff;
+  border-radius: 14px;
+}
+
+.detalle-examen-banner-info {
+  min-width: 0;
+}
+
+.detalle-examen-banner-info > span {
+  color: #1675c9;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.detalle-examen-banner-info h2 {
+  margin: 5px 0;
+  color: #173b60;
+  font-size: 19px;
+}
+
+.detalle-examen-banner-info p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.detalle-examen-status-card {
+  padding: 17px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.detalle-examen-status-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #1675c9;
+}
+
+.detalle-examen-status-heading strong {
+  font-size: 14px;
+}
+
+.detalle-examen-status-card p {
+  margin: 9px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.detalle-examen-card {
+  padding: 19px;
+  background: #ffffff;
+  border: 1px solid #e6edf5;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detalle-examen-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1675c9;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.detalle-examen-card-title h3 {
+  margin: 0;
+  color: #173b60;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.detalle-examen-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  font-size: 13px;
+}
+
+.detalle-examen-row span {
+  color: #64748b;
+}
+
+.detalle-examen-row strong {
+  color: #243b53;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.detalle-examen-result-available,
+.detalle-examen-result-pending {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  border-radius: 11px;
+  background: #eff8f1;
+  color: #287a45;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.detalle-examen-result-pending {
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.detalle-examen-result-pending p {
+  margin: 0;
+}
+
+.detalle-examen-result-text {
+  margin: 0;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.detalle-examen-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #1675c9;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1675c9;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.detalle-examen-download:hover {
+  background: #eff7ff;
+}
+
+.detalle-examen-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 15px;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.detalle-examen-footer svg {
+  flex-shrink: 0;
+  color: #1675c9;
+}
+
+.detalle-examen-footer p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .detalle-examen-content {
+    padding: 15px 13px 100px;
+  }
+
+  .detalle-examen-card {
+    padding: 16px;
+  }
+
+  .detalle-examen-row {
+    font-size: 12px;
+  }
+}
+
+/* ========================================
+   DETALLE DEL EXAMEN
+======================================== */
+
+.detalle-examen-page {
+  min-height: 100vh;
+  background: #f3f8ff;
+  padding-bottom: 30px;
+}
+
+.detalle-examen-content {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 16px 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+/* PRESENTACIÓN */
+
+.detalle-examen-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: linear-gradient(135deg, #e6f3ff, #f4f9ff);
+  border: 1px solid #d8eaff;
+  border-radius: 16px;
+}
+
+.detalle-examen-banner-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #d5eaff;
+  color: #0879e8;
+  border-radius: 14px;
+}
+
+.detalle-examen-banner h2 {
+  margin: 0 0 5px;
+  color: #17477e;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.detalle-examen-banner p {
+  margin: 0;
+  color: #657d99;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ESTADO DEL EXAMEN */
+
+.detalle-examen-status-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 17px;
+  background: #ffffff;
+  border: 1px solid #e3edf8;
+  border-radius: 15px;
+  box-shadow: 0 3px 12px rgba(30, 83, 135, 0.05);
+}
+
+.detalle-examen-status-icon {
+  width: 43px;
+  height: 43px;
+  min-width: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0879e8;
+  background: #e7f3ff;
+  border-radius: 12px;
+}
+
+.detalle-examen-status-card span {
+  display: block;
+  margin-bottom: 5px;
+  color: #71839a;
+  font-size: 12px;
+}
+
+.detalle-examen-status-card strong {
+  color: #0879e8;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* TARJETAS DE INFORMACIÓN */
+
+.detalle-examen-card {
+  padding: 19px 17px;
+  background: #ffffff;
+  border: 1px solid #e5edf6;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(30, 83, 135, 0.05);
+}
+
+.detalle-examen-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 17px;
+  padding-bottom: 13px;
+  color: #17477e;
+  font-size: 15px;
+  font-weight: 700;
+  border-bottom: 1px solid #edf2f8;
+}
+
+.detalle-examen-card h3 svg {
+  color: #0879e8;
+}
+
+/* FILAS DE INFORMACIÓN */
+
+.detalle-examen-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #f0f3f8;
+}
+
+.detalle-examen-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detalle-examen-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #71839a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.detalle-examen-row span svg {
+  color: #398ee5;
+}
+
+.detalle-examen-row strong {
+  max-width: 60%;
+  color: #24476d;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* RESULTADO DISPONIBLE */
+
+.detalle-examen-result-available {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  color: #16865b;
+  background: #effaf5;
+  border: 1px solid #d2f0e0;
+  border-radius: 12px;
+}
+
+.detalle-examen-result-available > svg {
+  color: #16a36b;
+}
+
+.detalle-examen-result-available strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #16865b;
+  font-size: 14px;
+}
+
+.detalle-examen-result-available p {
+  margin: 0;
+  color: #5c7c6e;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* RESULTADO PENDIENTE */
+
+.detalle-examen-result-pending {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px;
+  color: #c48720;
+  background: #fff9eb;
+  border: 1px solid #f5e7c5;
+  border-radius: 12px;
+}
+
+.detalle-examen-result-pending > svg {
+  min-width: 23px;
+  color: #d89a29;
+}
+
+.detalle-examen-result-pending strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #a97619;
+  font-size: 14px;
+}
+
+.detalle-examen-result-pending p {
+  margin: 0;
+  color: #8c774e;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* BOTÓN DESCARGAR */
+
+.detalle-examen-download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  color: #ffffff;
+  background: #087ff0;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.detalle-examen-download:hover {
+  background: #0668c8;
+}
+
+/* TEXTO DEL RESULTADO */
+
+.detalle-examen-result-text {
+  padding: 12px;
+  background: #ffffff;
+  border-radius: 9px;
+  color: #315c48 !important;
+}
+
+/* INFORMACIÓN ADICIONAL */
+
+.detalle-examen-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  background: #eaf4ff;
+  border-radius: 12px;
+  color: #2476bd;
+}
+
+.detalle-examen-footer svg {
+  min-width: 19px;
+  margin-top: 2px;
+}
+
+.detalle-examen-footer p {
+  margin: 0;
+  color: #527493;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* EXAMEN NO ENCONTRADO */
+
+.detalle-examen-not-found {
+  min-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.detalle-examen-not-found > svg {
+  margin-bottom: 14px;
+  color: #0879e8;
+}
+
+.detalle-examen-not-found h2 {
+  margin: 0 0 8px;
+  color: #17477e;
+  font-size: 20px;
+}
+
+.detalle-examen-not-found p {
+  max-width: 300px;
+  margin: 0 0 18px;
+  color: #71839a;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.detalle-examen-not-found button {
+  width: 100%;
+  max-width: 230px;
+  padding: 13px 18px;
+  color: #ffffff;
+  background: #087ff0;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 5px 12px rgba(8, 127, 240, 0.18);
+  cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 380px) {
+  .detalle-examen-content {
+    padding: 15px 12px 25px;
+    gap: 13px;
+  }
+
+  .detalle-examen-card {
+    padding: 16px 13px;
+  }
+
+  .detalle-examen-row {
+    gap: 8px;
+  }
+
+  .detalle-examen-row strong {
+    max-width: 58%;
+  }
+
+  .detalle-examen-banner {
+    padding: 14px;
+  }
+}
+
+/* CONTEXTO DEL PACIENTE */
+.appointments-patient-context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  margin: 0;
+  background: #f4f8ff;
+  border-bottom: 1px solid #e3edf9;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #718096;
+}
+
+.appointments-patient-context span {
+  color: #718096;
+  font-weight: 400;
+}
+
+.appointments-patient-context strong {
+  color: #0879e8;
+  font-weight: 700;
+}
+
+/* =========================================
+   RECETAS - OCULTAR BARRA DE DESPLAZAMIENTO
+========================================= */
+
+/* Mantener el desplazamiento, pero ocultar la barra */
+.prescriptions-page {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.prescriptions-page::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Ocultar scrollbar de los contenedores internos */
+.prescriptions-page .prescriptions-content {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.prescriptions-page .prescriptions-content::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+
+/* Mejorar visibilidad del mensaje en Detalle de Examen */
+html.tema-oscuro .detalle-examen-not-found h2 {
+  color: #ffffff !important;
+}
+
+html.tema-oscuro .detalle-examen-not-found p {
+  color: #cbd5e1 !important;
+}
+
+html.tema-oscuro .detalle-examen-not-found {
+  background: transparent;
+}
+
+html.tema-oscuro .detalle-examen-not-found svg {
+  color: #168cff;
 }

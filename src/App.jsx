@@ -56,6 +56,8 @@ import BiometriaCuenta from "./pages/BiometriaCuenta";
 import TodosServicios from "./pages/TodosServicios";
 import Notificaciones from "./pages/Notificaciones";
 import AyudaSoporte from "./pages/AyudaSoporte";
+import DetalleExamen from "./pages/DetalleExamen";
+import { PacienteProvider } from "./context/PacienteContext";
 
 import { AccessibilityProvider } from "./context/AccessibilityContext";
 
@@ -65,6 +67,7 @@ function App() {
   return (
     <AccessibilityProvider>
       <BrowserRouter>
+      <PacienteProvider>
         <PhoneFrame>
           <Routes>
             <Route path="/" element={<HomeScreen />} />
@@ -165,8 +168,10 @@ function App() {
               element={<Notificaciones />}
             />
             <Route path="/essalud/ayuda" element={<AyudaSoporte />} />
+            <Route path="/essalud/examen/:id" element={<DetalleExamen />} />
           </Routes>
         </PhoneFrame>
+        </PacienteProvider>
       </BrowserRouter>
     </AccessibilityProvider>
   );

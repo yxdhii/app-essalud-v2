@@ -23,49 +23,84 @@ import logoEssalud from "../assets/digital-logo.png";
 import emptyAppointments from "../assets/empty-appointments.png";
 
 import {
-  obtenerCitasUsuario,
+  obtenerCitasPaciente,
   cancelarCita,
   calificarCita,
 } from "../services/citasService.js";
 
-import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+import {
+  obtenerUsuarioActivo,
+  obtenerFamiliaresVinculados,
+} from "../services/usuariosService.js";
+
+import { usePaciente } from "../context/PacienteContext";
 
 export default function MisCitas() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Recuperar la pestaña y el paciente enviados desde otra pantalla.
+  // Recuperar la pestaña seleccionada.
   const [activeTab, setActiveTab] = useState(
     location.state?.activeTab || "Virtual"
   );
 
   const [citas, setCitas] = useState([]);
 
-  // Estados para el modal de confirmación.
+  // Estados del modal de confirmación.
   const [modalAbierto, setModalAbierto] = useState(false);
   const [citaSeleccionada, setCitaSeleccionada] = useState(null);
 
+  // Usuario que inició sesión.
   const usuario = obtenerUsuarioActivo();
 
-  // Si se llega desde DetalleFamiliar, se reciben los datos del familiar.
-  // Si se llega desde el inicio, se muestran las citas de toda la cuenta.
-  const pacienteSeleccionado = location.state?.paciente || null;
+  // Contexto global del paciente seleccionado.
+  const { pacienteSeleccionado } = usePaciente();
 
-  // Obtener las citas del titular o de un paciente específico.
+  // Familiares vinculados a la cuenta autenticada.
+  const familiares = usuario
+    ? obtenerFamiliaresVinculados(usuario.dni) || []
+    : [];
+
+  // Pacientes que esta cuenta tiene autorizados.
+  const pacientesDisponibles = [
+    usuario,
+    ...familiares,
+  ].filter(
+    (item, index, lista) =>
+      item?.dni &&
+      lista.findIndex(
+        (persona) =>
+          String(persona?.dni) === String(item.dni)
+      ) === index
+  );
+
+  // Verificar que el paciente del contexto pertenezca
+  // al titular que inició sesión.
+  const pacienteAutorizado = pacienteSeleccionado?.dni
+    ? pacientesDisponibles.find(
+        (item) =>
+          String(item.dni) ===
+          String(pacienteSeleccionado.dni)
+      )
+    : null;
+
+  // Si el paciente del contexto no pertenece a esta cuenta,
+  // mostramos al titular autenticado.
+  const pacienteActual = pacienteAutorizado || usuario;
+
+  // Obtener exclusivamente las citas del paciente activo.
   const actualizarCitas = () => {
-    if (!usuario) {
+    if (!usuario || !pacienteActual?.dni) {
       setCitas([]);
       return;
     }
 
     setCitas(
-      obtenerCitasUsuario(
-        usuario.id,
-        pacienteSeleccionado?.dni || null
-      )
+      obtenerCitasPaciente(pacienteActual.dni)
     );
   };
 
+  // Validar sesión y actualizar cuando cambie el paciente.
   useEffect(() => {
     if (!usuario) {
       navigate("/essalud");
@@ -73,12 +108,15 @@ export default function MisCitas() {
     }
 
     actualizarCitas();
-  }, []);
+  }, [usuario?.id, pacienteActual?.dni]);
 
   // Comprobar si la cita ya pasó.
   const esAnterior = (cita) => {
-    const hora = cita.horario || cita.hora || "00:00";
-    const fechaCita = new Date(`${cita.fecha}T${hora}:00`);
+    const hora = cita.hora || cita.horario || "00:00";
+
+    const fechaCita = new Date(
+      `${cita.fecha}T${hora}:00`
+    );
 
     return (
       !Number.isNaN(fechaCita.getTime()) &&
@@ -91,16 +129,21 @@ export default function MisCitas() {
     (cita) => cita.tipo === activeTab
   );
 
+  // Próximas citas.
   const proximasCitas = citasFiltradas.filter(
     (cita) =>
-      !esAnterior(cita) && cita.estado === "Pendiente"
+      !esAnterior(cita) &&
+      (cita.estado === "Pendiente" ||
+        cita.estado === "Programada")
   );
 
+  // Citas anteriores.
   const citasAnteriores = citasFiltradas.filter(
     (cita) =>
       esAnterior(cita) || cita.estado === "Atendida"
   );
 
+  // Citas canceladas.
   const citasCanceladas = citasFiltradas.filter(
     (cita) => cita.estado === "Cancelada"
   );
@@ -115,16 +158,16 @@ export default function MisCitas() {
 
     if (
       cita.pacienteId &&
-      String(cita.pacienteId) === String(usuario?.dni)
+      String(cita.pacienteId) === String(pacienteActual?.dni)
     ) {
-      return usuario?.nombres || usuario?.nombre || "Titular";
+      return (
+        pacienteActual?.nombres ||
+        pacienteActual?.nombre ||
+        "Paciente"
+      );
     }
 
-    if (cita.paciente === "Familiar") {
-      return "Familiar vinculado";
-    }
-
-    return usuario?.nombres || usuario?.nombre || "Titular";
+    return "Paciente";
   };
 
   // Abrir modal para confirmar la cancelación.
@@ -133,7 +176,7 @@ export default function MisCitas() {
     setModalAbierto(true);
   };
 
-  // Confirmar la cancelación de la cita.
+  // Confirmar la cancelación.
   const confirmarCancelacion = () => {
     if (citaSeleccionada === null) return;
 
@@ -146,13 +189,14 @@ export default function MisCitas() {
       actualizarCitas();
     } catch (error) {
       console.error("Error al cancelar la cita:", error);
+
       window.alert(
         "No se pudo cancelar la cita. Inténtalo nuevamente."
       );
     }
   };
 
-  // Cerrar el modal sin cancelar la cita.
+  // Cerrar modal sin cancelar.
   const cerrarModalCancelacion = () => {
     setModalAbierto(false);
     setCitaSeleccionada(null);
@@ -182,6 +226,7 @@ export default function MisCitas() {
     );
 
     calificarCita(id, valor, comentario || "");
+
     actualizarCitas();
   };
 
@@ -191,7 +236,9 @@ export default function MisCitas() {
 
     const fechaLocal = new Date(`${fecha}T12:00:00`);
 
-    if (Number.isNaN(fechaLocal.getTime())) return fecha;
+    if (Number.isNaN(fechaLocal.getTime())) {
+      return fecha;
+    }
 
     return fechaLocal.toLocaleDateString("es-PE", {
       day: "numeric",
@@ -220,29 +267,26 @@ export default function MisCitas() {
     }
 
     const hora12 = numeroHora % 12 || 12;
-    const sufijo = numeroHora >= 12 ? "p. m." : "a. m.";
+    const sufijo =
+      numeroHora >= 12 ? "p. m." : "a. m.";
 
     return `${hora12}:${minutos} ${sufijo}`;
   };
 
-  // Abrir el detalle conservando el paciente y la pestaña actual.
+  // Abrir detalle conservando la pestaña actual.
   const verDetalle = (cita) => {
     navigate("/essalud/detalle-cita", {
       state: {
         cita,
         activeTab,
-        paciente: pacienteSeleccionado,
+        paciente: pacienteActual,
       },
     });
   };
 
-  // Ir a reservar una nueva cita conservando el contexto del familiar.
+  // Ir a reservar una cita para el paciente activo.
   const irAReservar = () => {
-    navigate("/essalud/reservar-cita", {
-      state: {
-        paciente: pacienteSeleccionado,
-      },
-    });
+    navigate("/essalud/reservar-cita");
   };
 
   // Renderizar tarjeta de cita.
@@ -284,12 +328,11 @@ export default function MisCitas() {
         </span>
       </div>
 
-      {/* Identificación del paciente en la cuenta del titular. */}
-      {!pacienteSeleccionado && (
-        <p className="appointment-patient">
-          Paciente: <strong>{obtenerNombrePaciente(cita)}</strong>
-        </p>
-      )}
+      {/* Paciente de la cita */}
+      <p className="appointment-patient">
+        Paciente:{" "}
+        <strong>{obtenerNombrePaciente(cita)}</strong>
+      </p>
 
       <div className="appointment-doctor">
         <div className="appointment-avatar">
@@ -300,10 +343,15 @@ export default function MisCitas() {
         </div>
 
         <div className="appointment-doctor-info">
-          <h3>{cita.especialidad || "Consulta médica"}</h3>
+          <h3>
+            {cita.especialidad || "Consulta médica"}
+          </h3>
+
           <p>{cita.medico || "Médico por confirmar"}</p>
 
-          {cita.cmp && <small>CMP {cita.cmp}</small>}
+          {cita.cmp && (
+            <small>CMP {cita.cmp}</small>
+          )}
         </div>
       </div>
 
@@ -343,33 +391,36 @@ export default function MisCitas() {
       </button>
 
       <div className="appointment-actions">
-        {cita.estado === "Pendiente" && !esAnterior(cita) && (
-          <button
-            type="button"
-            className="appointment-cancel"
-            onClick={() => manejarCancelacion(cita.id)}
-          >
-            <XCircle size={17} />
-            Cancelar cita
-          </button>
-        )}
+        {cita.estado === "Pendiente" &&
+          !esAnterior(cita) && (
+            <button
+              type="button"
+              className="appointment-cancel"
+              onClick={() => manejarCancelacion(cita.id)}
+            >
+              <XCircle size={17} />
+              Cancelar cita
+            </button>
+          )}
 
-        {cita.estado === "Atendida" && !cita.calificacion && (
-          <button
-            type="button"
-            className="appointment-rate"
-            onClick={() => manejarCalificacion(cita.id)}
-          >
-            <Star size={17} />
-            Calificar atención
-          </button>
-        )}
+        {cita.estado === "Atendida" &&
+          !cita.calificacion && (
+            <button
+              type="button"
+              className="appointment-rate"
+              onClick={() => manejarCalificacion(cita.id)}
+            >
+              <Star size={17} />
+              Calificar atención
+            </button>
+          )}
 
-        {cita.estado === "Pendiente" && esAnterior(cita) && (
-          <span className="appointment-note">
-            Fecha de cita transcurrida
-          </span>
-        )}
+        {cita.estado === "Pendiente" &&
+          esAnterior(cita) && (
+            <span className="appointment-note">
+              Fecha de cita transcurrida
+            </span>
+          )}
 
         {cita.estado === "Cancelada" && (
           <span className="appointment-note">
@@ -388,20 +439,23 @@ export default function MisCitas() {
 
     if (id === "citas") {
       navigate("/essalud/citas", {
-        state: {
-          activeTab,
-          paciente: pacienteSeleccionado,
-        },
+        state: { activeTab },
       });
     }
 
-    if (id === "chat") navigate("/essalud/chat");
+    if (id === "chat") {
+      navigate("/essalud/chat");
+    }
 
-    if (id === "perfil") navigate("/essalud/perfil");
+    if (id === "perfil") {
+      navigate("/essalud/perfil");
+    }
   };
 
   return (
     <main className="appointments-screen mis-citas-screen">
+
+      {/* ENCABEZADO */}
       <header className="appointments-header">
         <button
           type="button"
@@ -450,13 +504,27 @@ export default function MisCitas() {
           type="button"
           role="tab"
           aria-selected={activeTab === "Presencial"}
-          className={activeTab === "Presencial" ? "active" : ""}
+          className={
+            activeTab === "Presencial" ? "active" : ""
+          }
           onClick={() => setActiveTab("Presencial")}
         >
           Presenciales
         </button>
       </div>
 
+      {/* PACIENTE ACTUAL: DEBAJO DE LAS PESTAÑAS */}
+      <div className="appointments-patient-context">
+        <span>Mostrando citas de:</span>
+
+        <strong>
+          {pacienteActual?.nombres ||
+            pacienteActual?.nombre ||
+            "Usuario"}
+        </strong>
+      </div>
+
+      {/* CONTENIDO */}
       <div className="appointments-content">
         {!tieneCitas ? (
           <section className="appointments-empty">
@@ -543,7 +611,10 @@ export default function MisCitas() {
                 </p>
               </div>
 
-              <button type="button" onClick={irAReservar}>
+              <button
+                type="button"
+                onClick={irAReservar}
+              >
                 Reservar
                 <CalendarPlus size={17} />
               </button>
@@ -552,6 +623,7 @@ export default function MisCitas() {
         )}
       </div>
 
+      {/* NAVEGACIÓN INFERIOR */}
       <BottomNavigation
         active="citas"
         onNavigate={navegarMenu}
