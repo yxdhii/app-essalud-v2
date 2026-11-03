@@ -27,6 +27,7 @@ export function obtenerCitasUsuario(usuarioId, pacienteId = null) {
     return true;
   });
 }
+
 // Obtener la próxima cita del usuario
 export function obtenerProximaCita(usuarioId) {
   const hoy = new Date();
