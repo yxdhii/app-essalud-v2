@@ -62,7 +62,7 @@ const notificacionesIniciales = [
   },
 ];
 
-export default function HomeHeader({ user }) {
+export default function HomeHeader({ user, titular = user }) {
   const navigate = useNavigate();
 
   // TEMA DE ACCESIBILIDAD
@@ -454,7 +454,8 @@ export default function HomeHeader({ user }) {
       <HomeSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        user={user}
+        user={titular}
+        pacienteSeleccionado={user}
       />
     </>
   );

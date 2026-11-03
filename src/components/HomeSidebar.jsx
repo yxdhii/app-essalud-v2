@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +22,11 @@ import {
 import logoEssalud from "../assets/digital-logo.png";
 import ConfirmacionModal from "./ConfirmacionModal";
 
-import { obtenerFamiliaresVinculados } from "../services/usuariosService.js";
+import {
+  obtenerFamiliaresVinculados,
+} from "../services/usuariosService.js";
+
+import { usePaciente } from "../context/PacienteContext";
 
 const menuItems = [
   { label: "Inicio", icon: House },
@@ -38,31 +43,39 @@ export default function HomeSidebar({
   isOpen,
   onClose,
   user = { name: "Usuario", dni: "" },
+  pacienteSeleccionado,
   onNavigate,
   onLogout,
 }) {
   const navigate = useNavigate();
 
+  const { seleccionarPaciente } = usePaciente();
+
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [activeItem, setActiveItem] = useState("Inicio");
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const [familyMembers, setFamilyMembers] = useState([]);
 
-  const nombreUsuario = user?.nombres || user?.name || "Usuario";
+  const nombreUsuario =
+    user?.nombres || user?.name || "Usuario";
+
   const dniUsuario = String(user?.dni || "");
 
-  // Cargar los familiares vinculados al titular actual
+  // Cargar familiares vinculados al titular.
   const cargarFamiliares = () => {
-    const familiares = obtenerFamiliaresVinculados(dniUsuario);
+    const familiares = obtenerFamiliaresVinculados(
+      dniUsuario
+    );
 
-    setFamilyMembers(Array.isArray(familiares) ? familiares : []);
+    setFamilyMembers(
+      Array.isArray(familiares) ? familiares : []
+    );
   };
 
   useEffect(() => {
     cargarFamiliares();
   }, [dniUsuario]);
 
-  // Datos del titular
+  // Información del titular.
   const titular = {
     id: user?.id,
     dni: dniUsuario,
@@ -73,19 +86,22 @@ export default function HomeSidebar({
     color: "#d8edff",
   };
 
-  // El titular aparece primero y luego los familiares
+  // El titular aparece primero.
   const profiles = [
     titular,
     ...familyMembers.map((familiar) => ({
       ...familiar,
-      name: familiar.nombres || familiar.name || "Familiar",
+      name:
+        familiar.nombres ||
+        familiar.name ||
+        "Familiar",
     })),
   ];
 
-  // Mostrar como máximo tres perfiles
+  // Mostrar máximo tres perfiles.
   const visibleProfiles = profiles.slice(0, 3);
 
-  // Navegación del menú lateral
+  // Navegación del menú lateral.
   const handleNavigate = (label) => {
     setActiveItem(label);
 
@@ -98,7 +114,6 @@ export default function HomeSidebar({
       Referencias: "/essalud/referencias",
       TeleEduca: "/essalud/teleeduca",
       "Riesgo de diabetes tipo 2": "/essalud/riesgo-diabetes",
-
       Familiares: "/essalud/familiares",
       "Mis familiares": "/essalud/familiares",
       "Agregar familiar": "/essalud/agregar-familiar",
@@ -117,15 +132,15 @@ export default function HomeSidebar({
     onClose();
   };
 
-  // Seleccionar un perfil familiar
+  // CAMBIAR PERFIL ACTIVO.
+  // No modifica la sesión del titular.
   const handleSelectProfile = (profile) => {
-    setSelectedProfile(profile.dni);
+    if (!profile?.dni || !user?.dni) return;
 
-    if (onNavigate) {
-      onNavigate("Perfil familiar", {
-        paciente: profile,
-      });
-    }
+    seleccionarPaciente(profile, user);
+
+    // Volver al Home del paciente seleccionado.
+    navigate("/essalud/inicio");
 
     onClose();
   };
@@ -133,7 +148,11 @@ export default function HomeSidebar({
   if (!isOpen) return null;
 
   return (
-    <div className="sidebar-overlay" onClick={onClose} role="presentation">
+    <div
+      className="sidebar-overlay"
+      onClick={onClose}
+      role="presentation"
+    >
       <aside
         className="home-sidebar"
         role="dialog"
@@ -166,7 +185,9 @@ export default function HomeSidebar({
           onClick={() => handleNavigate("Mi perfil")}
         >
           <div className="sidebar-avatar">
-            {user?.avatar || <UserRound size={28} strokeWidth={1.8} />}
+            {user?.avatar || (
+              <UserRound size={28} strokeWidth={1.8} />
+            )}
           </div>
 
           <div className="sidebar-profile-info">
@@ -180,38 +201,54 @@ export default function HomeSidebar({
           </div>
         </button>
 
-        {/* PERFILES */}
+        {/* PERFILES VINCULADOS */}
         <section className="sidebar-accounts">
           <h3>Mis perfiles</h3>
 
-          {visibleProfiles.map((profile) => (
-            <button
-              type="button"
-              className={`sidebar-family-member ${
-                selectedProfile === profile.dni ? "selected" : ""
-              }`}
-              key={profile.dni}
-              onClick={() => handleSelectProfile(profile)}
-            >
-              <span
-                className="sidebar-family-avatar"
-                style={{
-                  backgroundColor: profile.color || "#d8edff",
-                }}
+          {visibleProfiles.map((profile) => {
+            const estaSeleccionado =
+              String(pacienteSeleccionado?.dni) ===
+              String(profile.dni);
+
+            return (
+              <button
+                type="button"
+                className={`sidebar-family-member ${
+                  estaSeleccionado ? "selected" : ""
+                }`}
+                key={profile.dni}
+                onClick={() => handleSelectProfile(profile)}
+                aria-pressed={estaSeleccionado}
               >
-                {profile.avatar || <UserRound size={22} strokeWidth={1.8} />}
-              </span>
+                <span
+                  className="sidebar-family-avatar"
+                  style={{
+                    backgroundColor:
+                      profile.color || "#d8edff",
+                  }}
+                >
+                  {profile.avatar || (
+                    <UserRound
+                      size={22}
+                      strokeWidth={1.8}
+                    />
+                  )}
+                </span>
 
-              <span className="sidebar-family-info">
-                <strong>{profile.name}</strong>
-                <small>{profile.relation}</small>
-              </span>
+                <span className="sidebar-family-info">
+                  <strong>{profile.name}</strong>
+                  <small>{profile.relation}</small>
+                </span>
 
-              <ChevronRight size={17} className="sidebar-family-arrow" />
-            </button>
-          ))}
+                <ChevronRight
+                  size={17}
+                  className="sidebar-family-arrow"
+                />
+              </button>
+            );
+          })}
 
-          {/* ACCESO A TODOS LOS FAMILIARES */}
+          {/* TODOS LOS FAMILIARES */}
           <button
             type="button"
             className="sidebar-add-account"
@@ -223,10 +260,15 @@ export default function HomeSidebar({
 
             <span className="sidebar-add-info">
               <strong>Familiares</strong>
-              <small>Consultar y administrar familiares</small>
+              <small>
+                Consultar y administrar familiares
+              </small>
             </span>
 
-            <ChevronRight size={17} className="sidebar-add-arrow" />
+            <ChevronRight
+              size={17}
+              className="sidebar-add-arrow"
+            />
           </button>
 
           {/* AGREGAR FAMILIAR */}
@@ -244,7 +286,10 @@ export default function HomeSidebar({
               <small>Vincula a un asegurado</small>
             </span>
 
-            <ChevronRight size={17} className="sidebar-add-arrow" />
+            <ChevronRight
+              size={17}
+              className="sidebar-add-arrow"
+            />
           </button>
 
           {/* CAMBIAR DE CUENTA */}
@@ -262,12 +307,18 @@ export default function HomeSidebar({
               <small>Inicia sesión con otro titular</small>
             </span>
 
-            <ChevronRight size={17} className="sidebar-add-arrow" />
+            <ChevronRight
+              size={17}
+              className="sidebar-add-arrow"
+            />
           </button>
         </section>
 
         {/* NAVEGACIÓN PRINCIPAL */}
-        <nav className="sidebar-navigation" aria-label="Navegación principal">
+        <nav
+          className="sidebar-navigation"
+          aria-label="Navegación principal"
+        >
           {menuItems.map(({ label, icon: Icon }) => (
             <button
               type="button"
@@ -276,7 +327,9 @@ export default function HomeSidebar({
                 activeItem === label ? "active" : ""
               }`}
               onClick={() => handleNavigate(label)}
-              aria-current={activeItem === label ? "page" : undefined}
+              aria-current={
+                activeItem === label ? "page" : undefined
+              }
             >
               <Icon size={19} strokeWidth={1.8} />
               <span>{label}</span>
