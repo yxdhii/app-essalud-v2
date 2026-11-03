@@ -15,7 +15,10 @@ import {
 
 import logoEssalud from "../assets/digital-logo.png";
 
-import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+import {
+  obtenerUsuarioActivo,
+  cambiarCuentaGuardada,
+} from "../services/usuariosService.js";
 
 import ConfirmacionModal from "../components/ConfirmacionModal";
 import LoadingOverlay from "../components/LoadingOverlay";
@@ -26,12 +29,16 @@ export default function CambiarCuenta() {
   const [usuarioActivo, setUsuarioActivo] = useState(null);
   const [cuentas, setCuentas] = useState([]);
 
-  // Estado del modal y cuenta seleccionada
+  // Estado del modal y cuenta seleccionada.
   const [modalAbierto, setModalAbierto] = useState(false);
   const [cuentaSeleccionada, setCuentaSeleccionada] = useState(null);
 
-  // Estado de la pantalla de carga
+  // Estado de la pantalla de carga.
   const [validando, setValidando] = useState(false);
+
+  // ============================================
+  // CARGAR CUENTAS GUARDADAS
+  // ============================================
 
   useEffect(() => {
     const usuario = obtenerUsuarioActivo();
@@ -48,7 +55,8 @@ export default function CambiarCuenta() {
         );
 
         const esUsuarioActivo =
-          usuario && String(cuenta.dni) === String(usuario.dni);
+          usuario &&
+          String(cuenta.dni) === String(usuario.dni);
 
         return {
           ...cuenta,
@@ -84,6 +92,10 @@ export default function CambiarCuenta() {
     }
   }, []);
 
+  // ============================================
+  // ENCABEZADO
+  // ============================================
+
   const encabezado = (
     <header className="appointments-header">
       <button
@@ -118,7 +130,10 @@ export default function CambiarCuenta() {
     </header>
   );
 
-  // Formatear DNI
+  // ============================================
+  // FORMATEAR DNI
+  // ============================================
+
   const formatearDni = (dni = "") => {
     const documento = String(dni);
 
@@ -129,58 +144,90 @@ export default function CambiarCuenta() {
     return `${"•".repeat(documento.length - 2)}${documento.slice(-2)}`;
   };
 
-  // Agregar otra cuenta
+  // ============================================
+  // AGREGAR OTRA CUENTA
+  // ============================================
+
   const agregarCuenta = () => {
     navigate("/essalud/login", {
       state: { cambiarCuenta: true },
     });
   };
 
-  // Abrir modal al seleccionar una cuenta
+  // ============================================
+  // SELECCIONAR CUENTA
+  // ============================================
+
   const seleccionarCuenta = (cuenta) => {
     setCuentaSeleccionada(cuenta);
     setModalAbierto(true);
   };
 
-  // Cerrar modal
+  // ============================================
+  // CERRAR MODAL
+  // ============================================
+
   const cerrarModal = () => {
+    if (validando) return;
+
     setModalAbierto(false);
     setCuentaSeleccionada(null);
   };
 
-  // Confirmar selección y mostrar pantalla de carga
+  // ============================================
+  // CONFIRMAR CAMBIO DE CUENTA
+  // ============================================
+
   const confirmarCambioCuenta = () => {
-    if (!cuentaSeleccionada) return;
+    if (!cuentaSeleccionada || validando) return;
 
     const cuenta = cuentaSeleccionada;
 
     setModalAbierto(false);
     setValidando(true);
 
+    // Mantener visible la animación de carga.
     setTimeout(() => {
+      const resultado = cambiarCuentaGuardada(cuenta.dni);
+
       setValidando(false);
 
-      const esActiva =
-        usuarioActivo &&
-        String(cuenta.dni) === String(usuarioActivo.dni);
+      if (!resultado.correcto) {
+        setCuentaSeleccionada(null);
 
-      setCuentaSeleccionada(null);
+        window.alert(
+          resultado.mensaje || "No fue posible cambiar de cuenta."
+        );
 
-      if (esActiva) {
-        navigate("/essalud/inicio");
         return;
       }
 
-      window.alert(
-        "El cambio de cuenta estará disponible cuando conectemos esta acción con el servicio de cuentas guardadas."
-      );
-    }, 1500);
+      // Actualizar la cuenta activa.
+      setUsuarioActivo(resultado.usuario);
+      setCuentaSeleccionada(null);
+
+      // Ir al inicio con la nueva sesión.
+      navigate("/essalud/inicio", {
+        replace: true,
+        state: {
+          cuentaCambiada: true,
+        },
+      });
+    }, 1200);
   };
+
+  // ============================================
+  // NOMBRE DE LA CUENTA SELECCIONADA
+  // ============================================
 
   const nombreCuenta =
     cuentaSeleccionada?.nombres ||
     cuentaSeleccionada?.name ||
     "esta cuenta";
+
+  // ============================================
+  // RENDERIZADO
+  // ============================================
 
   return (
     <main className="appointments-screen cambiar-cuenta-screen">
@@ -192,6 +239,7 @@ export default function CambiarCuenta() {
           <p>Selecciona una cuenta para continuar.</p>
         </div>
 
+        {/* LISTA DE CUENTAS */}
         <div className="cambiar-cuenta-list">
           {cuentas.map((cuenta) => {
             const esActiva =
@@ -233,7 +281,9 @@ export default function CambiarCuenta() {
                     </span>
                   )}
 
-                  <small>DNI: {formatearDni(cuenta.dni)}</small>
+                  <small>
+                    DNI: {formatearDni(cuenta.dni)}
+                  </small>
                 </span>
 
                 {esActiva ? (
@@ -250,6 +300,7 @@ export default function CambiarCuenta() {
             );
           })}
 
+          {/* SIN CUENTAS */}
           {cuentas.length === 0 && (
             <div className="cuentas-vacias">
               <UserRound size={30} />
@@ -259,6 +310,7 @@ export default function CambiarCuenta() {
           )}
         </div>
 
+        {/* AGREGAR CUENTA */}
         <button
           type="button"
           className="cambiar-cuenta-add"
@@ -267,9 +319,11 @@ export default function CambiarCuenta() {
           <span className="cambiar-cuenta-add-icon">
             <Plus size={24} />
           </span>
+
           <span>Agregar otra cuenta</span>
         </button>
 
+        {/* AVISO DE SEGURIDAD */}
         <div className="cambiar-cuenta-notice">
           <span className="cambiar-cuenta-notice-icon">
             <ShieldCheck size={24} />
@@ -280,6 +334,7 @@ export default function CambiarCuenta() {
           </p>
         </div>
 
+        {/* VOLVER AL INICIO */}
         <button
           type="button"
           className="cambiar-cuenta-return"
@@ -289,7 +344,7 @@ export default function CambiarCuenta() {
         </button>
       </section>
 
-      {/* Modal de confirmación */}
+      {/* MODAL DE CONFIRMACIÓN */}
       <ConfirmacionModal
         isOpen={modalAbierto}
         title="¿Cambiar de cuenta?"
@@ -300,7 +355,7 @@ export default function CambiarCuenta() {
         onConfirm={confirmarCambioCuenta}
       />
 
-      {/* Pantalla de carga reutilizada del Login */}
+      {/* PANTALLA DE CARGA */}
       {validando && (
         <LoadingOverlay message="Cambiando de cuenta..." />
       )}
