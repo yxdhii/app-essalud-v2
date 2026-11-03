@@ -321,7 +321,7 @@ export default function MisCitas() {
   };
   
   return (
-    <main className="appointments-screen">
+    <main className="appointments-screen mis-citas-screen">
       <header className="appointments-header">
         <button
           type="button"

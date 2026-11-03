@@ -55,93 +55,120 @@ import CambiarContrasena from "./pages/CambiarContrasena";
 import BiometriaCuenta from "./pages/BiometriaCuenta";
 import TodosServicios from "./pages/TodosServicios";
 import Notificaciones from "./pages/Notificaciones";
+import AyudaSoporte from "./pages/AyudaSoporte";
+
+import { AccessibilityProvider } from "./context/AccessibilityContext";
+
 import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
-      <PhoneFrame>
-        <Routes>
-          <Route path="/" element={<HomeScreen />} />
-          <Route path="/essalud" element={<EsSalud />} />
-          <Route path="/splash" element={<Splash />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/heatmap" element={<HeatMap />} />
-          <Route path="/report-detail" element={<ReportDetail />} />
-          <Route path="/public-profile" element={<PublicProfile />} />
-          <Route path="/route-selection" element={<RouteSelection />} />
-          <Route path="/report" element={<ReportIncident />} />
-          <Route path="/report-success" element={<ReportSuccess />} />
-          <Route path="/navigation" element={<Navigation />} />
-          <Route path="/trip-complete" element={<TripComplete />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/my-reports" element={<MyReports />} />
-          <Route path="/badges" element={<Badges />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/alerts" element={<Alerts />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/change-password" element={<ChangePassword />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-code" element={<VerifyCode />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfUse />} />
-          <Route path="/data-protection-law" element={<DataProtectionLaw />} />
-          <Route path="/essalud/bienvenida" element={<EsSaludWelcome />} />
-          <Route path="/essalud/login" element={<EsSaludLogin />} />
-          <Route path="/essalud/registro" element={<EsSaludRegister />} />
-          <Route path="/essalud/inicio" element={<EsSaludHome />} />
-          <Route path="/essalud/citas" element={<MisCitas />} />
-          <Route path="/essalud/reservar-cita" element={<ReservarCita />} />
-          <Route path="/essalud/detalle-cita" element={<DetalleCita />} />
-          <Route path="/essalud/cita-virtual" element={<CitaVirtual />} />
-          <Route path="/essalud/familiares" element={<SeleccionarPerfil />} />
-          <Route path="/essalud/familiar/:dni" element={<DetalleFamiliar />} />
-          <Route
-            path="/essalud/agregar-familiar"
-            element={<AgregarFamiliar />}
-          />
-          <Route path="/essalud/cambiar-cuenta" element={<CambiarCuenta />} />
-          <Route
-            path="/essalud/seleccionar-perfil"
-            element={<SeleccionarPerfil />}
-          />
-          <Route path="/essalud/recetas" element={<Recetas />} />
-          <Route path="/essalud/examenes" element={<Examenes />} />
-          <Route
-            path="/essalud/centros-atencion"
-            element={<CentrosAtencion />}
-          />
-          <Route path="/essalud/chat" element={<Chat />} />
-          <Route path="/essalud/perfil" element={<Perfil />} />
-          <Route
-            path="/essalud/datos-personales"
-            element={<DatosPersonales />}
-          />
-          <Route path="/essalud/seguridad" element={<SeguridadCuenta />} />
-          <Route path="/essalud/receta/:id" element={<DetalleReceta />} />
-          <Route
-            path="/essalud/gestionar-cuentas"
-            element={<GestionarCuentas />}
-          />
-          <Route
-            path="/essalud/seguridad/contrasena"
-            element={<CambiarContrasena />}
-          />
-          <Route
-            path="/essalud/seguridad/biometria"
-            element={<BiometriaCuenta />}
-          />
-          <Route path="/essalud/servicios" element={<TodosServicios />} />
-          <Route path="/essalud/notificaciones" element={<Notificaciones />} />
-        </Routes>
-      </PhoneFrame>
-    </BrowserRouter>
+    <AccessibilityProvider>
+      <BrowserRouter>
+        <PhoneFrame>
+          <Routes>
+            <Route path="/" element={<HomeScreen />} />
+            <Route path="/essalud" element={<EsSalud />} />
+            <Route path="/splash" element={<Splash />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/heatmap" element={<HeatMap />} />
+            <Route path="/report-detail" element={<ReportDetail />} />
+            <Route path="/public-profile" element={<PublicProfile />} />
+            <Route path="/route-selection" element={<RouteSelection />} />
+            <Route path="/report" element={<ReportIncident />} />
+            <Route path="/report-success" element={<ReportSuccess />} />
+            <Route path="/navigation" element={<Navigation />} />
+            <Route path="/trip-complete" element={<TripComplete />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/my-reports" element={<MyReports />} />
+            <Route path="/badges" element={<Badges />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/alerts" element={<Alerts />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/verify-code" element={<VerifyCode />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfUse />} />
+            <Route
+              path="/data-protection-law"
+              element={<DataProtectionLaw />}
+            />
+
+            <Route path="/essalud/bienvenida" element={<EsSaludWelcome />} />
+            <Route path="/essalud/login" element={<EsSaludLogin />} />
+            <Route path="/essalud/registro" element={<EsSaludRegister />} />
+            <Route path="/essalud/inicio" element={<EsSaludHome />} />
+            <Route path="/essalud/citas" element={<MisCitas />} />
+            <Route path="/essalud/reservar-cita" element={<ReservarCita />} />
+            <Route path="/essalud/detalle-cita" element={<DetalleCita />} />
+            <Route path="/essalud/cita-virtual" element={<CitaVirtual />} />
+            <Route path="/essalud/familiares" element={<SeleccionarPerfil />} />
+            <Route
+              path="/essalud/familiar/:dni"
+              element={<DetalleFamiliar />}
+            />
+
+            <Route
+              path="/essalud/agregar-familiar"
+              element={<AgregarFamiliar />}
+            />
+            <Route path="/essalud/cambiar-cuenta" element={<CambiarCuenta />} />
+            <Route
+              path="/essalud/seleccionar-perfil"
+              element={<SeleccionarPerfil />}
+            />
+
+            <Route path="/essalud/recetas" element={<Recetas />} />
+            <Route path="/essalud/examenes" element={<Examenes />} />
+
+            <Route
+              path="/essalud/centros-atencion"
+              element={<CentrosAtencion />}
+            />
+
+            <Route path="/essalud/chat" element={<Chat />} />
+            <Route path="/essalud/perfil" element={<Perfil />} />
+
+            <Route
+              path="/essalud/datos-personales"
+              element={<DatosPersonales />}
+            />
+
+            <Route path="/essalud/seguridad" element={<SeguridadCuenta />} />
+            <Route path="/essalud/receta/:id" element={<DetalleReceta />} />
+
+            <Route
+              path="/essalud/gestionar-cuentas"
+              element={<GestionarCuentas />}
+            />
+
+            <Route
+              path="/essalud/seguridad/contrasena"
+              element={<CambiarContrasena />}
+            />
+
+            <Route
+              path="/essalud/seguridad/biometria"
+              element={<BiometriaCuenta />}
+            />
+
+            <Route path="/essalud/servicios" element={<TodosServicios />} />
+            <Route
+              path="/essalud/notificaciones"
+              element={<Notificaciones />}
+            />
+            <Route path="/essalud/ayuda" element={<AyudaSoporte />} />
+          </Routes>
+        </PhoneFrame>
+      </BrowserRouter>
+    </AccessibilityProvider>
   );
 }
 

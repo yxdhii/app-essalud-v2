@@ -1,5 +1,5 @@
-
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -15,17 +15,21 @@ import {
 
 import logoEssalud from "../assets/digital-logo.png";
 import headerMujer from "../assets/header-mujer.png";
+import headerMujerOscuro from "../assets/header-mujer-oscuro.png";
+
 import HomeSidebar from "./HomeSidebar";
+import { useAccessibility } from "../context/AccessibilityContext";
 
 const CLAVE_NOTIFICACIONES = "essalud_notificaciones";
 
-// Los iconos se mantienen fuera de los datos almacenados
+// ICONOS DE NOTIFICACIONES
 const iconosNotificacion = {
   cita: CalendarDays,
   receta: Pill,
   examen: FlaskConical,
 };
 
+// NOTIFICACIONES INICIALES
 const notificacionesIniciales = [
   {
     id: 1,
@@ -41,8 +45,7 @@ const notificacionesIniciales = [
     id: 2,
     tipo: "receta",
     titulo: "Recetas médicas",
-    mensaje:
-      "Te avisaremos cuando tu médico emita una nueva receta médica.",
+    mensaje: "Te avisaremos cuando tu médico emita una nueva receta médica.",
     fecha: "Información médica",
     leida: false,
     ruta: "/essalud/recetas",
@@ -62,27 +65,60 @@ const notificacionesIniciales = [
 export default function HomeHeader({ user }) {
   const navigate = useNavigate();
 
+  // TEMA DE ACCESIBILIDAD
+  const { tema } = useAccessibility();
+
+  // IMAGEN SEGÚN EL TEMA
+  const imagenBienvenida = tema === "oscuro" ? headerMujerOscuro : headerMujer;
+
+  // ESTADOS
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificacionesOpen, setNotificacionesOpen] = useState(false);
-  const [notificaciones, setNotificaciones] = useState(
-    notificacionesIniciales
-  );
+
+  const [notificaciones, setNotificaciones] = useState(notificacionesIniciales);
+
+  // CONTENEDOR DEL OVERLAY
+  const [overlayRoot, setOverlayRoot] = useState(null);
+
+  // BLOQUEAR SCROLL MIENTRAS LAS NOTIFICACIONES ESTÁN ABIERTAS
+  useEffect(() => {
+    if (!notificacionesOpen) return;
+
+    const contenedor = document.querySelector(".essalud-home");
+
+    if (!contenedor) return;
+
+    const scrollAnterior = contenedor.style.overflow;
+
+    contenedor.style.overflow = "hidden";
+
+    return () => {
+      contenedor.style.overflow = scrollAnterior;
+    };
+  }, [notificacionesOpen]);
+
+  // OBTENER EL CONTENEDOR PRINCIPAL DEL CELULAR
+  useEffect(() => {
+    const contenedor = document.querySelector(".essalud-home");
+    setOverlayRoot(contenedor);
+  }, []);
 
   const nombreUsuario = user?.nombres || user?.name || "Usuario";
 
-  const pendientes = notificaciones.filter(
-    (item) => !item.leida
-  ).length;
+  // CONTADOR DE NOTIFICACIONES PENDIENTES
+  const pendientes = notificaciones.filter((item) => !item.leida).length;
 
+  // ==========================================
   // CARGAR NOTIFICACIONES
+  // ==========================================
+
   useEffect(() => {
     try {
       const almacenadas = JSON.parse(
-        localStorage.getItem(CLAVE_NOTIFICACIONES) || "null"
+        localStorage.getItem(CLAVE_NOTIFICACIONES) || "null",
       );
 
       if (Array.isArray(almacenadas)) {
-        // Normalizar datos antiguos y evitar componentes dentro de localStorage
         const normalizadas = almacenadas.map((item) => ({
           id: item.id,
           tipo: item.tipo || "cita",
@@ -97,14 +133,14 @@ export default function HomeHeader({ user }) {
 
         localStorage.setItem(
           CLAVE_NOTIFICACIONES,
-          JSON.stringify(normalizadas)
+          JSON.stringify(normalizadas),
         );
       } else {
         setNotificaciones(notificacionesIniciales);
 
         localStorage.setItem(
           CLAVE_NOTIFICACIONES,
-          JSON.stringify(notificacionesIniciales)
+          JSON.stringify(notificacionesIniciales),
         );
       }
     } catch (error) {
@@ -113,12 +149,15 @@ export default function HomeHeader({ user }) {
     }
   }, []);
 
+  // ==========================================
   // ESCUCHAR CAMBIOS EN LAS NOTIFICACIONES
+  // ==========================================
+
   useEffect(() => {
     const actualizarNotificaciones = () => {
       try {
         const almacenadas = JSON.parse(
-          localStorage.getItem(CLAVE_NOTIFICACIONES) || "[]"
+          localStorage.getItem(CLAVE_NOTIFICACIONES) || "[]",
         );
 
         if (Array.isArray(almacenadas)) {
@@ -131,7 +170,7 @@ export default function HomeHeader({ user }) {
               fecha: item.fecha || "",
               leida: Boolean(item.leida),
               ruta: item.ruta || "",
-            }))
+            })),
           );
         }
       } catch (error) {
@@ -139,24 +178,24 @@ export default function HomeHeader({ user }) {
       }
     };
 
-    window.addEventListener(
-      "essalud-notificacion",
-      actualizarNotificaciones
-    );
+    window.addEventListener("essalud-notificacion", actualizarNotificaciones);
 
     window.addEventListener("storage", actualizarNotificaciones);
 
     return () => {
       window.removeEventListener(
         "essalud-notificacion",
-        actualizarNotificaciones
+        actualizarNotificaciones,
       );
 
       window.removeEventListener("storage", actualizarNotificaciones);
     };
   }, []);
 
+  // ==========================================
   // CERRAR PANEL CON ESCAPE
+  // ==========================================
+
   useEffect(() => {
     const cerrarConEscape = (event) => {
       if (event.key === "Escape") {
@@ -171,34 +210,43 @@ export default function HomeHeader({ user }) {
     };
   }, []);
 
+  // ==========================================
   // GUARDAR NOTIFICACIONES
+  // ==========================================
+
   const guardarNotificaciones = (lista) => {
     setNotificaciones(lista);
 
-    localStorage.setItem(
-      CLAVE_NOTIFICACIONES,
-      JSON.stringify(lista)
-    );
+    localStorage.setItem(CLAVE_NOTIFICACIONES, JSON.stringify(lista));
 
     window.dispatchEvent(new Event("essalud-notificacion"));
   };
 
+  // ==========================================
   // MARCAR COMO LEÍDA
+  // ==========================================
+
   const marcarComoLeida = (id) => {
     const actualizadas = notificaciones.map((item) =>
-      item.id === id ? { ...item, leida: true } : item
+      item.id === id ? { ...item, leida: true } : item,
     );
 
     guardarNotificaciones(actualizadas);
   };
 
+  // ==========================================
   // ABRIR PANTALLA COMPLETA
+  // ==========================================
+
   const verTodas = () => {
     setNotificacionesOpen(false);
     navigate("/essalud/notificaciones");
   };
 
+  // ==========================================
   // ABRIR MÓDULO CORRESPONDIENTE
+  // ==========================================
+
   const abrirNotificacion = (item) => {
     marcarComoLeida(item.id);
     setNotificacionesOpen(false);
@@ -208,10 +256,25 @@ export default function HomeHeader({ user }) {
     }
   };
 
+  // ==========================================
+  // CERRAR OVERLAY
+  // ==========================================
+
+  const cerrarNotificaciones = () => {
+    setNotificacionesOpen(false);
+  };
+
+  // ==========================================
+  // RENDERIZADO
+  // ==========================================
+
   return (
     <>
-      <header className="home-header">
+      {/* ======================================
+          HEADER PRINCIPAL
+      ====================================== */}
 
+      <header className="home-header">
         {/* BARRA SUPERIOR */}
         <div className="home-header-top">
           <button
@@ -237,9 +300,7 @@ export default function HomeHeader({ user }) {
             }`}
             aria-label={`Ver notificaciones: ${pendientes} sin leer`}
             aria-expanded={notificacionesOpen}
-            onClick={() =>
-              setNotificacionesOpen((prev) => !prev)
-            }
+            onClick={() => setNotificacionesOpen((prev) => !prev)}
           >
             <Bell size={22} strokeWidth={1.8} />
 
@@ -251,18 +312,57 @@ export default function HomeHeader({ user }) {
           </button>
         </div>
 
-        {/* PANEL DE NOTIFICACIONES */}
-        {notificacionesOpen && (
+        {/* ==================================
+            BIENVENIDA
+        ================================== */}
+
+        <section className="home-welcome">
+          <img
+            src={imagenBienvenida}
+            alt=""
+            aria-hidden="true"
+            className="welcome-image"
+          />
+
+          <div className="welcome-text">
+            <span>¡Hola!</span>
+            <h1>{nombreUsuario}</h1>
+            <p>¿Cómo podemos ayudarte hoy?</p>
+          </div>
+        </section>
+      </header>
+
+      {/* ======================================
+          OVERLAY DE NOTIFICACIONES
+          PORTAL DENTRO DE ESSALUD-HOME
+      ====================================== */}
+
+      {notificacionesOpen &&
+        overlayRoot &&
+        createPortal(
           <>
+            {/* FONDO DESENFOCADO */}
+
             <div
               className="notifications-backdrop"
-              onClick={() => setNotificacionesOpen(false)}
+              onClick={cerrarNotificaciones}
+              aria-hidden="true"
             />
 
-            <div className="notifications-panel">
+            {/* PANEL EMERGENTE */}
+
+            <div
+              className="notifications-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Notificaciones"
+            >
+              {/* ENCABEZADO DEL PANEL */}
+
               <div className="notifications-panel-header">
                 <div>
                   <h3>Notificaciones</h3>
+
                   <p>
                     {pendientes > 0
                       ? `Tienes ${pendientes} pendientes`
@@ -274,17 +374,18 @@ export default function HomeHeader({ user }) {
                   type="button"
                   className="notifications-close"
                   aria-label="Cerrar notificaciones"
-                  onClick={() => setNotificacionesOpen(false)}
+                  onClick={cerrarNotificaciones}
                 >
                   <X size={19} />
                 </button>
               </div>
 
+              {/* LISTA DE NOTIFICACIONES */}
+
               <div className="notifications-list">
                 {notificaciones.length > 0 ? (
                   notificaciones.slice(0, 5).map((item) => {
-                    const Icono =
-                      iconosNotificacion[item.tipo] || Bell;
+                    const Icono = iconosNotificacion[item.tipo] || Bell;
 
                     return (
                       <button
@@ -295,9 +396,7 @@ export default function HomeHeader({ user }) {
                         key={item.id}
                         onClick={() => abrirNotificacion(item)}
                       >
-                        <div
-                          className={`notification-item-icon ${item.tipo}`}
-                        >
+                        <div className={`notification-item-icon ${item.tipo}`}>
                           <Icono size={21} />
                         </div>
 
@@ -325,11 +424,15 @@ export default function HomeHeader({ user }) {
                 ) : (
                   <div className="notification-empty">
                     <BellRing size={30} />
+
                     <strong>No tienes notificaciones</strong>
+
                     <p>Aquí recibirás tus avisos médicos.</p>
                   </div>
                 )}
               </div>
+
+              {/* BOTÓN VER TODAS */}
 
               <button
                 type="button"
@@ -340,27 +443,14 @@ export default function HomeHeader({ user }) {
                 <ChevronRight size={17} />
               </button>
             </div>
-          </>
+          </>,
+          overlayRoot,
         )}
 
-        {/* BIENVENIDA */}
-        <section className="home-welcome">
-          <img
-            src={headerMujer}
-            alt=""
-            aria-hidden="true"
-            className="welcome-image"
-          />
+      {/* ======================================
+          MENÚ LATERAL
+      ====================================== */}
 
-          <div className="welcome-text">
-            <span>¡Hola!</span>
-            <h1>{nombreUsuario}</h1>
-            <p>¿Cómo podemos ayudarte hoy?</p>
-          </div>
-        </section>
-      </header>
-
-      {/* MENÚ LATERAL */}
       <HomeSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

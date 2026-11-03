@@ -27,13 +27,17 @@ import {
 import BottomNavigation from "../components/BottomNavigation";
 import logoEssalud from "../assets/digital-logo.png";
 import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+import { useAccessibility } from "../context/AccessibilityContext";
 
 export default function Perfil() {
   const navigate = useNavigate();
   const usuario = obtenerUsuarioActivo();
   const inputFotoRef = useRef(null);
 
-  // Foto de perfil
+  // ==========================================
+  // FOTO DE PERFIL
+  // ==========================================
+
   const [fotoPerfil, setFotoPerfil] = useState(usuario?.fotoPerfil || "");
 
   const [modalFotoAbierto, setModalFotoAbierto] = useState(false);
@@ -41,15 +45,28 @@ export default function Perfil() {
   const [fotoEliminada, setFotoEliminada] = useState(false);
   const [errorFoto, setErrorFoto] = useState("");
 
-  // Accesibilidad
+  // ==========================================
+  // ACCESIBILIDAD GLOBAL
+  // ==========================================
+
   const [accesibilidadAbierta, setAccesibilidadAbierta] = useState(true);
+
   const [sonido, setSonido] = useState(true);
   const [lecturaVoz, setLecturaVoz] = useState(false);
-  const [contraste, setContraste] = useState("normal");
-  const [tema, setTema] = useState("claro");
-  const [tamanoTexto, setTamanoTexto] = useState("medio");
 
-  // Abrir modal
+  const {
+    tema,
+    setTema,
+    contraste,
+    setContraste,
+    tamanoTexto,
+    setTamanoTexto,
+  } = useAccessibility();
+
+  // ==========================================
+  // ABRIR MODAL DE FOTO
+  // ==========================================
+
   const abrirModalFoto = () => {
     setFotoTemporal(fotoPerfil);
     setFotoEliminada(false);
@@ -57,7 +74,10 @@ export default function Perfil() {
     setModalFotoAbierto(true);
   };
 
-  // Seleccionar imagen
+  // ==========================================
+  // SELECCIONAR IMAGEN
+  // ==========================================
+
   const seleccionarFoto = (e) => {
     const archivo = e.target.files?.[0];
 
@@ -93,14 +113,20 @@ export default function Perfil() {
     e.target.value = "";
   };
 
-  // Marcar foto para eliminar
+  // ==========================================
+  // ELIMINAR FOTO
+  // ==========================================
+
   const eliminarFoto = () => {
     setFotoTemporal("");
     setFotoEliminada(true);
     setErrorFoto("");
   };
 
-  // Guardar cambios en localStorage
+  // ==========================================
+  // GUARDAR FOTO EN LOCALSTORAGE
+  // ==========================================
+
   const guardarFoto = () => {
     if (!usuario?.id) {
       setErrorFoto("No se encontró una sesión de usuario activa.");
@@ -144,13 +170,17 @@ export default function Perfil() {
       setErrorFoto("");
     } catch (error) {
       console.error("Error al guardar la foto:", error);
+
       setErrorFoto(
         "No se pudo guardar la foto. Prueba con una imagen más pequeña.",
       );
     }
   };
 
-  // Cancelar edición
+  // ==========================================
+  // CANCELAR EDICIÓN DE FOTO
+  // ==========================================
+
   const cancelarEdicionFoto = () => {
     setFotoTemporal(fotoPerfil);
     setFotoEliminada(false);
@@ -158,7 +188,10 @@ export default function Perfil() {
     setModalFotoAbierto(false);
   };
 
-  // Navegación inferior
+  // ==========================================
+  // NAVEGACIÓN INFERIOR
+  // ==========================================
+
   const navegarMenu = (id) => {
     const rutas = {
       inicio: "/essalud/inicio",
@@ -167,8 +200,14 @@ export default function Perfil() {
       perfil: "/essalud/perfil",
     };
 
-    if (rutas[id]) navigate(rutas[id]);
+    if (rutas[id]) {
+      navigate(rutas[id]);
+    }
   };
+
+  // ==========================================
+  // RENDERIZADO
+  // ==========================================
 
   return (
     <main
@@ -286,6 +325,7 @@ export default function Perfil() {
 
           <ChevronRight size={21} />
         </button>
+
         {/* ACCESIBILIDAD */}
 
         <section className="perfil-access-card">
@@ -313,6 +353,8 @@ export default function Perfil() {
 
           {accesibilidadAbierta && (
             <div className="perfil-access-content">
+              {/* SONIDO */}
+
               <div className="perfil-access-row">
                 <div className="perfil-access-icon">
                   <Volume2 size={21} />
@@ -334,6 +376,8 @@ export default function Perfil() {
                   <span />
                 </button>
               </div>
+
+              {/* LECTURA EN VOZ ALTA */}
 
               <div className="perfil-access-row">
                 <div className="perfil-access-icon">
@@ -357,6 +401,8 @@ export default function Perfil() {
                 </button>
               </div>
 
+              {/* CONTRASTE */}
+
               <div className="perfil-access-row">
                 <div className="perfil-access-icon">
                   <Contrast size={21} />
@@ -367,10 +413,15 @@ export default function Perfil() {
                   <p>Mejora la visibilidad del contenido</p>
                 </div>
 
-                <div className="perfil-segmented">
+                <div
+                  className="perfil-segmented"
+                  role="group"
+                  aria-label="Nivel de contraste"
+                >
                   <button
                     type="button"
                     className={contraste === "normal" ? "active" : ""}
+                    aria-pressed={contraste === "normal"}
                     onClick={() => setContraste("normal")}
                   >
                     Normal
@@ -379,12 +430,15 @@ export default function Perfil() {
                   <button
                     type="button"
                     className={contraste === "alto" ? "active" : ""}
+                    aria-pressed={contraste === "alto"}
                     onClick={() => setContraste("alto")}
                   >
                     Alto
                   </button>
                 </div>
               </div>
+
+              {/* TEMA */}
 
               <div className="perfil-access-row">
                 <div className="perfil-access-icon">
@@ -396,12 +450,17 @@ export default function Perfil() {
                   <p>Elige el estilo de la aplicación</p>
                 </div>
 
-                <div className="perfil-segmented">
+                <div
+                  className="perfil-segmented theme-options"
+                  role="group"
+                  aria-label="Tema de visualización"
+                >
                   <button
                     type="button"
                     className={tema === "claro" ? "active" : ""}
                     onClick={() => setTema("claro")}
                     aria-label="Tema claro"
+                    aria-pressed={tema === "claro"}
                   >
                     <Sun size={15} />
                   </button>
@@ -411,11 +470,14 @@ export default function Perfil() {
                     className={tema === "oscuro" ? "active" : ""}
                     onClick={() => setTema("oscuro")}
                     aria-label="Tema oscuro"
+                    aria-pressed={tema === "oscuro"}
                   >
                     <Moon size={15} />
                   </button>
                 </div>
               </div>
+
+              {/* TAMAÑO DEL TEXTO */}
 
               <div className="perfil-access-row">
                 <div className="perfil-access-icon">
@@ -427,12 +489,17 @@ export default function Perfil() {
                   <p>Ajusta el tamaño del contenido</p>
                 </div>
 
-                <div className="perfil-segmented text-size-options">
+                <div
+                  className="perfil-segmented text-size-options"
+                  role="group"
+                  aria-label="Tamaño del texto"
+                >
                   <button
                     type="button"
                     className={tamanoTexto === "pequeno" ? "active" : ""}
                     onClick={() => setTamanoTexto("pequeno")}
                     aria-label="Texto pequeño"
+                    aria-pressed={tamanoTexto === "pequeno"}
                   >
                     A
                   </button>
@@ -442,6 +509,7 @@ export default function Perfil() {
                     className={tamanoTexto === "medio" ? "active" : ""}
                     onClick={() => setTamanoTexto("medio")}
                     aria-label="Texto mediano"
+                    aria-pressed={tamanoTexto === "medio"}
                   >
                     A
                   </button>
@@ -451,6 +519,7 @@ export default function Perfil() {
                     className={tamanoTexto === "grande" ? "active" : ""}
                     onClick={() => setTamanoTexto("grande")}
                     aria-label="Texto grande"
+                    aria-pressed={tamanoTexto === "grande"}
                   >
                     A
                   </button>
@@ -465,9 +534,7 @@ export default function Perfil() {
         <button
           type="button"
           className="perfil-option-card"
-          onClick={() =>
-            window.alert("Próximamente encontrarás aquí la ayuda y soporte.")
-          }
+          onClick={() => navigate("/essalud/ayuda")}
         >
           <div className="perfil-option-icon">
             <CircleHelp size={23} />
@@ -504,6 +571,7 @@ export default function Perfil() {
                 <span className="foto-modal-eyebrow">
                   PERSONALIZA TU CUENTA
                 </span>
+
                 <h2 id="foto-modal-title">Foto de perfil</h2>
               </div>
 
