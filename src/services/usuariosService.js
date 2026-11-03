@@ -1,3 +1,4 @@
+
 import { asegurados } from "../data/asegurados.js";
 import { centrosAtencion } from "../data/centrosAtencion.js";
 
@@ -17,7 +18,6 @@ const METODOS_BIOMETRICOS = ["fingerprint", "face"];
 // UTILIDADES
 // ============================================
 
-// Obtener la edad de una persona.
 function obtenerEdad(fechaNacimiento) {
   if (!fechaNacimiento) return null;
 
@@ -39,7 +39,6 @@ function obtenerEdad(fechaNacimiento) {
   return edad;
 }
 
-// Obtener avatar predeterminado.
 function obtenerAvatar(asegurado, parentesco = "") {
   if (asegurado?.avatar) {
     return asegurado.avatar;
@@ -49,17 +48,14 @@ function obtenerAvatar(asegurado, parentesco = "") {
   const relacion = parentesco.toLowerCase().trim();
   const sexo = asegurado?.sexo;
 
-  // Adultos mayores.
   if (edad !== null && edad >= 60) {
     return sexo === "F" ? "👵🏻" : "👨🏻‍🦳";
   }
 
-  // Niños y adolescentes.
   if (edad !== null && edad < 18) {
     return sexo === "F" ? "👧🏻" : "👦🏻";
   }
 
-  // Adultos según parentesco.
   if (["madre", "hermana", "hija"].includes(relacion)) {
     return "👩🏻";
   }
@@ -68,14 +64,13 @@ function obtenerAvatar(asegurado, parentesco = "") {
     return "👨🏻";
   }
 
-  // Adultos según sexo.
   if (sexo === "F") return "👩🏻";
   if (sexo === "M") return "👨🏻";
 
   return null;
 }
 
-// Leer información de Local Storage de forma segura.
+// Leer Local Storage de forma segura.
 function leerLocalStorage(clave, valorPredeterminado) {
   try {
     const contenido = localStorage.getItem(clave);
@@ -104,19 +99,16 @@ function guardarLocalStorage(clave, datos) {
 // GESTIÓN DE USUARIOS
 // ============================================
 
-// Obtener los usuarios registrados.
 export function obtenerUsuarios() {
   return leerLocalStorage(CLAVE_USUARIOS, []);
 }
 
-// Buscar un asegurado por DNI.
 export function buscarAsegurado(dni) {
   return asegurados.find(
     (usuario) => String(usuario.dni) === String(dni)
   );
 }
 
-// Registrar las credenciales de un asegurado autorizado.
 export function registrarUsuario(datos) {
   const dni = String(datos.documentNumber || "").trim();
   const asegurado = buscarAsegurado(dni);
@@ -191,12 +183,11 @@ export function registrarUsuario(datos) {
 // CUENTAS GUARDADAS EN EL DISPOSITIVO
 // ============================================
 
-// Obtener las cuentas guardadas.
 export function obtenerCuentasGuardadas() {
   return leerLocalStorage(CLAVE_CUENTAS_GUARDADAS, []);
 }
 
-// Guardar o actualizar una cuenta de titular.
+// Guardar o actualizar una cuenta.
 // Nunca se almacena la contraseña en esta lista.
 function guardarCuentaDispositivo(usuario, accesoRapido = false) {
   const cuentas = obtenerCuentasGuardadas();
@@ -233,12 +224,10 @@ function guardarCuentaDispositivo(usuario, accesoRapido = false) {
 // AUTENTICACIÓN BIOMÉTRICA SIMULADA
 // ============================================
 
-// Validar el método biométrico.
 function validarMetodoBiometrico(metodo) {
   return METODOS_BIOMETRICOS.includes(metodo);
 }
 
-// Obtener la configuración biométrica de un DNI.
 export function obtenerConfiguracionBiometrica(dni) {
   const documento = String(dni || "").trim();
 
@@ -255,7 +244,6 @@ export function obtenerConfiguracionBiometrica(dni) {
   };
 }
 
-// Habilitar un método biométrico para el usuario activo.
 export function habilitarBiometriaSimulada(dni, metodo) {
   const documento = String(dni || "").trim();
 
@@ -309,7 +297,6 @@ export function habilitarBiometriaSimulada(dni, metodo) {
   };
 }
 
-// Deshabilitar un método biométrico.
 export function deshabilitarBiometriaSimulada(dni, metodo) {
   const documento = String(dni || "").trim();
 
@@ -352,7 +339,6 @@ export function deshabilitarBiometriaSimulada(dni, metodo) {
   };
 }
 
-// Verificar el método biométrico e iniciar sesión.
 export function verificarBiometriaSimulada(dni, metodo) {
   const documento = String(dni || "").trim();
 
@@ -388,7 +374,6 @@ export function verificarBiometriaSimulada(dni, metodo) {
     };
   }
 
-  // Construir y guardar la sesión del usuario.
   const resultado = construirSesion(usuario);
 
   if (!resultado.correcto) {
@@ -436,7 +421,6 @@ export function eliminarCuentaGuardada(dni) {
 // CONSTRUIR SESIÓN DEL USUARIO
 // ============================================
 
-// Preparar los datos públicos del usuario.
 function construirSesion(usuario) {
   const centro = centrosAtencion.find(
     (item) => item.id === usuario.centroId
@@ -471,7 +455,6 @@ function construirSesion(usuario) {
   };
 }
 
-// Activar una sesión.
 function establecerSesion(sesion) {
   return guardarLocalStorage(CLAVE_SESION, sesion);
 }
@@ -480,7 +463,6 @@ function establecerSesion(sesion) {
 // INICIO DE SESIÓN
 // ============================================
 
-// Iniciar sesión mediante DNI y contraseña.
 export function iniciarSesion(dni, password, recordar = false) {
   const documento = String(dni || "").trim();
 
@@ -503,9 +485,7 @@ export function iniciarSesion(dni, password, recordar = false) {
     return resultado;
   }
 
-  const sesionGuardada = establecerSesion(
-    resultado.usuario
-  );
+  const sesionGuardada = establecerSesion(resultado.usuario);
 
   if (!sesionGuardada) {
     return {
@@ -514,7 +494,6 @@ export function iniciarSesion(dni, password, recordar = false) {
     };
   }
 
-  // Recordar al titular según su preferencia.
   const cuentaGuardada = guardarCuentaDispositivo(
     resultado.usuario,
     recordar
@@ -540,8 +519,6 @@ export function iniciarSesion(dni, password, recordar = false) {
 // ACCESO RÁPIDO
 // ============================================
 
-// Iniciar sesión sin pedir contraseña
-// cuando el titular activó "Recordar mi cuenta".
 export function iniciarSesionRecordada(dni) {
   const documento = String(dni || "").trim();
 
@@ -575,9 +552,7 @@ export function iniciarSesionRecordada(dni) {
     return resultado;
   }
 
-  const sesionGuardada = establecerSesion(
-    resultado.usuario
-  );
+  const sesionGuardada = establecerSesion(resultado.usuario);
 
   if (!sesionGuardada) {
     return {
@@ -593,7 +568,82 @@ export function iniciarSesionRecordada(dni) {
   };
 }
 
-// Recuperar el usuario que inició sesión.
+// ============================================
+// CAMBIAR DE CUENTA
+// ============================================
+
+export function cambiarCuentaGuardada(dni) {
+  const documento = String(dni || "").trim();
+
+  if (!/^\d{8}$/.test(documento)) {
+    return {
+      correcto: false,
+      mensaje: "El DNI de la cuenta no es válido.",
+    };
+  }
+
+  const usuarioActivo = obtenerUsuarioActivo();
+
+  // Si ya es la cuenta activa, no es necesario cambiarla.
+  if (
+    usuarioActivo &&
+    String(usuarioActivo.dni) === documento
+  ) {
+    return {
+      correcto: true,
+      mensaje: "Esta cuenta ya está activa.",
+      usuario: usuarioActivo,
+    };
+  }
+
+  const cuentaGuardada = obtenerCuentasGuardadas().find(
+    (cuenta) => String(cuenta.dni) === documento
+  );
+
+  if (!cuentaGuardada) {
+    return {
+      correcto: false,
+      mensaje: "Esta cuenta no está guardada en el dispositivo.",
+    };
+  }
+
+  const usuario = obtenerUsuarios().find(
+    (item) => String(item.dni) === documento
+  );
+
+  if (!usuario) {
+    return {
+      correcto: false,
+      mensaje: "No se encontró el usuario registrado.",
+    };
+  }
+
+  const resultado = construirSesion(usuario);
+
+  if (!resultado.correcto) {
+    return resultado;
+  }
+
+  const sesionGuardada = establecerSesion(resultado.usuario);
+
+  if (!sesionGuardada) {
+    return {
+      correcto: false,
+      mensaje: "No fue posible cambiar de cuenta.",
+    };
+  }
+
+  return {
+    correcto: true,
+    mensaje: "Cuenta cambiada correctamente.",
+    usuario: resultado.usuario,
+  };
+}
+
+// ============================================
+// USUARIO ACTIVO
+// ============================================
+
 export function obtenerUsuarioActivo() {
   return leerLocalStorage(CLAVE_SESION, null);
 }
@@ -629,7 +679,6 @@ export function actualizarDatosPersonales(datos) {
     };
   }
 
-  // Actualizar el usuario registrado.
   const usuarios = obtenerUsuarios();
 
   const usuariosActualizados = usuarios.map((usuario) =>
@@ -654,7 +703,6 @@ export function actualizarDatosPersonales(datos) {
     };
   }
 
-  // Actualizar la sesión activa.
   const nuevaSesion = {
     ...usuarioActivo,
     phone: telefono,
@@ -674,12 +722,10 @@ export function actualizarDatosPersonales(datos) {
 // FAMILIARES VINCULADOS
 // ============================================
 
-// Obtener todas las vinculaciones.
 function obtenerTodasLasVinculaciones() {
   return leerLocalStorage(CLAVE_FAMILIARES, {});
 }
 
-// Guardar las vinculaciones.
 function guardarTodasLasVinculaciones(vinculaciones) {
   return guardarLocalStorage(
     CLAVE_FAMILIARES,
@@ -687,7 +733,6 @@ function guardarTodasLasVinculaciones(vinculaciones) {
   );
 }
 
-// Obtener los familiares del titular actual.
 export function obtenerFamiliaresVinculados(dniTitular) {
   const titular = String(
     dniTitular || obtenerUsuarioActivo()?.dni || ""
@@ -716,7 +761,6 @@ export function obtenerFamiliaresVinculados(dniTitular) {
     .filter(Boolean);
 }
 
-// Vincular un familiar.
 export function vincularFamiliar(dniFamiliar, parentesco) {
   const usuarioActivo = obtenerUsuarioActivo();
 
@@ -780,9 +824,7 @@ export function vincularFamiliar(dniFamiliar, parentesco) {
     },
   ];
 
-  const guardado = guardarTodasLasVinculaciones(
-    vinculaciones
-  );
+  const guardado = guardarTodasLasVinculaciones(vinculaciones);
 
   if (!guardado) {
     return {
@@ -798,7 +840,6 @@ export function vincularFamiliar(dniFamiliar, parentesco) {
   };
 }
 
-// Desvincular un familiar.
 export function desvincularFamiliar(dniFamiliar) {
   const usuarioActivo = obtenerUsuarioActivo();
 
@@ -830,9 +871,7 @@ export function desvincularFamiliar(dniFamiliar) {
     (familiar) => String(familiar.dni) !== dni
   );
 
-  const guardado = guardarTodasLasVinculaciones(
-    vinculaciones
-  );
+  const guardado = guardarTodasLasVinculaciones(vinculaciones);
 
   if (!guardado) {
     return {
@@ -851,8 +890,6 @@ export function desvincularFamiliar(dniFamiliar) {
 // CERRAR SESIÓN
 // ============================================
 
-// Cerrar únicamente la sesión activa.
-// Las cuentas recordadas permanecen en el dispositivo.
 export function cerrarSesion() {
   localStorage.removeItem(CLAVE_SESION);
 
