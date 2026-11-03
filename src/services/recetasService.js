@@ -1,4 +1,3 @@
-
 const CLAVE_RECETAS = "essalud_recetas";
 
 // Obtener todas las recetas guardadas.
@@ -11,14 +10,25 @@ export function obtenerRecetas() {
 }
 
 // Obtener las recetas de un paciente.
-// Funciona tanto para el titular como para sus familiares.
-export function obtenerRecetasPaciente(pacienteId) {
+// pacienteId: DNI del paciente.
+// identificadorAlternativo: permite recuperar recetas antiguas del titular.
+export function obtenerRecetasPaciente(
+  pacienteId,
+  identificadorAlternativo = null,
+) {
   if (!pacienteId) return [];
 
-  return obtenerRecetas().filter(
-    (receta) =>
-      String(receta.pacienteId || receta.usuarioId) === String(pacienteId)
-  );
+  return obtenerRecetas().filter((receta) => {
+    const idPaciente = String(receta.pacienteId || receta.usuarioId || "");
+
+    const coincidePaciente = idPaciente === String(pacienteId);
+
+    const coincideIdentificadorAlternativo =
+      identificadorAlternativo &&
+      idPaciente === String(identificadorAlternativo);
+
+    return coincidePaciente || coincideIdentificadorAlternativo;
+  });
 }
 
 // Generar automáticamente una receta al completar una cita.
@@ -33,9 +43,7 @@ export function generarRecetaDesdeCita(cita) {
   const recetas = obtenerRecetas();
 
   // Evitar que una misma cita genere varias recetas.
-  const recetaExistente = recetas.find(
-    (receta) => receta.citaId === cita.id
-  );
+  const recetaExistente = recetas.find((receta) => receta.citaId === cita.id);
 
   if (recetaExistente) {
     return {
@@ -45,9 +53,12 @@ export function generarRecetaDesdeCita(cita) {
     };
   }
 
-  // El paciente puede ser el titular o un familiar.
+  // Identificar al paciente atendido.
   const pacienteId = cita.pacienteId || cita.usuarioId;
-  const pacienteDni = cita.pacienteDni || "";
+
+  const pacienteDni =
+    cita.pacienteDni || (cita.pacienteId ? cita.pacienteId : "");
+
   const nombrePaciente =
     cita.pacienteNombre ||
     (cita.paciente === "Yo" ? "" : cita.paciente) ||
@@ -66,12 +77,15 @@ export function generarRecetaDesdeCita(cita) {
     id: `REC-${Date.now()}`,
     citaId: cita.id,
 
-    // Identificación del titular que reservó.
+    // Titular que administra la cuenta.
     titularId: cita.usuarioId,
+    solicitanteId: cita.solicitanteId || cita.usuarioId,
+    solicitanteNombre: cita.solicitanteNombre || "Titular",
 
-    // Identificación del paciente atendido.
+    // Paciente que recibió la atención.
     pacienteId,
     paciente: nombrePaciente,
+    pacienteNombre: nombrePaciente,
     dni: pacienteDni,
     parentesco: cita.parentesco || "Titular",
 
@@ -82,6 +96,7 @@ export function generarRecetaDesdeCita(cita) {
     fecha: cita.fecha,
 
     diagnostico: "Registro demostrativo de atención médica.",
+
     indicaciones:
       "Receta ficticia generada automáticamente para la simulación académica. No constituye una prescripción médica real.",
 
@@ -100,10 +115,7 @@ export function generarRecetaDesdeCita(cita) {
   };
 
   try {
-    localStorage.setItem(
-      CLAVE_RECETAS,
-      JSON.stringify([receta, ...recetas])
-    );
+    localStorage.setItem(CLAVE_RECETAS, JSON.stringify([receta, ...recetas]));
 
     return {
       correcto: true,
@@ -124,9 +136,12 @@ export function obtenerRecetaPorId(id) {
 }
 
 // Clasificar las recetas en nuevas y anteriores.
-// Se toma como referencia la fecha de emisión.
-export function obtenerRecetasPorPeriodo(pacienteId, periodo) {
-  const recetas = obtenerRecetasPaciente(pacienteId);
+export function obtenerRecetasPorPeriodo(
+  pacienteId,
+  periodo,
+  identificadorAlternativo = null,
+) {
+  const recetas = obtenerRecetasPaciente(pacienteId, identificadorAlternativo);
 
   const ahora = new Date();
   const mesActual = ahora.getMonth();
@@ -134,7 +149,7 @@ export function obtenerRecetasPorPeriodo(pacienteId, periodo) {
 
   return recetas.filter((receta) => {
     const fechaEmision = new Date(
-      receta.fechaRegistro || `${receta.fecha}T12:00:00`
+      receta.fechaRegistro || `${receta.fecha}T12:00:00`,
     );
 
     const esMesActual =

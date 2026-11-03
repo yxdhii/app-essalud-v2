@@ -22,6 +22,7 @@ import {
   CircleHelp,
   CalendarCheck,
   Info,
+  UserCheck,
 } from "lucide-react";
 
 export default function DetalleCita() {
@@ -30,14 +31,17 @@ export default function DetalleCita() {
 
   const cita = location.state?.cita;
   const activeTabAnterior = location.state?.activeTab || "Virtual";
+  const pacienteContexto = location.state?.paciente || null;
 
-  // CONTROL DEL MODAL REUTILIZABLE
   const [modalAbierto, setModalAbierto] = useState(null);
 
-  // VOLVER A MIS CITAS
+  // VOLVER A MIS CITAS CONSERVANDO EL PACIENTE
   const volverAMisCitas = () => {
     navigate("/essalud/citas", {
-      state: { activeTab: activeTabAnterior },
+      state: {
+        activeTab: activeTabAnterior,
+        paciente: pacienteContexto,
+      },
     });
   };
 
@@ -122,6 +126,19 @@ export default function DetalleCita() {
   const esVirtual = cita.tipo === "Virtual";
   const estaPendiente = cita.estado === "Pendiente";
 
+  // IDENTIFICACIÓN DEL PACIENTE
+  const nombrePaciente =
+    cita.pacienteNombre ||
+    (cita.paciente === "Yo"
+      ? "Titular de la cuenta"
+      : cita.paciente === "Familiar"
+        ? "Familiar vinculado"
+        : cita.paciente || "No especificado");
+
+  // PERSONA QUE GESTIONÓ LA RESERVA
+  const nombreSolicitante =
+    cita.solicitanteNombre || "No especificado";
+
   // FORMATEAR FECHA
   const formatearFecha = (fecha) => {
     if (!fecha) return "Fecha pendiente";
@@ -168,12 +185,13 @@ export default function DetalleCita() {
     return nombre.charAt(0).toUpperCase() || "M";
   };
 
-  // ABRIR VIDEOLLAMADA
+  // ABRIR VIDEOLLAMADA CONSERVANDO LOS DATOS
   const entrarVideollamada = () => {
     navigate("/essalud/cita-virtual", {
       state: {
         cita,
         activeTab: activeTabAnterior,
+        paciente: pacienteContexto,
       },
     });
   };
@@ -316,13 +334,23 @@ export default function DetalleCita() {
           <div className="detalle-cita-fila">
             <Clock3 />
             <span>Hora</span>
-            <strong>{formatearHora(cita.horario)}</strong>
+            <strong>
+              {formatearHora(cita.horario || cita.hora)}
+            </strong>
           </div>
 
+          {/* PACIENTE */}
           <div className="detalle-cita-fila">
             <UserRound />
             <span>Paciente</span>
-            <strong>{cita.paciente || "Yo"}</strong>
+            <strong>{nombrePaciente}</strong>
+          </div>
+
+          {/* PERSONA QUE GESTIONÓ LA RESERVA */}
+          <div className="detalle-cita-fila">
+            <UserCheck />
+            <span>Gestionada por</span>
+            <strong>{nombreSolicitante}</strong>
           </div>
 
           <div className="detalle-cita-fila">

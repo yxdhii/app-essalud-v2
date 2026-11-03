@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -33,9 +34,9 @@ export default function MisCitas() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Recuperar la pestaña enviada desde DetalleCita.
+  // Recuperar la pestaña y el paciente enviados desde otra pantalla.
   const [activeTab, setActiveTab] = useState(
-    location.state?.activeTab || "Virtual",
+    location.state?.activeTab || "Virtual"
   );
 
   const [citas, setCitas] = useState([]);
@@ -46,14 +47,23 @@ export default function MisCitas() {
 
   const usuario = obtenerUsuarioActivo();
 
-  // Obtener las citas del usuario activo.
+  // Si se llega desde DetalleFamiliar, se reciben los datos del familiar.
+  // Si se llega desde el inicio, se muestran las citas de toda la cuenta.
+  const pacienteSeleccionado = location.state?.paciente || null;
+
+  // Obtener las citas del titular o de un paciente específico.
   const actualizarCitas = () => {
     if (!usuario) {
       setCitas([]);
       return;
     }
 
-    setCitas(obtenerCitasUsuario(usuario.id));
+    setCitas(
+      obtenerCitasUsuario(
+        usuario.id,
+        pacienteSeleccionado?.dni || null
+      )
+    );
   };
 
   useEffect(() => {
@@ -70,23 +80,52 @@ export default function MisCitas() {
     const hora = cita.horario || cita.hora || "00:00";
     const fechaCita = new Date(`${cita.fecha}T${hora}:00`);
 
-    return !Number.isNaN(fechaCita.getTime()) && fechaCita < new Date();
+    return (
+      !Number.isNaN(fechaCita.getTime()) &&
+      fechaCita < new Date()
+    );
   };
 
   // Filtrar las citas según la pestaña seleccionada.
-  const citasFiltradas = citas.filter((cita) => cita.tipo === activeTab);
+  const citasFiltradas = citas.filter(
+    (cita) => cita.tipo === activeTab
+  );
 
   const proximasCitas = citasFiltradas.filter(
-    (cita) => !esAnterior(cita) && cita.estado === "Pendiente",
+    (cita) =>
+      !esAnterior(cita) && cita.estado === "Pendiente"
   );
 
   const citasAnteriores = citasFiltradas.filter(
-    (cita) => esAnterior(cita) || cita.estado === "Atendida",
+    (cita) =>
+      esAnterior(cita) || cita.estado === "Atendida"
   );
 
   const citasCanceladas = citasFiltradas.filter(
-    (cita) => cita.estado === "Cancelada",
+    (cita) => cita.estado === "Cancelada"
   );
+
+  const tieneCitas = citas.length > 0;
+
+  // Nombre del paciente asociado a cada cita.
+  const obtenerNombrePaciente = (cita) => {
+    if (cita.pacienteNombre) {
+      return cita.pacienteNombre;
+    }
+
+    if (
+      cita.pacienteId &&
+      String(cita.pacienteId) === String(usuario?.dni)
+    ) {
+      return usuario?.nombres || usuario?.nombre || "Titular";
+    }
+
+    if (cita.paciente === "Familiar") {
+      return "Familiar vinculado";
+    }
+
+    return usuario?.nombres || usuario?.nombre || "Titular";
+  };
 
   // Abrir modal para confirmar la cancelación.
   const manejarCancelacion = (id) => {
@@ -107,7 +146,9 @@ export default function MisCitas() {
       actualizarCitas();
     } catch (error) {
       console.error("Error al cancelar la cita:", error);
-      window.alert("No se pudo cancelar la cita. Inténtalo nuevamente.");
+      window.alert(
+        "No se pudo cancelar la cita. Inténtalo nuevamente."
+      );
     }
   };
 
@@ -119,18 +160,26 @@ export default function MisCitas() {
 
   // Calificar la atención.
   const manejarCalificacion = (id) => {
-    const puntuacion = window.prompt("Califica tu atención del 1 al 5:");
+    const puntuacion = window.prompt(
+      "Califica tu atención del 1 al 5:"
+    );
 
     if (puntuacion === null) return;
 
     const valor = Number(puntuacion);
 
-    if (!Number.isInteger(valor) || valor < 1 || valor > 5) {
+    if (
+      !Number.isInteger(valor) ||
+      valor < 1 ||
+      valor > 5
+    ) {
       window.alert("Ingresa una calificación del 1 al 5.");
       return;
     }
 
-    const comentario = window.prompt("¿Deseas dejar un comentario? (Opcional)");
+    const comentario = window.prompt(
+      "¿Deseas dejar un comentario? (Opcional)"
+    );
 
     calificarCita(id, valor, comentario || "");
     actualizarCitas();
@@ -176,14 +225,22 @@ export default function MisCitas() {
     return `${hora12}:${minutos} ${sufijo}`;
   };
 
-  const tieneCitas = citas.length > 0;
-
-  // Abrir el detalle conservando la pestaña actual.
+  // Abrir el detalle conservando el paciente y la pestaña actual.
   const verDetalle = (cita) => {
     navigate("/essalud/detalle-cita", {
       state: {
         cita,
         activeTab,
+        paciente: pacienteSeleccionado,
+      },
+    });
+  };
+
+  // Ir a reservar una nueva cita conservando el contexto del familiar.
+  const irAReservar = () => {
+    navigate("/essalud/reservar-cita", {
+      state: {
+        paciente: pacienteSeleccionado,
       },
     });
   };
@@ -197,7 +254,11 @@ export default function MisCitas() {
             cita.tipo === "Virtual" ? "virtual" : "presencial"
           }`}
         >
-          {cita.tipo === "Virtual" ? <Video size={16} /> : <MapPin size={16} />}
+          {cita.tipo === "Virtual" ? (
+            <Video size={16} />
+          ) : (
+            <MapPin size={16} />
+          )}
 
           {cita.tipo}
         </span>
@@ -223,6 +284,13 @@ export default function MisCitas() {
         </span>
       </div>
 
+      {/* Identificación del paciente en la cuenta del titular. */}
+      {!pacienteSeleccionado && (
+        <p className="appointment-patient">
+          Paciente: <strong>{obtenerNombrePaciente(cita)}</strong>
+        </p>
+      )}
+
       <div className="appointment-doctor">
         <div className="appointment-avatar">
           {(cita.medico || "M")
@@ -247,7 +315,9 @@ export default function MisCitas() {
 
         <div>
           <Clock3 size={19} />
-          <span>{formatearHorario(cita.horario || cita.hora)}</span>
+          <span>
+            {formatearHorario(cita.horario || cita.hora)}
+          </span>
         </div>
       </div>
 
@@ -257,7 +327,9 @@ export default function MisCitas() {
           {"☆".repeat(5 - cita.calificacion)}
 
           <small>
-            {cita.comentario ? ` ${cita.comentario}` : " Tu calificación"}
+            {cita.comentario
+              ? ` ${cita.comentario}`
+              : " Tu calificación"}
           </small>
         </div>
       )}
@@ -294,24 +366,32 @@ export default function MisCitas() {
         )}
 
         {cita.estado === "Pendiente" && esAnterior(cita) && (
-          <span className="appointment-note">Fecha de cita transcurrida</span>
+          <span className="appointment-note">
+            Fecha de cita transcurrida
+          </span>
         )}
 
         {cita.estado === "Cancelada" && (
-          <span className="appointment-note">Esta cita fue cancelada.</span>
+          <span className="appointment-note">
+            Esta cita fue cancelada.
+          </span>
         )}
       </div>
     </article>
   );
 
   // Navegación inferior.
-  // Navegación inferior.
   const navegarMenu = (id) => {
-    if (id === "inicio") navigate("/essalud/inicio");
+    if (id === "inicio") {
+      navigate("/essalud/inicio");
+    }
 
     if (id === "citas") {
       navigate("/essalud/citas", {
-        state: { activeTab },
+        state: {
+          activeTab,
+          paciente: pacienteSeleccionado,
+        },
       });
     }
 
@@ -319,7 +399,7 @@ export default function MisCitas() {
 
     if (id === "perfil") navigate("/essalud/perfil");
   };
-  
+
   return (
     <main className="appointments-screen mis-citas-screen">
       <header className="appointments-header">
@@ -346,7 +426,7 @@ export default function MisCitas() {
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Aquí puedes consultar la información de tu cita médica.",
+              "Aquí puedes consultar la información de tu cita médica."
             )
           }
         >
@@ -389,13 +469,14 @@ export default function MisCitas() {
             <h2>¡Aún no tienes citas!</h2>
 
             <p>
-              Aquí aparecerán tus próximas citas médicas cuando las programes.
+              Aquí aparecerán tus próximas citas médicas cuando las
+              programes.
             </p>
 
             <button
               type="button"
               className="appointments-book-button"
-              onClick={() => navigate("/essalud/reservar-cita")}
+              onClick={irAReservar}
             >
               <CalendarPlus size={18} />
               Reservar una cita
@@ -457,15 +538,12 @@ export default function MisCitas() {
                 <h3>¿Necesitas una nueva cita?</h3>
 
                 <p>
-                  Encuentra una especialidad y agenda tu próxima atención
-                  médica.
+                  Encuentra una especialidad y agenda tu próxima
+                  atención médica.
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => navigate("/essalud/reservar-cita")}
-              >
+              <button type="button" onClick={irAReservar}>
                 Reservar
                 <CalendarPlus size={17} />
               </button>
@@ -474,7 +552,10 @@ export default function MisCitas() {
         )}
       </div>
 
-      <BottomNavigation active="citas" onNavigate={navegarMenu} />
+      <BottomNavigation
+        active="citas"
+        onNavigate={navegarMenu}
+      />
 
       {/* MODAL DE CONFIRMACIÓN PARA CANCELAR CITA */}
       <ConfirmacionModal

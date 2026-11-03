@@ -1,13 +1,14 @@
-
 import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { guardarCita } from "../services/citasService.js";
-import { obtenerUsuarioActivo } from "../services/usuariosService.js";
+import {
+  obtenerUsuarioActivo,
+  obtenerFamiliaresVinculados,
+} from "../services/usuariosService.js";
 
 import BottomNavigation from "../components/BottomNavigation";
 import ConfirmacionModal from "../components/ConfirmacionModal";
-
 import logoEssalud from "../assets/digital-logo.png";
 
 import {
@@ -33,46 +34,14 @@ import {
 
 // ESPECIALIDADES
 const especialidades = [
-  {
-    nombre: "Medicina General",
-    descripcion: "Atención integral",
-    icono: Stethoscope,
-  },
-  {
-    nombre: "Pediatría",
-    descripcion: "Niños y adolescentes",
-    icono: Baby,
-  },
-  {
-    nombre: "Ginecología y Obstetricia",
-    descripcion: "Salud de la mujer",
-    icono: HeartPulse,
-  },
-  {
-    nombre: "Psicología",
-    descripcion: "Bienestar emocional",
-    icono: Brain,
-  },
-  {
-    nombre: "Medicina Interna",
-    descripcion: "Salud del adulto",
-    icono: UserRound,
-  },
-  {
-    nombre: "Cardiología",
-    descripcion: "Salud del corazón",
-    icono: HeartPulse,
-  },
-  {
-    nombre: "Cirugía General",
-    descripcion: "Evaluación y tratamiento",
-    icono: UserRoundCheck,
-  },
-  {
-    nombre: "Dermatología",
-    descripcion: "Cuidado de la piel",
-    icono: Sparkles,
-  },
+  { nombre: "Medicina General", descripcion: "Atención integral", icono: Stethoscope },
+  { nombre: "Pediatría", descripcion: "Niños y adolescentes", icono: Baby },
+  { nombre: "Ginecología y Obstetricia", descripcion: "Salud de la mujer", icono: HeartPulse },
+  { nombre: "Psicología", descripcion: "Bienestar emocional", icono: Brain },
+  { nombre: "Medicina Interna", descripcion: "Salud del adulto", icono: UserRound },
+  { nombre: "Cardiología", descripcion: "Salud del corazón", icono: HeartPulse },
+  { nombre: "Cirugía General", descripcion: "Evaluación y tratamiento", icono: UserRoundCheck },
+  { nombre: "Dermatología", descripcion: "Cuidado de la piel", icono: Sparkles },
 ];
 
 // MÉDICOS
@@ -167,18 +136,63 @@ function fechaBonita(valor) {
 
 export default function ReservarCita() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // USUARIO TITULAR
+  const usuario = obtenerUsuarioActivo();
+
+  // FAMILIARES VINCULADOS
+  const familiares = usuario
+    ? obtenerFamiliaresVinculados(usuario.dni) || []
+    : [];
+
+  // LISTA DE PACIENTES: TITULAR + FAMILIARES
+  const pacientesDisponibles = [
+    usuario,
+    ...familiares,
+  ].filter(
+    (item, index, lista) =>
+      item &&
+      item.dni &&
+      lista.findIndex(
+        (persona) => String(persona?.dni) === String(item.dni)
+      ) === index
+  );
+
+  // SI LLEGA DESDE EL DETALLE DE UN FAMILIAR, PRESELECCIONARLO.
+  // SI LLEGA DESDE EL INICIO, PRESELECCIONAR AL TITULAR.
+  const [pacienteSeleccionado, setPacienteSeleccionado] = useState(
+    () => {
+      const pacienteRecibido = location.state?.paciente;
+
+      if (pacienteRecibido) {
+        return (
+          pacientesDisponibles.find(
+            (item) =>
+              String(item.dni) === String(pacienteRecibido.dni)
+          ) || usuario
+        );
+      }
+
+      return usuario;
+    }
+  );
+
+  const esFamiliar =
+    pacienteSeleccionado &&
+    usuario &&
+    String(pacienteSeleccionado.dni) !== String(usuario.dni);
 
   // ESTADOS DE LA RESERVA
   const [paso, setPaso] = useState(1);
   const [tipoCita, setTipoCita] = useState("Presencial");
-  const [paciente, setPaciente] = useState("Yo");
   const [busqueda, setBusqueda] = useState("");
   const [especialidad, setEspecialidad] = useState("");
   const [medico, setMedico] = useState(null);
   const [fecha, setFecha] = useState("");
   const [horario, setHorario] = useState("");
 
-  // ESTADO DEL MODAL DE CONFIRMACIÓN
+  // MODAL
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
   // FILTRAR ESPECIALIDADES
@@ -195,13 +209,18 @@ export default function ReservarCita() {
     if (!especialidad) return [];
 
     return medicos.filter(
-      (medico) => medico.especialidad === especialidad
+      (item) => item.especialidad === especialidad
     );
   }, [especialidad]);
 
   // CONTINUAR ENTRE PASOS
   const continuar = () => {
     if (paso === 1) {
+      if (!pacienteSeleccionado) {
+        window.alert("Selecciona a la persona que recibirá la atención.");
+        return;
+      }
+
       setPaso(2);
     } else if (paso === 2 && especialidad) {
       setPaso(3);
@@ -245,99 +264,106 @@ export default function ReservarCita() {
   const reiniciarReserva = () => {
     setPaso(1);
     setTipoCita("Presencial");
-    setPaciente("Yo");
     setBusqueda("");
     setEspecialidad("");
     setMedico(null);
     setFecha("");
     setHorario("");
     setMostrarConfirmacion(false);
+
+    // Conservamos al paciente seleccionado.
   };
 
   // MOSTRAR MODAL ANTES DE RESERVAR
   const confirmarReserva = () => {
-    const usuario = obtenerUsuarioActivo();
-
     if (!usuario) {
-      window.alert(
-        "Tu sesión no está activa. Inicia sesión nuevamente."
-      );
+      window.alert("Tu sesión no está activa. Inicia sesión nuevamente.");
       navigate("/essalud");
       return;
     }
 
-    if (!medico || !especialidad || !fecha || !horario) {
-      window.alert(
-        "Completa los datos de tu cita antes de continuar."
-      );
+    if (!pacienteSeleccionado || !medico || !especialidad || !fecha || !horario) {
+      window.alert("Completa los datos de tu cita antes de continuar.");
       return;
     }
 
     setMostrarConfirmacion(true);
   };
 
-  // EJECUTAR Y GUARDAR LA RESERVA
-  const ejecutarReserva = () => {
-    const usuario = obtenerUsuarioActivo();
+  // CONVERTIR HORARIO A FORMATO DE 24 HORAS
+  const convertirHora = (valor) => {
+    const [horaTexto, periodo, meridiano] = valor.split(" ");
+    const [horas, minutos] = horaTexto.split(":").map(Number);
 
-    if (!usuario) {
-      window.alert(
-        "Tu sesión no está activa. Inicia sesión nuevamente."
-      );
+    const esPM = periodo === "p." && meridiano === "m.";
+
+    const hora24 = esPM
+      ? horas === 12
+        ? 12
+        : horas + 12
+      : horas === 12
+        ? 0
+        : horas;
+
+    return `${String(hora24).padStart(2, "0")}:${String(minutos).padStart(2, "0")}`;
+  };
+
+  // GUARDAR RESERVA
+  const ejecutarReserva = () => {
+    const usuarioActual = obtenerUsuarioActivo();
+
+    if (!usuarioActual) {
+      window.alert("Tu sesión no está activa. Inicia sesión nuevamente.");
       navigate("/essalud");
       return;
     }
 
-    // Convertir horario a formato de 24 horas
-    const convertirHora = (valor) => {
-      const [horaTexto, periodo, meridiano] = valor.split(" ");
-      const [horas, minutos] = horaTexto.split(":").map(Number);
+    if (!pacienteSeleccionado?.dni) {
+      window.alert("No se identificó al paciente seleccionado.");
+      return;
+    }
 
-      const esPM = periodo === "p." && meridiano === "m.";
-
-      const hora24 = esPM
-        ? horas === 12
-          ? 12
-          : horas + 12
-        : horas === 12
-          ? 0
-          : horas;
-
-      return `${String(hora24).padStart(2, "0")}:${String(
-        minutos
-      ).padStart(2, "0")}`;
-    };
-
-    // Guardar cita
     const resultado = guardarCita({
-      usuarioId: usuario.id,
+      // TITULAR QUE ADMINISTRA LA CUENTA
+      usuarioId: usuarioActual.id,
+      solicitanteId: usuarioActual.id,
+      solicitanteNombre:
+        usuarioActual.nombres || usuarioActual.nombre || "Titular",
+
+      // PACIENTE QUE RECIBE LA ATENCIÓN
+      pacienteId: pacienteSeleccionado.dni,
+      pacienteNombre:
+        pacienteSeleccionado.nombres ||
+        pacienteSeleccionado.nombre ||
+        "Paciente",
+
       tipo: tipoCita,
-      paciente,
+      paciente: esFamiliar ? "Familiar" : "Yo",
       especialidad,
       medico: medico.nombre,
       cmp: medico.cmp,
       fecha,
       horario,
       hora: convertirHora(horario),
+
       centroNombre:
-        usuario.centro?.nombre || "Centro de atención asignado",
+        usuarioActual.centro?.nombre ||
+        "Centro de atención asignado",
+
       estado: "Pendiente",
     });
 
     if (!resultado.correcto) {
-      window.alert(
-        resultado.mensaje || "No se pudo guardar la cita."
-      );
+      window.alert(resultado.mensaje || "No se pudo guardar la cita.");
       return;
     }
 
-    // Mostrar pantalla de éxito
+    setMostrarConfirmacion(false);
     setPaso(5);
   };
 
   // CONFIRMAR DESDE EL MODAL
   const aceptarReserva = () => {
-    setMostrarConfirmacion(false);
     ejecutarReserva();
   };
 
@@ -385,7 +411,7 @@ export default function ReservarCita() {
         </button>
       </header>
 
-      {/* PROGRESO DE LOS CUATRO PASOS */}
+      {/* PROGRESO */}
       {paso < 5 && (
         <div
           className="reservar-progress"
@@ -423,7 +449,7 @@ export default function ReservarCita() {
 
       <section className="reservar-content">
 
-        {/* PASO 1: TIPO DE CITA */}
+        {/* PASO 1: TIPO DE CITA Y SELECCIÓN DEL PACIENTE */}
         {paso === 1 && (
           <div className="reservar-section">
             <p className="reservar-step-label">PASO 1 DE 4</p>
@@ -471,49 +497,69 @@ export default function ReservarCita() {
 
             <h3>¿Para quién es la cita?</h3>
 
-            {[
-              {
-                nombre: "Yo",
-                titulo: "Para mí",
-                descripcion: "Asegurado titular",
-                icono: UserRound,
-              },
-              {
-                nombre: "Familiar",
-                titulo: "Familiar",
-                descripcion: "Atención para un familiar",
-                icono: HeartPulse,
-              },
-            ].map(({ nombre, titulo, descripcion, icono: Icono }) => (
-              <button
-                key={nombre}
-                type="button"
-                className={`reservar-patient ${
-                  paciente === nombre ? "selected" : ""
-                }`}
-                onClick={() => setPaciente(nombre)}
-              >
-                <span className="reservar-avatar">
-                  <Icono size={22} />
-                </span>
+            <p className="reservar-description">
+              Selecciona a la persona que recibirá la atención médica.
+            </p>
 
-                <span>
-                  <strong>{titulo}</strong>
-                  <small>{descripcion}</small>
-                </span>
+            <div className="reservar-patients-list">
+              {pacientesDisponibles.map((item) => {
+                const seleccionado =
+                  String(pacienteSeleccionado?.dni) === String(item.dni);
 
-                <span className="reservar-radio">
-                  {paciente === nombre && <span />}
-                </span>
-              </button>
-            ))}
+                const esTitular =
+                  String(item.dni) === String(usuario?.dni);
+
+                return (
+                  <button
+                    key={item.dni}
+                    type="button"
+                    className={`reservar-patient ${
+                      seleccionado ? "selected" : ""
+                    }`}
+                    onClick={() => setPacienteSeleccionado(item)}
+                    aria-pressed={seleccionado}
+                  >
+                    <span className="reservar-avatar">
+                      <UserRound size={22} />
+                    </span>
+
+                    <span>
+                      <strong>
+                        {item.nombres || item.nombre || "Paciente"}
+                      </strong>
+
+                      <small>
+                        {esTitular
+                          ? "Asegurado titular"
+                          : item.relation ||
+                            item.parentesco ||
+                            "Familiar vinculado"}
+                      </small>
+
+                      <small>DNI: {item.dni}</small>
+                    </span>
+
+                    <span className="reservar-radio">
+                      {seleccionado && <span />}
+                    </span>
+                  </button>
+                );
+              })}
+
+              {pacientesDisponibles.length === 0 && (
+                <p className="reservar-no-results">
+                  No se encontraron pacientes vinculados a esta cuenta.
+                </p>
+              )}
+            </div>
 
             <div className="reservar-notice">
               <MapPin size={21} />
+
               <span>
                 <strong>Centro de atención</strong>
                 <small>
-                  {obtenerUsuarioActivo()?.centro?.nombre ||
+                  {usuario?.centro?.nombre ||
                     "Centro de atención asignado"}
                 </small>
               </span>
@@ -539,7 +585,8 @@ export default function ReservarCita() {
                 <small>Tipo de cita</small>
                 <strong>{tipoCita}</strong>
                 <small>
-                  {paciente === "Yo" ? "Para mí" : "Para un familiar"}
+                  Para: {pacienteSeleccionado?.nombres ||
+                    pacienteSeleccionado?.nombre}
                 </small>
               </span>
 
@@ -570,29 +617,27 @@ export default function ReservarCita() {
             </div>
 
             <div className="reservar-specialties">
-              {resultados.map(
-                ({ nombre, descripcion, icono: Icono }) => (
-                  <button
-                    key={nombre}
-                    type="button"
-                    className={`reservar-specialty ${
-                      especialidad === nombre ? "selected" : ""
-                    }`}
-                    onClick={() => seleccionarEspecialidad(nombre)}
-                  >
-                    <span className="reservar-specialty-icon">
-                      <Icono size={22} />
-                    </span>
+              {resultados.map(({ nombre, descripcion, icono: Icono }) => (
+                <button
+                  key={nombre}
+                  type="button"
+                  className={`reservar-specialty ${
+                    especialidad === nombre ? "selected" : ""
+                  }`}
+                  onClick={() => seleccionarEspecialidad(nombre)}
+                >
+                  <span className="reservar-specialty-icon">
+                    <Icono size={22} />
+                  </span>
 
-                    <span className="reservar-specialty-info">
-                      <strong>{nombre}</strong>
-                      <small>{descripcion}</small>
-                    </span>
+                  <span className="reservar-specialty-info">
+                    <strong>{nombre}</strong>
+                    <small>{descripcion}</small>
+                  </span>
 
-                    <ArrowRight size={18} />
-                  </button>
-                )
-              )}
+                  <ArrowRight size={18} />
+                </button>
+              ))}
 
               {resultados.length === 0 && (
                 <p className="reservar-no-results">
@@ -617,8 +662,8 @@ export default function ReservarCita() {
                 <small>Especialidad seleccionada</small>
                 <strong>{especialidad}</strong>
                 <small>
-                  {tipoCita} ·{" "}
-                  {paciente === "Yo" ? "Para mí" : "Familiar"}
+                  {tipoCita} · {pacienteSeleccionado?.nombres ||
+                    pacienteSeleccionado?.nombre}
                 </small>
               </span>
 
@@ -671,6 +716,7 @@ export default function ReservarCita() {
 
             <div className="reservar-notice">
               <UserRoundCheck size={21} />
+
               <span>
                 <strong>Elige tu médico</strong>
                 <small>
@@ -745,6 +791,7 @@ export default function ReservarCita() {
 
             <div className="reservar-notice">
               <MapPin size={21} />
+
               <span>
                 <strong>Disponibilidad demostrativa</strong>
                 <small>
@@ -796,7 +843,7 @@ export default function ReservarCita() {
               <p>
                 <span>Centro de atención</span>
                 <strong>
-                  {obtenerUsuarioActivo()?.centro?.nombre ||
+                  {usuario?.centro?.nombre ||
                     "Centro de atención asignado"}
                 </strong>
               </p>
@@ -804,7 +851,15 @@ export default function ReservarCita() {
               <p>
                 <span>Paciente</span>
                 <strong>
-                  {paciente === "Yo" ? "Para mí" : "Familiar"}
+                  {pacienteSeleccionado?.nombres ||
+                    pacienteSeleccionado?.nombre}
+                </strong>
+              </p>
+
+              <p>
+                <span>Gestionado por</span>
+                <strong>
+                  {usuario?.nombres || usuario?.nombre}
                 </strong>
               </p>
 
@@ -822,7 +877,13 @@ export default function ReservarCita() {
             <button
               className="reservar-primary"
               type="button"
-              onClick={() => navigate("/essalud/citas")}
+              onClick={() =>
+                navigate("/essalud/citas", {
+                  state: {
+                    paciente: esFamiliar ? pacienteSeleccionado : null,
+                  },
+                })
+              }
             >
               Ver mis citas <ArrowRight size={19} />
             </button>
@@ -844,10 +905,9 @@ export default function ReservarCita() {
           <button
             className="reservar-primary"
             type="button"
-            onClick={
-              paso === 4 ? confirmarReserva : continuar
-            }
+            onClick={paso === 4 ? confirmarReserva : continuar}
             disabled={
+              (paso === 1 && !pacienteSeleccionado) ||
               (paso === 2 && !especialidad) ||
               (paso === 3 && !medico) ||
               (paso === 4 && (!fecha || !horario))
@@ -858,7 +918,7 @@ export default function ReservarCita() {
         </footer>
       )}
 
-      {/* MODAL REUTILIZABLE DE CONFIRMACIÓN */}
+      {/* MODAL DE CONFIRMACIÓN */}
       <ConfirmacionModal
         isOpen={mostrarConfirmacion}
         title="¿Estás seguro de reservar esta cita?"
