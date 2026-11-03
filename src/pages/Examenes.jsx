@@ -228,8 +228,6 @@ export default function Examenes() {
         )}
       </div>
 
-      {/* NAVEGACIÓN INFERIOR REUTILIZADA */}
-      <BottomNavigation active="recetas" onNavigate={navegarMenu} />
     </main>
   );
 }

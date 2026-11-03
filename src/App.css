@@ -40683,3 +40683,124 @@ html.tema-oscuro .register-page button:focus-visible {
 .contraste-alto .biometric-modal-icon.scanning::after {
   background: #000000;
 }
+
+/* Lista de pacientes seleccionables */
+.reservar-patients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 2px 5px 2px 0;
+
+  scrollbar-width: thin;
+  scrollbar-color: #3984f7 transparent;
+}
+
+/* Scroll para Chrome, Edge y Safari */
+.reservar-patients-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.reservar-patients-list::-webkit-scrollbar-thumb {
+  background: #3984f7;
+  border-radius: 10px;
+}
+
+.reservar-patients-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Identificación del paciente */
+.appointment-patient {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 12px 0 10px;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.appointment-patient strong {
+  color: #123d70;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Información del médico */
+.appointment-doctor {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.appointment-doctor-info {
+  min-width: 0;
+}
+
+.appointment-doctor-info h3 {
+  margin: 0 0 4px;
+  color: #123d70;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.appointment-doctor-info p {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.appointment-doctor-info small {
+  font-size: 11px;
+  color: #8494a9;
+}
+
+/* Tarjeta de cita */
+.appointment-card {
+  border-radius: 22px;
+  padding: 15px;
+  background: #ffffff;
+  border: 1px solid #dceafe;
+  box-shadow: 0 5px 16px rgba(30, 75, 130, 0.06);
+}
+
+/* Separación de los datos de la cita */
+.appointment-details {
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid #e5edf7;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.appointment-details > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #52749e;
+  font-size: 12px;
+}
+
+.appointment-details svg {
+  color: #1684f8;
+  flex-shrink: 0;
+}
+
+/* Botones */
+.appointment-card button {
+  border-radius: 12px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.appointment-card button:active {
+  transform: scale(0.98);
+}
+

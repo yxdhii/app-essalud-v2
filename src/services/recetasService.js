@@ -11,14 +11,31 @@ export function obtenerRecetas() {
 }
 
 // Obtener las recetas de un paciente.
-// Funciona tanto para el titular como para sus familiares.
-export function obtenerRecetasPaciente(pacienteId) {
+// pacienteId: DNI del paciente.
+// identificadorAlternativo: permite recuperar recetas antiguas del titular.
+export function obtenerRecetasPaciente(
+  pacienteId,
+  identificadorAlternativo = null
+) {
   if (!pacienteId) return [];
 
-  return obtenerRecetas().filter(
-    (receta) =>
-      String(receta.pacienteId || receta.usuarioId) === String(pacienteId)
-  );
+  return obtenerRecetas().filter((receta) => {
+    const idPaciente = String(
+      receta.pacienteId || receta.usuarioId || ""
+    );
+
+    const coincidePaciente =
+      idPaciente === String(pacienteId);
+
+    const coincideIdentificadorAlternativo =
+      identificadorAlternativo &&
+      idPaciente === String(identificadorAlternativo);
+
+    return (
+      coincidePaciente ||
+      coincideIdentificadorAlternativo
+    );
+  });
 }
 
 // Generar automáticamente una receta al completar una cita.
@@ -45,9 +62,13 @@ export function generarRecetaDesdeCita(cita) {
     };
   }
 
-  // El paciente puede ser el titular o un familiar.
+  // Identificar al paciente atendido.
   const pacienteId = cita.pacienteId || cita.usuarioId;
-  const pacienteDni = cita.pacienteDni || "";
+
+  const pacienteDni =
+    cita.pacienteDni ||
+    (cita.pacienteId ? cita.pacienteId : "");
+
   const nombrePaciente =
     cita.pacienteNombre ||
     (cita.paciente === "Yo" ? "" : cita.paciente) ||
@@ -66,12 +87,16 @@ export function generarRecetaDesdeCita(cita) {
     id: `REC-${Date.now()}`,
     citaId: cita.id,
 
-    // Identificación del titular que reservó.
+    // Titular que administra la cuenta.
     titularId: cita.usuarioId,
+    solicitanteId: cita.solicitanteId || cita.usuarioId,
+    solicitanteNombre:
+      cita.solicitanteNombre || "Titular",
 
-    // Identificación del paciente atendido.
+    // Paciente que recibió la atención.
     pacienteId,
     paciente: nombrePaciente,
+    pacienteNombre: nombrePaciente,
     dni: pacienteDni,
     parentesco: cita.parentesco || "Titular",
 
@@ -82,6 +107,7 @@ export function generarRecetaDesdeCita(cita) {
     fecha: cita.fecha,
 
     diagnostico: "Registro demostrativo de atención médica.",
+
     indicaciones:
       "Receta ficticia generada automáticamente para la simulación académica. No constituye una prescripción médica real.",
 
@@ -120,13 +146,21 @@ export function generarRecetaDesdeCita(cita) {
 
 // Consultar una receta por su identificador.
 export function obtenerRecetaPorId(id) {
-  return obtenerRecetas().find((receta) => receta.id === id) || null;
+  return obtenerRecetas().find(
+    (receta) => receta.id === id
+  ) || null;
 }
 
 // Clasificar las recetas en nuevas y anteriores.
-// Se toma como referencia la fecha de emisión.
-export function obtenerRecetasPorPeriodo(pacienteId, periodo) {
-  const recetas = obtenerRecetasPaciente(pacienteId);
+export function obtenerRecetasPorPeriodo(
+  pacienteId,
+  periodo,
+  identificadorAlternativo = null
+) {
+  const recetas = obtenerRecetasPaciente(
+    pacienteId,
+    identificadorAlternativo
+  );
 
   const ahora = new Date();
   const mesActual = ahora.getMonth();
@@ -134,13 +168,16 @@ export function obtenerRecetasPorPeriodo(pacienteId, periodo) {
 
   return recetas.filter((receta) => {
     const fechaEmision = new Date(
-      receta.fechaRegistro || `${receta.fecha}T12:00:00`
+      receta.fechaRegistro ||
+      `${receta.fecha}T12:00:00`
     );
 
     const esMesActual =
       fechaEmision.getMonth() === mesActual &&
       fechaEmision.getFullYear() === anioActual;
 
-    return periodo === "nuevas" ? esMesActual : !esMesActual;
+    return periodo === "nuevas"
+      ? esMesActual
+      : !esMesActual;
   });
 }

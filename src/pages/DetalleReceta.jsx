@@ -1,3 +1,4 @@
+
 import { useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -36,7 +37,7 @@ export default function DetalleReceta() {
   const paciente =
     location.state?.paciente || usuario;
 
-  // Formatear fecha
+  // Formatear fecha.
   const formatearFecha = (fecha) => {
     if (!fecha) return "Fecha no disponible";
 
@@ -53,19 +54,31 @@ export default function DetalleReceta() {
     });
   };
 
-  // Volver a mis recetas
+  // VOLVER A LA PANTALLA ANTERIOR SIN CREAR OTRA ENTRADA.
   const volverARecetas = () => {
-    navigate("/essalud/recetas", {
-      state: { paciente },
-    });
+    if (window.history.state?.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate("/essalud/recetas", {
+        state: { paciente },
+        replace: true,
+      });
+    }
   };
 
-  // Descargar PDF utilizando la función compartida
+  // Descargar PDF.
   const descargar = async () => {
-    await generarPDF(documentoRef.current, receta);
+    if (!documentoRef.current) return;
+
+    try {
+      await generarPDF(documentoRef.current, receta);
+    } catch (error) {
+      console.error("Error al descargar la receta:", error);
+      window.alert("No se pudo descargar la receta.");
+    }
   };
 
-  // Encabezado
+  // Encabezado.
   const renderizarEncabezado = () => (
     <header className="appointments-header">
       <button
@@ -100,7 +113,7 @@ export default function DetalleReceta() {
     </header>
   );
 
-  // Si no se encuentra la receta
+  // Si no se encuentra la receta.
   if (!receta) {
     return (
       <main className="appointments-screen detalle-receta-screen">
@@ -116,7 +129,10 @@ export default function DetalleReceta() {
               No pudimos encontrar la información de esta receta médica.
             </p>
 
-            <button type="button" onClick={volverARecetas}>
+            <button
+              type="button"
+              onClick={volverARecetas}
+            >
               Volver a mis recetas
             </button>
           </div>
@@ -128,7 +144,8 @@ export default function DetalleReceta() {
   const medicamentos = receta.medicamentos || [];
 
   const nombrePaciente =
-    receta.paciente ||
+    receta.pacienteNombre ||
+    (receta.paciente === "Paciente" ? "" : receta.paciente) ||
     paciente?.nombres ||
     paciente?.nombre ||
     "No disponible";
@@ -138,8 +155,7 @@ export default function DetalleReceta() {
     paciente?.dni ||
     "No disponible";
 
-  // Datos del QR para identificar la receta en farmacia.
-  // Es un código demostrativo para el prototipo.
+  // Datos del QR demostrativo.
   const datosQR = JSON.stringify({
     institucion: "EsSalud Digital",
     tipo: "RECOJO_EN_FARMACIA",
@@ -228,6 +244,13 @@ export default function DetalleReceta() {
               <span>Tipo de atención</span>
               <strong>
                 {receta.tipoCita || "No especificado"}
+              </strong>
+            </div>
+
+            <div className="detalle-receta-row">
+              <span>Gestionada por</span>
+              <strong>
+                {receta.solicitanteNombre || "No especificado"}
               </strong>
             </div>
           </article>
@@ -339,9 +362,8 @@ export default function DetalleReceta() {
             </p>
           </article>
 
-          {/* CÓDIGO QR PARA RECOJO EN FARMACIA */}
+          {/* CÓDIGO QR */}
           <article className="detalle-receta-qr-card">
-
             <div className="detalle-receta-qr-info">
               <div className="detalle-receta-qr-icon">
                 <Pill size={21} />
@@ -374,7 +396,6 @@ export default function DetalleReceta() {
             <p className="detalle-receta-qr-note">
               Código demostrativo para el prototipo de EsSalud Digital.
             </p>
-
           </article>
 
           {/* PIE DEL DOCUMENTO */}
@@ -385,7 +406,6 @@ export default function DetalleReceta() {
               Documento generado desde EsSalud Digital
             </span>
           </div>
-
         </div>
 
         {/* BOTÓN DE DESCARGA */}
