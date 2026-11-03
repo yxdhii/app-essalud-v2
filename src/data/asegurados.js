@@ -54,4 +54,15 @@ export const asegurados = [
     sexo: "F",
     avatar: "👩🏻",
   },
+    {
+    id: "U006",
+    dni: "70000006",
+    digitoVerificador: "6",
+    nombres: "Mari Guadalupe",
+    fechaNacimiento: "1983-08-21",
+    direccion: "Urb Campoy - AA.HH 28 de julio",
+    centroId: "CENTRO001",
+    sexo: "F",
+    avatar: "👩🏻",
+  },
 ];

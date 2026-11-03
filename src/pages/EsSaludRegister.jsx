@@ -1,12 +1,17 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { es } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
+
 import VerificationCharacterModal from "../components/VerificationCharacterModal.jsx";
 import RegisterHelpTutorial from "../components/RegisterHelpTutorial";
+import LoadingOverlay from "../components/LoadingOverlay";
+
 import {
   registrarUsuario,
+  iniciarSesion,
   buscarAsegurado,
 } from "../services/usuariosService.js";
 
@@ -42,6 +47,9 @@ export default function EsSaludRegister() {
   const [showVerificationInfo, setShowVerificationInfo] = useState(false);
   const [showRegisterTutorial, setShowRegisterTutorial] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+
   const [form, setForm] = useState({
     documentType: "DNI",
     documentNumber: "",
@@ -55,7 +63,21 @@ export default function EsSaludRegister() {
     acceptPrivacy: false,
   });
 
-  // Actualizar campos del formulario
+  // Redirigir al inicio después de mostrar el mensaje de éxito.
+  useEffect(() => {
+    if (!registrationSuccess) return;
+
+    const timer = setTimeout(() => {
+      navigate("/essalud/inicio", {
+        replace: true,
+        state: { registroExitoso: true },
+      });
+    }, 1800);
+
+    return () => clearTimeout(timer);
+  }, [registrationSuccess, navigate]);
+
+  // Actualizar campos del formulario.
   const updateField = (event) => {
     const { name, value, checked, type } = event.target;
 
@@ -67,14 +89,14 @@ export default function EsSaludRegister() {
     setError("");
   };
 
-  // Actualizar fecha de nacimiento
+  // Actualizar fecha de nacimiento.
   const handleBirthDate = (date) => {
     setBirthDate(date);
 
     const formattedDate = date
       ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
           2,
-          "0",
+          "0"
         )}-${String(date.getDate()).padStart(2, "0")}`
       : "";
 
@@ -86,11 +108,10 @@ export default function EsSaludRegister() {
     setError("");
   };
 
-  // Validar datos personales y continuar al paso 2
+  // Validar datos personales y continuar al paso 2.
   const continueRegistration = (event) => {
     event.preventDefault();
 
-    // Validar campos obligatorios
     if (
       !form.documentNumber.trim() ||
       (form.documentType === "DNI" && !form.verificationCode.trim()) ||
@@ -102,22 +123,25 @@ export default function EsSaludRegister() {
       return;
     }
 
-    // Validar formato del DNI
-    if (form.documentType === "DNI" && !/^\d{8}$/.test(form.documentNumber)) {
+    // Validar formato del DNI.
+    if (
+      form.documentType === "DNI" &&
+      !/^\d{8}$/.test(form.documentNumber.trim())
+    ) {
       setError("El DNI debe contener 8 dígitos.");
       return;
     }
 
-    // Validar formato del carné de extranjería
+    // Validar formato del carné de extranjería.
     if (
       form.documentType === "CE" &&
-      !/^[a-zA-Z0-9]{5,20}$/.test(form.documentNumber)
+      !/^[a-zA-Z0-9]{5,20}$/.test(form.documentNumber.trim())
     ) {
       setError("Ingresa un número de C.E. válido.");
       return;
     }
 
-    // Validar formato del carácter verificador
+    // Validar carácter verificador.
     if (
       form.documentType === "DNI" &&
       !/^[a-zA-Z0-9]$/.test(form.verificationCode.trim())
@@ -126,7 +150,7 @@ export default function EsSaludRegister() {
       return;
     }
 
-    // Verificar los datos del asegurado registrado
+    // Verificar datos del asegurado registrado.
     if (form.documentType === "DNI") {
       const asegurado = buscarAsegurado(form.documentNumber.trim());
 
@@ -135,7 +159,6 @@ export default function EsSaludRegister() {
         return;
       }
 
-      // Validar carácter verificador
       if (
         form.verificationCode.trim().toUpperCase() !==
         String(asegurado.digitoVerificador).trim().toUpperCase()
@@ -144,26 +167,24 @@ export default function EsSaludRegister() {
         return;
       }
 
-      // Validar fecha de nacimiento
       if (form.birthDate !== asegurado.fechaNacimiento) {
         setError("La fecha de nacimiento no coincide con la registrada.");
         return;
       }
     }
 
-    // Validar correo electrónico
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    // Validar correo electrónico.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       setError("Ingresa un correo electrónico válido.");
       return;
     }
 
-    // Validar celular
+    // Validar celular.
     if (!/^\d{9}$/.test(form.phone.trim())) {
       setError("El celular debe tener 9 dígitos.");
       return;
     }
 
-    // Continuar al paso 2
     setError("");
     setStep(2);
 
@@ -173,9 +194,11 @@ export default function EsSaludRegister() {
     });
   };
 
-  // Validar seguridad de la cuenta
+  // Registrar cuenta e iniciar sesión automáticamente.
   const submitRegistration = (event) => {
     event.preventDefault();
+
+    if (loading || registrationSuccess) return;
 
     if (!form.password || !form.confirmPassword) {
       setError("Completa ambos campos de contraseña.");
@@ -206,15 +229,36 @@ export default function EsSaludRegister() {
       return;
     }
 
-    const resultado = registrarUsuario(form);
+    setError("");
+    setLoading(true);
 
-    if (!resultado.correcto) {
-      setError(resultado.mensaje);
-      return;
-    }
+    // Simular el procesamiento del registro.
+    setTimeout(() => {
+      const resultado = registrarUsuario(form);
 
-    window.alert(resultado.mensaje);
-    navigate("/essalud");
+      if (!resultado.correcto) {
+        setLoading(false);
+        setError(resultado.mensaje);
+        return;
+      }
+
+      // Iniciar sesión con las credenciales recién registradas.
+      const sesion = iniciarSesion(
+        form.documentNumber.trim(),
+        form.password
+      );
+
+      if (!sesion.correcto) {
+        setLoading(false);
+        setError(
+          "Tu cuenta fue creada, pero no se pudo iniciar sesión automáticamente. Intenta ingresar nuevamente."
+        );
+        return;
+      }
+
+      setLoading(false);
+      setRegistrationSuccess(true);
+    }, 1000);
   };
 
   return (
@@ -225,6 +269,8 @@ export default function EsSaludRegister() {
           type="button"
           className="essalud-back-button"
           onClick={() => {
+            if (loading || registrationSuccess) return;
+
             if (step === 2) {
               setStep(1);
               setError("");
@@ -238,6 +284,7 @@ export default function EsSaludRegister() {
             }
           }}
           aria-label="Volver"
+          disabled={loading || registrationSuccess}
         >
           <ChevronLeft size={25} strokeWidth={1.8} />
         </button>
@@ -246,6 +293,7 @@ export default function EsSaludRegister() {
           type="button"
           className="essalud-help-button"
           onClick={() => setShowRegisterTutorial(true)}
+          disabled={loading || registrationSuccess}
         >
           <CircleHelp size={21} strokeWidth={2} />
           <span>Ayuda</span>
@@ -254,7 +302,11 @@ export default function EsSaludRegister() {
 
       <section className="register-content">
         {/* LOGO */}
-        <img src={logo} alt="EsSalud Digital" className="register-logo" />
+        <img
+          src={logo}
+          alt="EsSalud Digital"
+          className="register-logo"
+        />
 
         <h1>Crear cuenta</h1>
 
@@ -268,10 +320,18 @@ export default function EsSaludRegister() {
             </div>
           </div>
 
-          <div className={`progress-line ${step === 2 ? "completed" : ""}`} />
+          <div
+            className={`progress-line ${
+              step === 2 ? "completed" : ""
+            }`}
+          />
 
           <div className="progress-item">
-            <div className={`progress-number ${step === 2 ? "active" : ""}`}>
+            <div
+              className={`progress-number ${
+                step === 2 ? "active" : ""
+              }`}
+            >
               2
             </div>
           </div>
@@ -279,7 +339,10 @@ export default function EsSaludRegister() {
 
         {/* PASO 1: DATOS PERSONALES */}
         {step === 1 && (
-          <form className="register-form" onSubmit={continueRegistration}>
+          <form
+            className="register-form"
+            onSubmit={continueRegistration}
+          >
             <div className="register-section-title">
               <h2>Tus datos</h2>
               <p>Ingresa tu información personal.</p>
@@ -312,7 +375,10 @@ export default function EsSaludRegister() {
             </div>
 
             {/* NÚMERO DE DOCUMENTO */}
-            <label className="register-field" data-tour="documentNumber">
+            <label
+              className="register-field"
+              data-tour="documentNumber"
+            >
               <UserRound className="field-icon" size={22} />
 
               <input
@@ -327,9 +393,12 @@ export default function EsSaludRegister() {
               />
             </label>
 
-            {/* CARÁCTER VERIFICADOR: SOLO PARA DNI */}
+            {/* CARÁCTER VERIFICADOR */}
             {form.documentType === "DNI" && (
-              <label className="register-field" data-tour="verificationCode">
+              <label
+                className="register-field"
+                data-tour="verificationCode"
+              >
                 <ShieldCheck className="field-icon" size={22} />
 
                 <input
@@ -432,7 +501,10 @@ export default function EsSaludRegister() {
 
         {/* PASO 2: SEGURIDAD DE LA CUENTA */}
         {step === 2 && (
-          <form className="register-form" onSubmit={submitRegistration}>
+          <form
+            className="register-form"
+            onSubmit={submitRegistration}
+          >
             <div className="register-section-title">
               <h2>Protege tu cuenta</h2>
               <p>Crea una contraseña segura para continuar.</p>
@@ -460,12 +532,19 @@ export default function EsSaludRegister() {
                   showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                 }
               >
-                {showPassword ? <EyeOff size={21} /> : <Eye size={21} />}
+                {showPassword ? (
+                  <EyeOff size={21} />
+                ) : (
+                  <Eye size={21} />
+                )}
               </button>
             </label>
 
             {/* CONFIRMAR CONTRASEÑA */}
-            <label className="register-field" data-tour="confirmPassword">
+            <label
+              className="register-field"
+              data-tour="confirmPassword"
+            >
               <LockKeyhole className="field-icon" size={22} />
 
               <input
@@ -481,19 +560,28 @@ export default function EsSaludRegister() {
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                onClick={() =>
+                  setShowConfirmPassword((prev) => !prev)
+                }
                 aria-label={
                   showConfirmPassword
                     ? "Ocultar contraseña"
                     : "Mostrar contraseña"
                 }
               >
-                {showConfirmPassword ? <EyeOff size={21} /> : <Eye size={21} />}
+                {showConfirmPassword ? (
+                  <EyeOff size={21} />
+                ) : (
+                  <Eye size={21} />
+                )}
               </button>
             </label>
 
             {/* TÉRMINOS Y CONDICIONES */}
-            <label className="register-checkbox" data-tour="acceptTerms">
+            <label
+              className="register-checkbox"
+              data-tour="acceptTerms"
+            >
               <input
                 type="checkbox"
                 name="acceptTerms"
@@ -502,12 +590,16 @@ export default function EsSaludRegister() {
               />
 
               <span>
-                Acepto los <a href="/terminos">Términos y Condiciones de Uso</a>
+                Acepto los{" "}
+                <a href="/terminos">Términos y Condiciones de Uso</a>
               </span>
             </label>
 
             {/* TRATAMIENTO DE DATOS */}
-            <label className="register-checkbox" data-tour="acceptPrivacy">
+            <label
+              className="register-checkbox"
+              data-tour="acceptPrivacy"
+            >
               <input
                 type="checkbox"
                 name="acceptPrivacy"
@@ -515,7 +607,9 @@ export default function EsSaludRegister() {
                 onChange={updateField}
               />
 
-              <span>Autorización para el Tratamiento de Datos Personales</span>
+              <span>
+                Autorización para el Tratamiento de Datos Personales
+              </span>
             </label>
 
             {/* MENSAJE DE ERROR */}
@@ -530,6 +624,7 @@ export default function EsSaludRegister() {
               data-tour="register"
               type="submit"
               className="register-primary-button"
+              disabled={loading || registrationSuccess}
             >
               Registrarme
               <ChevronRight size={21} strokeWidth={2} />
@@ -543,6 +638,7 @@ export default function EsSaludRegister() {
               type="button"
               className="register-secondary-button"
               onClick={() => navigate("/essalud")}
+              disabled={loading || registrationSuccess}
             >
               Inicia tu Sesión
             </button>
@@ -561,7 +657,9 @@ export default function EsSaludRegister() {
             <div className="register-contact">
               <Globe className="contact-icon" size={23} />
 
-              <p>Provincias a EsSalud en Línea de la Red de su región.</p>
+              <p>
+                Provincias a EsSalud en Línea de la Red de su región.
+              </p>
             </div>
 
             <p className="register-version">v1.9.3</p>
@@ -569,13 +667,14 @@ export default function EsSaludRegister() {
         )}
       </section>
 
-      {/* Modal Carácter Verificador */}
+      {/* MODAL CARÁCTER VERIFICADOR */}
       {showVerificationInfo && (
         <VerificationCharacterModal
           onClose={() => setShowVerificationInfo(false)}
         />
       )}
 
+      {/* TUTORIAL DE REGISTRO */}
       {showRegisterTutorial && (
         <RegisterHelpTutorial
           onClose={() => setShowRegisterTutorial(false)}
@@ -583,6 +682,33 @@ export default function EsSaludRegister() {
           step={step}
         />
       )}
+
+      {/* MENSAJE DE REGISTRO EXITOSO */}
+      {registrationSuccess && (
+        <div className="register-success-overlay">
+          <div
+            className="register-success-card"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="register-success-icon">
+              <Check size={38} strokeWidth={2.5} />
+            </div>
+
+            <h2>¡Bienvenido a EsSalud Digital!</h2>
+
+            <p>
+              Tu cuenta se creó correctamente.
+              Ya puedes disfrutar de nuestros servicios.
+            </p>
+
+            <span>Ingresando a tu cuenta...</span>
+          </div>
+        </div>
+      )}
+
+      {/* PANTALLA DE CARGA */}
+      {loading && <LoadingOverlay />}
     </main>
   );
 }

@@ -41593,3 +41593,490 @@ html.tema-oscuro .detalle-examen-not-found {
 html.tema-oscuro .detalle-examen-not-found svg {
   color: #168cff;
 }
+
+/* El contenedor del registro será la referencia del modal */
+.register-page {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Fondo oscurecido y desenfocado SOLO dentro del celular */
+.register-success-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  background: rgba(13, 35, 65, 0.42);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  border-radius: inherit;
+  animation: registerFadeIn 0.3s ease;
+}
+
+/* Nueva tarjeta de bienvenida */
+.register-success-card {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+
+  padding: 30px 24px 27px;
+  overflow: hidden;
+
+  border-radius: 25px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+
+  text-align: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  box-shadow:
+    0 20px 50px rgba(12, 43, 83, 0.18),
+    0 4px 14px rgba(12, 43, 83, 0.08);
+
+  animation: registerSuccessIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Línea decorativa superior */
+.register-success-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+
+  background: linear-gradient(
+    90deg,
+    #0876c9,
+    #27b6c9,
+    #0876c9
+  );
+}
+
+/* Icono de éxito */
+.register-success-icon {
+  width: 68px;
+  height: 68px;
+
+  margin: 0 auto 19px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 21px;
+
+  background: linear-gradient(145deg, #e7f5ff, #dff7f5);
+  color: #0876c9;
+
+  box-shadow: 0 6px 18px rgba(8, 118, 201, 0.10);
+}
+
+/* Título */
+.register-success-card h2 {
+  margin: 0 0 11px;
+
+  color: #123b69;
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+
+/* Descripción */
+.register-success-card p {
+  margin: 0 0 22px;
+
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Estado de ingreso */
+.register-success-card span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  padding: 10px 15px;
+
+  border-radius: 30px;
+
+  background: #edf6ff;
+  color: #0876c9;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+/* Indicador animado */
+.register-success-card span::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+  background: #0876c9;
+
+  animation: registerPulse 1s infinite;
+}
+
+/* Animaciones */
+@keyframes registerFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes registerSuccessIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes registerPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+
+/* =========================================
+   REGISTRO EXITOSO - MODO OSCURO ESSALUD
+========================================= */
+
+.register-page.tema-oscuro .register-success-overlay {
+  background: rgba(5, 12, 25, 0.76);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.register-page.tema-oscuro .register-success-card {
+  background: linear-gradient(
+    145deg,
+    #19283e 0%,
+    #111e32 100%
+  );
+
+  border: 1px solid #30445f;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+/* Línea superior */
+.register-page.tema-oscuro .register-success-card::before {
+  background: linear-gradient(
+    90deg,
+    #2563eb,
+    #38bdf8,
+    #2563eb
+  );
+}
+
+/* Icono de confirmación */
+.register-page.tema-oscuro .register-success-icon {
+  background: #203956;
+  color: #60a5fa;
+  border: 1px solid #345579;
+  box-shadow: none;
+}
+
+/* Título */
+.register-page.tema-oscuro .register-success-card h2 {
+  color: #ffffff;
+}
+
+/* Descripción */
+.register-page.tema-oscuro .register-success-card p {
+  color: #b8c9df;
+}
+
+/* Mensaje de ingreso */
+.register-page.tema-oscuro .register-success-card span {
+  background: #203754;
+  color: #60a5fa;
+  border: 1px solid #304e70;
+}
+
+/* Indicador animado */
+.register-page.tema-oscuro .register-success-card span::before {
+  background: #60a5fa;
+}
+
+/* =========================================
+   REGISTRO EXITOSO - ALTO CONTRASTE
+========================================= */
+
+.contraste-alto .register-success-overlay {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.contraste-alto .register-success-card {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: none;
+}
+
+/* Línea superior */
+.contraste-alto .register-success-card::before {
+  background: #000000;
+}
+
+/* Icono */
+.contraste-alto .register-success-icon {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  box-shadow: none;
+}
+
+/* Título */
+.contraste-alto .register-success-card h2 {
+  color: #000000;
+  font-weight: 800;
+}
+
+/* Descripción */
+.contraste-alto .register-success-card p {
+  color: #000000;
+}
+
+/* Indicador de ingreso */
+.contraste-alto .register-success-card span {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+/* Punto animado */
+.contraste-alto .register-success-card span::before {
+  background: #000000;
+}
+
+/* =========================================
+   CAMBIAR DE CUENTA - SCROLL VERTICAL
+========================================= */
+
+.cambiar-cuenta-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Encabezado fijo */
+.cambiar-cuenta-screen .appointments-header {
+  flex-shrink: 0;
+}
+
+/* Área desplazable */
+.cambiar-cuenta-content {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-bottom: 30px;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+
+/* Ocultar barra de desplazamiento */
+.cambiar-cuenta-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================
+   GESTIONAR CUENTAS - PANTALLA FIJA
+   DURANTE EL LOADING
+========================================= */
+
+.gestionar-cuentas-screen.gestionar-cuentas-loading {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+.gestionar-cuentas-loading .essalud-login-content {
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
+.gestionar-cuentas-loading button {
+  pointer-events: none !important;
+}
+
+/* Overlay por encima de toda la pantalla */
+.gestionar-cuentas-screen.gestionar-cuentas-loading
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+}
+
+/* =========================================
+   ESSALUD WELCOME - MODO OSCURO
+========================================= */
+
+.tema-oscuro .essalud-welcome {
+  background: #0b1425;
+  color: #ffffff;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Sección principal */
+.tema-oscuro .essalud-welcome-hero {
+  background: #0b1425;
+}
+
+/* Imagen principal */
+.tema-oscuro .essalud-welcome-image {
+  border-radius: inherit;
+}
+
+/* Tarjeta inferior */
+.tema-oscuro .essalud-welcome-card {
+  background: linear-gradient(
+    145deg,
+    #19283e 0%,
+    #111e32 100%
+  );
+
+  border: 1px solid #30445f;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Título */
+.tema-oscuro .essalud-welcome-card h1 {
+  color: #ffffff;
+}
+
+/* Descripción */
+.tema-oscuro .essalud-welcome-card p {
+  color: #b8c9df;
+}
+
+/* Contenedor de botones */
+.tema-oscuro .essalud-welcome-actions {
+  color: #ffffff;
+}
+
+/* Botón iniciar sesión */
+.tema-oscuro .essalud-welcome-login {
+  background: #347ff0;
+  color: #ffffff;
+  border: 1px solid #347ff0;
+  transition: background 0.2s ease;
+}
+
+.tema-oscuro .essalud-welcome-login:hover {
+  background: #2563d9;
+}
+
+/* Botón crear cuenta */
+.tema-oscuro .essalud-welcome-register {
+  background: #19283e;
+  color: #60a5fa;
+  border: 1px solid #3b5879;
+  transition: background 0.2s ease;
+}
+
+.tema-oscuro .essalud-welcome-register:hover {
+  background: #203754;
+}
+
+/* =========================================
+   ESSALUD WELCOME - ALTO CONTRASTE
+========================================= */
+
+.contraste-alto .essalud-welcome {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Sección principal */
+.contraste-alto .essalud-welcome-hero {
+  background: #ffffff;
+}
+
+/* Imagen principal */
+.contraste-alto .essalud-welcome-image {
+  border: 2px solid #000000;
+}
+
+/* Tarjeta inferior */
+.contraste-alto .essalud-welcome-card {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: none;
+}
+
+/* Título */
+.contraste-alto .essalud-welcome-card h1 {
+  color: #000000;
+  font-weight: 800;
+}
+
+/* Descripción */
+.contraste-alto .essalud-welcome-card p {
+  color: #000000;
+}
+
+/* Botón iniciar sesión */
+.contraste-alto .essalud-welcome-login {
+  background: #000000;
+  color: #ffffff;
+  border: 2px solid #000000;
+  font-weight: 700;
+}
+
+.contraste-alto .essalud-welcome-login:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* Botón crear cuenta */
+.contraste-alto .essalud-welcome-register {
+  background: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+  font-weight: 700;
+}
+
+.contraste-alto .essalud-welcome-register:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Icono */
+.contraste-alto .essalud-welcome-login svg {
+  color: #ffffff;
+}

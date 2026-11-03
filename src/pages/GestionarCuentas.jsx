@@ -28,7 +28,7 @@ export default function GestionarCuentas() {
   const [cuentaPorEliminar, setCuentaPorEliminar] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Cargar únicamente las cuentas de titulares guardadas
+  // Cargar cuentas guardadas
   useEffect(() => {
     try {
       const cuentasGuardadas = JSON.parse(
@@ -41,6 +41,28 @@ export default function GestionarCuentas() {
       setCuentas([]);
     }
   }, []);
+
+  // Bloquear el desplazamiento de la pantalla durante la carga
+  useEffect(() => {
+    if (!loading) return;
+
+    const bloquearScroll = (e) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener("touchmove", bloquearScroll, {
+      passive: false,
+    });
+
+    document.addEventListener("wheel", bloquearScroll, {
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener("touchmove", bloquearScroll);
+      document.removeEventListener("wheel", bloquearScroll);
+    };
+  }, [loading]);
 
   // Ocultar DNI
   const formatearDni = (dni = "") => {
@@ -66,7 +88,7 @@ export default function GestionarCuentas() {
   const seleccionarCuenta = (cuenta) => {
     if (loading) return;
 
-    // Acceso directo si recordó su cuenta
+    // Acceso directo si la cuenta tiene acceso rápido activado
     if (cuenta.accesoRapido === true) {
       const resultado = iniciarSesionRecordada(cuenta.dni);
 
@@ -83,10 +105,11 @@ export default function GestionarCuentas() {
       }
     }
 
-    // Solicitar contraseña si no recordó su cuenta
+    // Solicitar contraseña y permitir recordar nuevamente la cuenta
     navigate("/essalud/login", {
       state: {
         requierePassword: true,
+        permitirRecordarCuenta: true,
         dni: cuenta.dni,
         nombre: cuenta.nombres || cuenta.name,
       },
@@ -95,18 +118,26 @@ export default function GestionarCuentas() {
 
   // Usar otro perfil
   const usarOtroPerfil = () => {
+    if (loading) return;
+
     navigate("/essalud/login", {
-      state: { cambiarCuenta: true },
+      state: {
+        cambiarCuenta: true,
+      },
     });
   };
 
   // Crear cuenta nueva
   const crearCuentaNueva = () => {
+    if (loading) return;
+
     navigate("/essalud/registro");
   };
 
   // Mostrar confirmación antes de eliminar
   const solicitarEliminarCuenta = (cuenta) => {
+    if (loading) return;
+
     setCuentaPorEliminar(cuenta);
   };
 
@@ -135,7 +166,12 @@ export default function GestionarCuentas() {
   };
 
   return (
-    <main className="essalud-login gestionar-cuentas-screen">
+    <main
+      className={`essalud-login gestionar-cuentas-screen ${
+        loading ? "gestionar-cuentas-loading" : ""
+      }`}
+      aria-busy={loading}
+    >
       <div className="essalud-login-content">
 
         {/* ENCABEZADO */}
@@ -145,6 +181,7 @@ export default function GestionarCuentas() {
             className="essalud-back-button"
             onClick={() => navigate("/essalud/login")}
             aria-label="Volver al inicio de sesión"
+            disabled={loading}
           >
             <ChevronLeft size={25} strokeWidth={1.8} />
           </button>
@@ -157,6 +194,7 @@ export default function GestionarCuentas() {
                 "Selecciona una cuenta guardada para iniciar sesión o utiliza otro perfil."
               )
             }
+            disabled={loading}
           >
             <CircleHelp size={21} strokeWidth={2} />
             <span>Ayuda</span>
@@ -309,7 +347,7 @@ export default function GestionarCuentas() {
         confirmText="Sí, eliminar"
       />
 
-      {/* PANTALLA DE CARGA PARA ACCESO RÁPIDO */}
+      {/* PANTALLA DE CARGA */}
       {loading && (
         <LoadingOverlay message="Ingresando a tu cuenta..." />
       )}

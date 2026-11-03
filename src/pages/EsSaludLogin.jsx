@@ -1,5 +1,5 @@
-
 import { useState, useEffect, useCallback } from "react";
+
 import { useNavigate, useLocation } from "react-router-dom";
 
 import HelpTutorial from "../components/HelpTutorial";
@@ -36,6 +36,9 @@ function EsSaludLogin() {
   const requierePassword =
     location.state?.requierePassword === true;
 
+  const permitirRecordarCuenta =
+    location.state?.permitirRecordarCuenta === true;
+
   const nombreCuenta = location.state?.nombre || "";
 
   const [dni, setDni] = useState(
@@ -44,8 +47,11 @@ function EsSaludLogin() {
 
   const [password, setPassword] = useState("");
 
+  // Recordar cuenta también al ingresar desde Gestionar cuentas
   const [remember, setRemember] = useState(
-    requierePassword ? false : true
+    requierePassword
+      ? permitirRecordarCuenta
+      : true
   );
 
   const [showPassword, setShowPassword] = useState(false);
@@ -55,7 +61,7 @@ function EsSaludLogin() {
   const [showHelp, setShowHelp] = useState(false);
   const [biometricMethod, setBiometricMethod] = useState(null);
 
-  // Configuración biométrica de la cuenta.
+  // Configuración biométrica de la cuenta
   const [biometria, setBiometria] = useState({
     fingerprint: false,
     face: false,
@@ -132,10 +138,11 @@ function EsSaludLogin() {
       return;
     }
 
+    // Enviar la preferencia seleccionada por el usuario
     const resultado = iniciarSesion(
       dni,
       password,
-      requierePassword ? false : remember
+      remember
     );
 
     if (!resultado.correcto) {
@@ -197,7 +204,7 @@ function EsSaludLogin() {
     setBiometricMethod(method);
   };
 
-  // Se ejecuta cuando la verificación biométrica es correcta.
+  // Se ejecuta cuando la verificación biométrica es correcta
   const handleBiometricSuccess = useCallback(() => {
     setBiometricMethod(null);
     setLoading(true);
@@ -419,7 +426,8 @@ function EsSaludLogin() {
           {/* OPCIONES DE CUENTA */}
           <div className="essalud-login-options">
 
-            {!requierePassword && (
+            {/* RECORDAR CUENTA */}
+            {(!requierePassword || permitirRecordarCuenta) && (
               <label className="essalud-remember">
                 <input
                   type="checkbox"
@@ -433,6 +441,7 @@ function EsSaludLogin() {
               </label>
             )}
 
+            {/* OLVIDASTE TU CONTRASEÑA */}
             <button
               data-tour="forgot"
               type="button"
@@ -472,11 +481,7 @@ function EsSaludLogin() {
           </button>
         </form>
 
-        {/* ====================================== */}
         {/* OPCIONES BIOMÉTRICAS */}
-        {/* SIEMPRE VISIBLES */}
-        {/* ====================================== */}
-
         <div className="essalud-login-divider">
           <span />
           <p>O continúa con</p>
@@ -488,9 +493,7 @@ function EsSaludLogin() {
           {/* HUELLA DIGITAL */}
           <button
             type="button"
-            onClick={() =>
-              handleBiometric("fingerprint")
-            }
+            onClick={() => handleBiometric("fingerprint")}
             disabled={loading}
             className={
               biometria.fingerprint
@@ -511,9 +514,7 @@ function EsSaludLogin() {
           {/* RECONOCIMIENTO FACIAL */}
           <button
             type="button"
-            onClick={() =>
-              handleBiometric("face")
-            }
+            onClick={() => handleBiometric("face")}
             disabled={loading}
             className={
               biometria.face
@@ -530,7 +531,6 @@ function EsSaludLogin() {
 
             <span>Reconocimiento facial</span>
           </button>
-
         </div>
 
         {/* CREAR CUENTA */}
@@ -541,9 +541,7 @@ function EsSaludLogin() {
             <button
               data-tour="register"
               type="button"
-              onClick={() =>
-                navigate("/essalud/registro")
-              }
+              onClick={() => navigate("/essalud/registro")}
             >
               Crear cuenta
             </button>
@@ -552,7 +550,6 @@ function EsSaludLogin() {
 
         {/* PANTALLA DE CARGA */}
         {loading && <LoadingOverlay />}
-
       </div>
 
       {/* TUTORIAL */}
@@ -571,7 +568,6 @@ function EsSaludLogin() {
           onClose={() => setBiometricMethod(null)}
         />
       )}
-
     </main>
   );
 }
