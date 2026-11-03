@@ -1,5 +1,4 @@
-
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -15,7 +14,7 @@ import {
 } from "lucide-react";
 
 import { QRCodeSVG } from "qrcode.react";
-
+import ConfirmacionModal from "../components/ConfirmacionModal";
 import logoEssalud from "../assets/digital-logo.png";
 
 import { obtenerRecetaPorId } from "../services/recetasService.js";
@@ -28,14 +27,12 @@ export default function DetalleReceta() {
   const { id } = useParams();
 
   const documentoRef = useRef(null);
-
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
   const usuario = obtenerUsuarioActivo();
 
-  const receta =
-    location.state?.receta || obtenerRecetaPorId(id);
+  const receta = location.state?.receta || obtenerRecetaPorId(id);
 
-  const paciente =
-    location.state?.paciente || usuario;
+  const paciente = location.state?.paciente || usuario;
 
   // Formatear fecha.
   const formatearFecha = (fecha) => {
@@ -102,11 +99,7 @@ export default function DetalleReceta() {
         className="reservar-help"
         type="button"
         aria-label="Ayuda"
-        onClick={() =>
-          window.alert(
-            "Aquí puedes consultar la información de tu receta médica."
-          )
-        }
+        onClick={() => setMostrarAyuda(true)}
       >
         <CircleHelp size={18} />
       </button>
@@ -125,14 +118,9 @@ export default function DetalleReceta() {
 
             <h2>Receta no encontrada</h2>
 
-            <p>
-              No pudimos encontrar la información de esta receta médica.
-            </p>
+            <p>No pudimos encontrar la información de esta receta médica.</p>
 
-            <button
-              type="button"
-              onClick={volverARecetas}
-            >
+            <button type="button" onClick={volverARecetas}>
               Volver a mis recetas
             </button>
           </div>
@@ -150,10 +138,7 @@ export default function DetalleReceta() {
     paciente?.nombre ||
     "No disponible";
 
-  const dniPaciente =
-    receta.dni ||
-    paciente?.dni ||
-    "No disponible";
+  const dniPaciente = receta.dni || paciente?.dni || "No disponible";
 
   // Datos del QR demostrativo.
   const datosQR = JSON.stringify({
@@ -165,26 +150,20 @@ export default function DetalleReceta() {
 
   return (
     <main className="appointments-screen detalle-receta-screen">
-
       {/* ENCABEZADO */}
       {renderizarEncabezado()}
 
       <section className="detalle-receta-content">
-
         {/* DOCUMENTO QUE SE DESCARGARÁ */}
         <div
           ref={documentoRef}
           id="receta-pdf"
           className="detalle-receta-documento"
         >
-
           {/* ENCABEZADO DEL PDF */}
           <div className="detalle-receta-pdf-header">
             <div className="detalle-receta-pdf-logo">
-              <img
-                src={logoEssalud}
-                alt="EsSalud Digital"
-              />
+              <img src={logoEssalud} alt="EsSalud Digital" />
 
               <div>
                 <strong>EsSalud Digital</strong>
@@ -192,9 +171,7 @@ export default function DetalleReceta() {
               </div>
             </div>
 
-            <span className="detalle-receta-pdf-label">
-              RECETA MÉDICA
-            </span>
+            <span className="detalle-receta-pdf-label">RECETA MÉDICA</span>
           </div>
 
           {/* BANNER PRINCIPAL */}
@@ -208,14 +185,10 @@ export default function DetalleReceta() {
 
               <h2>Tu receta está disponible</h2>
 
-              <p>
-                Consulta los detalles de tu atención médica.
-              </p>
+              <p>Consulta los detalles de tu atención médica.</p>
             </div>
 
-            <span className="detalle-receta-id">
-              {receta.id}
-            </span>
+            <span className="detalle-receta-id">{receta.id}</span>
           </div>
 
           {/* DATOS DEL PACIENTE */}
@@ -242,16 +215,12 @@ export default function DetalleReceta() {
 
             <div className="detalle-receta-row">
               <span>Tipo de atención</span>
-              <strong>
-                {receta.tipoCita || "No especificado"}
-              </strong>
+              <strong>{receta.tipoCita || "No especificado"}</strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>Gestionada por</span>
-              <strong>
-                {receta.solicitanteNombre || "No especificado"}
-              </strong>
+              <strong>{receta.solicitanteNombre || "No especificado"}</strong>
             </div>
           </article>
 
@@ -264,16 +233,12 @@ export default function DetalleReceta() {
 
             <div className="detalle-receta-row">
               <span>Médico</span>
-              <strong>
-                {receta.medico || "No disponible"}
-              </strong>
+              <strong>{receta.medico || "No disponible"}</strong>
             </div>
 
             <div className="detalle-receta-row">
               <span>Especialidad</span>
-              <strong>
-                {receta.especialidad || "No disponible"}
-              </strong>
+              <strong>{receta.especialidad || "No disponible"}</strong>
             </div>
 
             {receta.cmp && (
@@ -292,8 +257,7 @@ export default function DetalleReceta() {
             </div>
 
             <p className="detalle-receta-diagnostico">
-              {receta.diagnostico ||
-                "No se ha registrado un diagnóstico."}
+              {receta.diagnostico || "No se ha registrado un diagnóstico."}
             </p>
           </article>
 
@@ -320,9 +284,7 @@ export default function DetalleReceta() {
                     </div>
 
                     <div className="detalle-medicamento-info">
-                      <h4>
-                        {medicamento.nombre || "Medicamento"}
-                      </h4>
+                      <h4>{medicamento.nombre || "Medicamento"}</h4>
 
                       <p>
                         <strong>Dosis:</strong>{" "}
@@ -373,19 +335,14 @@ export default function DetalleReceta() {
                 <h3>Recojo de medicamentos</h3>
 
                 <p>
-                  Presenta este código QR en la farmacia para
-                  identificar tu receta médica.
+                  Presenta este código QR en la farmacia para identificar tu
+                  receta médica.
                 </p>
               </div>
             </div>
 
             <div className="detalle-receta-qr-code">
-              <QRCodeSVG
-                value={datosQR}
-                size={170}
-                level="H"
-                includeMargin
-              />
+              <QRCodeSVG value={datosQR} size={170} level="H" includeMargin />
             </div>
 
             <div className="detalle-receta-qr-status">
@@ -402,9 +359,7 @@ export default function DetalleReceta() {
           <div className="detalle-receta-pdf-footer">
             <CheckCircle2 size={16} />
 
-            <span>
-              Documento generado desde EsSalud Digital
-            </span>
+            <span>Documento generado desde EsSalud Digital</span>
           </div>
         </div>
 
@@ -417,8 +372,16 @@ export default function DetalleReceta() {
           <Download size={19} />
           Descargar receta PDF
         </button>
-
       </section>
+      {/* MODAL DE AYUDA */}
+      <ConfirmacionModal
+        isOpen={mostrarAyuda}
+        variant="help"
+        title="Ayuda - Detalle de receta"
+        message="Consulta los datos de tu receta, revisa los medicamentos e indicaciones y presenta el código QR para identificarla en farmacia."
+        confirmText="Entendido"
+        onCancel={() => setMostrarAyuda(false)}
+      />
     </main>
   );
 }

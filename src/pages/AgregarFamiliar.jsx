@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -28,6 +27,7 @@ export default function AgregarFamiliar() {
 
   // Estado del modal de confirmación.
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
 
   // Validar datos antes de mostrar el modal.
   const handleSubmit = (event) => {
@@ -85,7 +85,6 @@ export default function AgregarFamiliar() {
 
   return (
     <main className="appointments-screen agregar-familiar-page">
-
       {/* ENCABEZADO */}
       <header className="appointments-header">
         <button
@@ -109,11 +108,7 @@ export default function AgregarFamiliar() {
           className="reservar-help"
           type="button"
           aria-label="Ayuda"
-          onClick={() =>
-            window.alert(
-              "Ingresa el DNI y el parentesco para vincular a un familiar."
-            )
-          }
+          onClick={() => setMostrarAyuda(true)}
         >
           <CircleHelp size={18} />
         </button>
@@ -121,7 +116,6 @@ export default function AgregarFamiliar() {
 
       {/* CONTENIDO DEL FORMULARIO */}
       <section className="agregar-familiar-content">
-
         <div className="agregar-familiar-intro">
           <div className="agregar-familiar-icon">
             <UserRoundPlus size={32} />
@@ -135,14 +129,9 @@ export default function AgregarFamiliar() {
           </p>
         </div>
 
-        <form
-          className="agregar-familiar-form"
-          onSubmit={handleSubmit}
-        >
+        <form className="agregar-familiar-form" onSubmit={handleSubmit}>
           {/* DNI DEL FAMILIAR */}
-          <label htmlFor="dni-familiar">
-            DNI del familiar
-          </label>
+          <label htmlFor="dni-familiar">DNI del familiar</label>
 
           <div className="agregar-familiar-input">
             <CreditCard size={20} />
@@ -155,9 +144,7 @@ export default function AgregarFamiliar() {
               placeholder="Ingresa los 8 dígitos"
               value={dni}
               onChange={(event) => {
-                setDni(
-                  event.target.value.replace(/\D/g, "").slice(0, 8)
-                );
+                setDni(event.target.value.replace(/\D/g, "").slice(0, 8));
                 setMensaje("");
               }}
               maxLength={8}
@@ -166,9 +153,7 @@ export default function AgregarFamiliar() {
           </div>
 
           {/* PARENTESCO */}
-          <label htmlFor="parentesco-familiar">
-            Parentesco
-          </label>
+          <label htmlFor="parentesco-familiar">Parentesco</label>
 
           <div className="agregar-familiar-input">
             <UsersRound size={20} />
@@ -234,11 +219,8 @@ export default function AgregarFamiliar() {
         <div className="agregar-familiar-notice">
           <AlertCircle size={19} />
 
-          <p>
-            Recuerda que el DNI debe corresponder a un asegurado.
-          </p>
+          <p>Recuerda que el DNI debe corresponder a un asegurado.</p>
         </div>
-
       </section>
 
       {/* MODAL DE CONFIRMACIÓN */}
@@ -252,6 +234,15 @@ export default function AgregarFamiliar() {
         onConfirm={confirmarVinculacion}
       />
 
+      {/* MODAL DE AYUDA */}
+      <ConfirmacionModal
+        isOpen={mostrarAyuda}
+        variant="help"
+        title="Ayuda - Agregar familiar"
+        message="Ingresa el DNI de un asegurado, selecciona el parentesco y confirma la vinculación para agregarlo a tu perfil."
+        confirmText="Entendido"
+        onCancel={() => setMostrarAyuda(false)}
+      />
     </main>
   );
 }

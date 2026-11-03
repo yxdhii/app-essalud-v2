@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -17,9 +16,7 @@ import {
 
 import logoEssalud from "../assets/digital-logo.png";
 
-import {
-  obtenerExamenPorId,
-} from "../services/examenesService.js";
+import { obtenerExamenPorId } from "../services/examenesService.js";
 
 import {
   obtenerUsuarioActivo,
@@ -41,16 +38,12 @@ export default function DetalleExamen() {
     ? obtenerFamiliaresVinculados(usuario.dni) || []
     : [];
 
-  const pacientesDisponibles = [
-    usuario,
-    ...familiares,
-  ].filter(
+  const pacientesDisponibles = [usuario, ...familiares].filter(
     (item, index, lista) =>
       item?.dni &&
       lista.findIndex(
-        (persona) =>
-          String(persona?.dni) === String(item.dni)
-      ) === index
+        (persona) => String(persona?.dni) === String(item.dni),
+      ) === index,
   );
 
   // Recuperar y validar el examen.
@@ -74,9 +67,7 @@ export default function DetalleExamen() {
     // El examen debe pertenecer al titular o a un familiar
     // vinculado a su cuenta.
     const pacienteAutorizado = pacientesDisponibles.find(
-      (persona) =>
-        String(persona.dni) ===
-        String(examenEncontrado.pacienteId)
+      (persona) => String(persona.dni) === String(examenEncontrado.pacienteId),
     );
 
     if (!pacienteAutorizado) {
@@ -115,8 +106,7 @@ export default function DetalleExamen() {
 
   // Identificar al paciente mediante su DNI.
   const paciente = pacientesDisponibles.find(
-    (persona) =>
-      String(persona?.dni) === String(examen?.pacienteId)
+    (persona) => String(persona?.dni) === String(examen?.pacienteId),
   );
 
   const nombrePaciente =
@@ -125,36 +115,25 @@ export default function DetalleExamen() {
     paciente?.nombre ||
     "Paciente";
 
-  const dniPaciente =
-    examen?.pacienteId ||
-    "No disponible";
+  const dniPaciente = examen?.pacienteId || "No disponible";
 
   // Mantener la atribución original de quien gestionó el examen.
-  const nombreSolicitante =
-    examen?.solicitanteNombre ||
-    "No disponible";
+  const nombreSolicitante = examen?.solicitanteNombre || "No disponible";
 
   // Comprobar disponibilidad del resultado.
   const estadoExamen = examen?.estado?.toLowerCase();
 
   const resultadoDisponible =
-    ["disponible", "completado", "atendido"].includes(
-      estadoExamen
-    ) ||
+    ["disponible", "completado", "atendido"].includes(estadoExamen) ||
     Boolean(examen?.resultadoUrl || examen?.archivoUrl);
 
   // Descargar resultado.
   const descargarResultado = () => {
-    const archivo =
-      examen?.resultadoUrl || examen?.archivoUrl;
+    const archivo = examen?.resultadoUrl || examen?.archivoUrl;
 
     if (!archivo) return;
 
-    window.open(
-      archivo,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    window.open(archivo, "_blank", "noopener,noreferrer");
   };
 
   if (cargando) {
@@ -169,7 +148,6 @@ export default function DetalleExamen() {
 
   return (
     <main className="appointments-screen detalle-examen-page">
-
       {/* ENCABEZADO */}
       <header className="appointments-header">
         <button
@@ -193,11 +171,7 @@ export default function DetalleExamen() {
           className="reservar-help"
           type="button"
           aria-label="Ayuda"
-          onClick={() =>
-            window.alert(
-              "Aquí puedes consultar la información de tu examen médico, verificar su estado y revisar tus resultados."
-            )
-          }
+          onClick={() => setMostrarAyuda(true)}
         >
           <CircleHelp size={18} />
         </button>
@@ -209,11 +183,7 @@ export default function DetalleExamen() {
           <section className="detalle-examen-not-found">
             <FileText size={46} />
 
-            <h2>
-              {usuario
-                ? "Examen no encontrado"
-                : "Inicia sesión"}
-            </h2>
+            <h2>{usuario ? "Examen no encontrado" : "Inicia sesión"}</h2>
 
             <p>
               {usuario
@@ -224,14 +194,10 @@ export default function DetalleExamen() {
             <button
               type="button"
               onClick={() =>
-                usuario
-                  ? volverAExamenes()
-                  : navigate("/essalud")
+                usuario ? volverAExamenes() : navigate("/essalud")
               }
             >
-              {usuario
-                ? "Volver a mis exámenes"
-                : "Iniciar sesión"}
+              {usuario ? "Volver a mis exámenes" : "Iniciar sesión"}
             </button>
           </section>
         ) : (
@@ -244,9 +210,7 @@ export default function DetalleExamen() {
 
               <div>
                 <h2>Información del examen</h2>
-                <p>
-                  Consulta los datos y el estado de tu examen médico.
-                </p>
+                <p>Consulta los datos y el estado de tu examen médico.</p>
               </div>
             </section>
 
@@ -303,16 +267,12 @@ export default function DetalleExamen() {
 
               <div className="detalle-examen-row">
                 <span>Nombre del examen</span>
-                <strong>
-                  {examen.nombre || "Examen médico"}
-                </strong>
+                <strong>{examen.nombre || "Examen médico"}</strong>
               </div>
 
               <div className="detalle-examen-row">
                 <span>Tipo de examen</span>
-                <strong>
-                  {examen.tipo || "No especificado"}
-                </strong>
+                <strong>{examen.tipo || "No especificado"}</strong>
               </div>
 
               <div className="detalle-examen-row">
@@ -328,9 +288,7 @@ export default function DetalleExamen() {
                   <Building2 size={15} />
                   Establecimiento
                 </span>
-                <strong>
-                  {examen.laboratorio || "No especificado"}
-                </strong>
+                <strong>{examen.laboratorio || "No especificado"}</strong>
               </div>
 
               <div className="detalle-examen-row">
@@ -356,8 +314,7 @@ export default function DetalleExamen() {
                   <div>
                     <strong>Resultado disponible</strong>
                     <p>
-                      Puedes consultar o descargar el resultado
-                      de tu examen.
+                      Puedes consultar o descargar el resultado de tu examen.
                     </p>
                   </div>
 
@@ -385,9 +342,8 @@ export default function DetalleExamen() {
                   <div>
                     <strong>Resultado pendiente</strong>
                     <p>
-                      Los resultados de tu examen todavía no se
-                      encuentran disponibles. Podrás consultarlos
-                      cuando sean publicados.
+                      Los resultados de tu examen todavía no se encuentran
+                      disponibles. Podrás consultarlos cuando sean publicados.
                     </p>
                   </div>
                 </div>
@@ -399,8 +355,8 @@ export default function DetalleExamen() {
               <CircleHelp size={19} />
 
               <p>
-                Si tienes alguna consulta sobre tu examen o sus
-                resultados, comunícate con tu establecimiento de salud.
+                Si tienes alguna consulta sobre tu examen o sus resultados,
+                comunícate con tu establecimiento de salud.
               </p>
             </div>
           </>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -7,9 +6,7 @@ import ConfirmacionModal from "../components/ConfirmacionModal";
 
 import logoEssalud from "../assets/digital-logo.png";
 
-import {
-  cancelarCita as cancelarCitaServicio,
-} from "../services/citasService.js";
+import { cancelarCita as cancelarCitaServicio } from "../services/citasService.js";
 
 import {
   ArrowLeft,
@@ -32,8 +29,9 @@ export default function DetalleCita() {
   const cita = location.state?.cita;
   const activeTabAnterior = location.state?.activeTab || "Virtual";
   const pacienteContexto = location.state?.paciente || null;
-
+  // Estados de los modales
   const [modalAbierto, setModalAbierto] = useState(null);
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
 
   // VOLVER A MIS CITAS CONSERVANDO EL PACIENTE
   const volverAMisCitas = () => {
@@ -77,11 +75,7 @@ export default function DetalleCita() {
         className="reservar-help"
         type="button"
         aria-label="Ayuda"
-        onClick={() =>
-          window.alert(
-            "Aquí puedes consultar la información de tu cita médica."
-          )
-        }
+        onClick={() => setMostrarAyuda(true)}
       >
         <CircleHelp size={18} />
       </button>
@@ -90,10 +84,7 @@ export default function DetalleCita() {
 
   // NAVEGACIÓN INFERIOR
   const navegacionInferior = (
-    <BottomNavigation
-      active="citas"
-      onNavigate={navegarMenu}
-    />
+    <BottomNavigation active="citas" onNavigate={navegarMenu} />
   );
 
   // COMPROBAR SI EXISTE LA CITA
@@ -105,14 +96,9 @@ export default function DetalleCita() {
         <section className="detalle-cita-vacio">
           <h2>No se encontró la cita</h2>
 
-          <p>
-            Selecciona una cita desde la sección Mis citas.
-          </p>
+          <p>Selecciona una cita desde la sección Mis citas.</p>
 
-          <button
-            type="button"
-            onClick={volverAMisCitas}
-          >
+          <button type="button" onClick={volverAMisCitas}>
             Volver a Mis citas
           </button>
         </section>
@@ -136,8 +122,7 @@ export default function DetalleCita() {
         : cita.paciente || "No especificado");
 
   // PERSONA QUE GESTIONÓ LA RESERVA
-  const nombreSolicitante =
-    cita.solicitanteNombre || "No especificado";
+  const nombreSolicitante = cita.solicitanteNombre || "No especificado";
 
   // FORMATEAR FECHA
   const formatearFecha = (fecha) => {
@@ -178,9 +163,7 @@ export default function DetalleCita() {
 
   // INICIAL DEL MÉDICO
   const inicialMedico = (medico) => {
-    const nombre = (medico || "M")
-      .replace(/^Dra?\.\s*/i, "")
-      .trim();
+    const nombre = (medico || "M").replace(/^Dra?\.\s*/i, "").trim();
 
     return nombre.charAt(0).toUpperCase() || "M";
   };
@@ -228,9 +211,7 @@ export default function DetalleCita() {
 
         setModalAbierto(null);
 
-        window.alert(
-          "No se pudo cancelar la cita. Inténtalo nuevamente."
-        );
+        window.alert("No se pudo cancelar la cita. Inténtalo nuevamente.");
       }
     }
   };
@@ -238,7 +219,7 @@ export default function DetalleCita() {
   // REPROGRAMACIÓN
   const reprogramarCita = () => {
     window.alert(
-      "La reprogramación de citas es una función simulada en esta aplicación."
+      "La reprogramación de citas es una función simulada en esta aplicación.",
     );
   };
 
@@ -254,35 +235,21 @@ export default function DetalleCita() {
 
   return (
     <main className="appointments-screen detalle-cita-screen">
-
       {encabezado}
 
       <div className="detalle-cita-content">
-
         {/* TARJETA DEL MÉDICO */}
         <section className="detalle-cita-doctor">
-
           <div className="detalle-cita-etiquetas">
-
             <span
-              className={
-                esVirtual
-                  ? "etiqueta-virtual"
-                  : "etiqueta-presencial"
-              }
+              className={esVirtual ? "etiqueta-virtual" : "etiqueta-presencial"}
             >
-              {esVirtual ? (
-                <Video size={14} />
-              ) : (
-                <MapPin size={14} />
-              )}
+              {esVirtual ? <Video size={14} /> : <MapPin size={14} />}
 
               {esVirtual ? "Virtual" : "Presencial"}
             </span>
 
-            <span
-              className={`etiqueta-pendiente ${claseEstado}`}
-            >
+            <span className={`etiqueta-pendiente ${claseEstado}`}>
               {cita.estado === "Cancelada" ? (
                 <XCircle size={13} />
               ) : cita.estado === "Reprogramada" ? (
@@ -293,36 +260,25 @@ export default function DetalleCita() {
 
               {cita.estado || "Pendiente"}
             </span>
-
           </div>
 
           <div className="detalle-cita-medico">
-
             <div className="detalle-cita-avatar">
               {inicialMedico(cita.medico)}
             </div>
 
             <div className="detalle-cita-medico-info">
-              <h2>
-                {cita.medico || "Médico por confirmar"}
-              </h2>
+              <h2>{cita.medico || "Médico por confirmar"}</h2>
 
-              <p>
-                {cita.especialidad ||
-                  "Especialidad no especificada"}
-              </p>
+              <p>{cita.especialidad || "Especialidad no especificada"}</p>
 
-              {cita.cmp && (
-                <small>CMP {cita.cmp}</small>
-              )}
+              {cita.cmp && <small>CMP {cita.cmp}</small>}
             </div>
-
           </div>
         </section>
 
         {/* INFORMACIÓN DE LA CITA */}
         <section className="detalle-cita-informacion">
-
           <h2>Información de la cita</h2>
 
           <div className="detalle-cita-fila">
@@ -334,9 +290,7 @@ export default function DetalleCita() {
           <div className="detalle-cita-fila">
             <Clock3 />
             <span>Hora</span>
-            <strong>
-              {formatearHora(cita.horario || cita.hora)}
-            </strong>
+            <strong>{formatearHora(cita.horario || cita.hora)}</strong>
           </div>
 
           {/* PACIENTE */}
@@ -358,9 +312,7 @@ export default function DetalleCita() {
 
             <span>Tipo de atención</span>
 
-            <strong>
-              {esVirtual ? "Videoconsulta" : "Presencial"}
-            </strong>
+            <strong>{esVirtual ? "Videoconsulta" : "Presencial"}</strong>
           </div>
 
           {!esVirtual && (
@@ -380,11 +332,8 @@ export default function DetalleCita() {
             <CalendarCheck />
             <span>Especialidad</span>
 
-            <strong>
-              {cita.especialidad || "Por confirmar"}
-            </strong>
+            <strong>{cita.especialidad || "Por confirmar"}</strong>
           </div>
-
         </section>
 
         {/* AVISO PARA CITAS VIRTUALES */}
@@ -393,8 +342,7 @@ export default function DetalleCita() {
             <Video size={19} />
 
             <p>
-              Podrás ingresar a la videollamada 10 minutos
-              antes de tu cita.
+              Podrás ingresar a la videollamada 10 minutos antes de tu cita.
             </p>
           </div>
         )}
@@ -405,8 +353,8 @@ export default function DetalleCita() {
             <MapPin size={19} />
 
             <p>
-              Recuerda revisar el establecimiento y la
-              dirección antes de acudir a tu cita.
+              Recuerda revisar el establecimiento y la dirección antes de acudir
+              a tu cita.
             </p>
           </div>
         )}
@@ -414,7 +362,6 @@ export default function DetalleCita() {
         {/* ACCIONES DE LA CITA */}
         {estaPendiente && (
           <div className="detalle-cita-acciones">
-
             {esVirtual && (
               <button
                 type="button"
@@ -443,74 +390,65 @@ export default function DetalleCita() {
               <XCircle size={17} />
               Cancelar cita
             </button>
-
           </div>
         )}
 
         {/* RECOMENDACIONES */}
         {esVirtual && (
           <section className="detalle-cita-recomendaciones">
-
             <div className="detalle-cita-recomendaciones-titulo">
               <Info size={15} />
               <h3>Recomendaciones</h3>
             </div>
 
             <ul>
-              <li>
-                Conéctate desde un lugar con buena señal.
-              </li>
+              <li>Conéctate desde un lugar con buena señal.</li>
+
+              <li>Usa audífonos para una mejor comunicación.</li>
 
               <li>
-                Usa audífonos para una mejor comunicación.
-              </li>
-
-              <li>
-                Ten a la mano tu DNI y tus resultados médicos
-                (si los tienes).
+                Ten a la mano tu DNI y tus resultados médicos (si los tienes).
               </li>
             </ul>
-
           </section>
         )}
-
       </div>
 
       {/* MODAL REUTILIZABLE PARA TODAS LAS ACCIONES */}
       <ConfirmacionModal
         isOpen={modalAbierto !== null}
-
         title={
           modalAbierto === "videollamada"
             ? "¿Deseas ingresar a la videollamada?"
             : "¿Deseas cancelar tu cita?"
         }
-
         message={
           modalAbierto === "videollamada"
             ? "Estás por ingresar a tu consulta médica virtual. Verifica que estés listo para comunicarte con tu médico."
             : "Esta acción cancelará tu cita médica programada. ¿Estás seguro de continuar?"
         }
-
         cancelText={
-          modalAbierto === "videollamada"
-            ? "No, todavía no"
-            : "No, regresar"
+          modalAbierto === "videollamada" ? "No, todavía no" : "No, regresar"
         }
-
         confirmText={
-          modalAbierto === "videollamada"
-            ? "Sí, ingresar"
-            : "Sí, cancelar"
+          modalAbierto === "videollamada" ? "Sí, ingresar" : "Sí, cancelar"
         }
-
         onCancel={() => setModalAbierto(null)}
         onConfirm={ejecutarAccion}
       />
 
+      {/* MODAL DE AYUDA */}
+      <ConfirmacionModal
+        isOpen={mostrarAyuda}
+        variant="help"
+        title="Ayuda - Detalle de cita"
+        message="Consulta los datos de tu cita, revisa sus detalles y gestiona las opciones de reprogramación o cancelación. Si es virtual, podrás acceder a tu videollamada."
+        confirmText="Entendido"
+        onCancel={() => setMostrarAyuda(false)}
+      />
+
       {/* NAVEGACIÓN INFERIOR */}
       {navegacionInferior}
-
     </main>
   );
 }

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import logoEssalud from "../assets/digital-logo.png";
+import ConfirmacionModal from "../components/ConfirmacionModal";
 
 import {
   obtenerUsuarioActivo,
@@ -23,6 +24,7 @@ import {
 export default function SeleccionarPerfil() {
   const navigate = useNavigate();
   const usuario = obtenerUsuarioActivo();
+  const [mostrarAyuda, setMostrarAyuda] = useState(false);
 
   const [busqueda, setBusqueda] = useState("");
 
@@ -108,11 +110,7 @@ export default function SeleccionarPerfil() {
           className="reservar-help"
           type="button"
           aria-label="Ayuda"
-          onClick={() =>
-            window.alert(
-              "Selecciona tu perfil o el de uno de tus familiares vinculados para continuar.",
-            )
-          }
+          onClick={() => setMostrarAyuda(true)}
         >
           <CircleHelp size={18} />
         </button>
@@ -251,6 +249,15 @@ export default function SeleccionarPerfil() {
           Volver al inicio
         </button>
       </section>
+
+      <ConfirmacionModal
+        isOpen={mostrarAyuda}
+        variant="help"
+        title="Ayuda - Mis familiares"
+        message="Selecciona tu perfil o el de un familiar vinculado para consultar sus servicios médicos y gestionar sus atenciones."
+        confirmText="Entendido"
+        onCancel={() => setMostrarAyuda(false)}
+      />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 
 import React from "react";
+import { CircleHelp } from "lucide-react";
 
 export default function ConfirmacionModal({
   isOpen,
@@ -9,21 +10,34 @@ export default function ConfirmacionModal({
   onConfirm,
   cancelText = "No",
   confirmText = "Sí",
+  variant = "confirm",
 }) {
   if (!isOpen) return null;
 
+  const esAyuda = variant === "help";
+
+  const cerrarModal = onCancel || onConfirm;
+
   return (
     <div
-      className="logout-confirm-overlay"
-      onClick={onCancel}
-    >
+  className={`logout-confirm-overlay ${
+    esAyuda ? "help-modal-overlay" : ""
+  }`}
+  onClick={cerrarModal}
+>
       <div
         className="logout-confirm-modal"
-        role="alertdialog"
+        role="dialog"
         aria-modal="true"
         aria-labelledby="confirmacion-modal-title"
         onClick={(event) => event.stopPropagation()}
       >
+        {esAyuda && (
+          <div className="help-modal-icon">
+            <CircleHelp size={27} />
+          </div>
+        )}
+
         <h2 id="confirmacion-modal-title">
           {title}
         </h2>
@@ -31,21 +45,33 @@ export default function ConfirmacionModal({
         {message && <p>{message}</p>}
 
         <div className="logout-confirm-actions">
-          <button
-            type="button"
-            className="logout-cancel-button"
-            onClick={onCancel}
-          >
-            {cancelText}
-          </button>
+          {esAyuda ? (
+            <button
+              type="button"
+              className="logout-accept-button"
+              onClick={cerrarModal}
+            >
+              {confirmText || "Entendido"}
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="logout-cancel-button"
+                onClick={onCancel}
+              >
+                {cancelText}
+              </button>
 
-          <button
-            type="button"
-            className="logout-accept-button"
-            onClick={onConfirm}
-          >
-            {confirmText}
-          </button>
+              <button
+                type="button"
+                className="logout-accept-button"
+                onClick={onConfirm}
+              >
+                {confirmText}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
