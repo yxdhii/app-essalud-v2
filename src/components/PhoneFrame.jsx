@@ -1,4 +1,6 @@
 
+import LecturaVoz from "./LecturaVoz";
+
 function PhoneFrame({ children }) {
   return (
     <div className="phone-frame-bg">
@@ -69,7 +71,10 @@ function PhoneFrame({ children }) {
           </div>
         </div>
 
-        <div className="phone-screen-content">{children}</div>
+        <div className="phone-screen-content">
+          {children}
+          <LecturaVoz />
+        </div>
 
         <div className="phone-home-indicator"></div>
 

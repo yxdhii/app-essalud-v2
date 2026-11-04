@@ -1,5 +1,11 @@
 
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 
 const AccessibilityContext = createContext(null);
 
@@ -7,6 +13,7 @@ const PREFERENCIAS_INICIALES = {
   tema: "claro",
   contraste: "normal",
   tamanoTexto: "medio",
+  lecturaVoz: false,
 };
 
 export function AccessibilityProvider({ children }) {
@@ -31,6 +38,15 @@ export function AccessibilityProvider({ children }) {
       return localStorage.getItem("essalud-tamano-texto") || "medio";
     } catch {
       return "medio";
+    }
+  });
+
+  // Nueva preferencia: lectura en voz alta
+  const [lecturaVoz, setLecturaVoz] = useState(() => {
+    try {
+      return localStorage.getItem("essalud-lectura-voz") === "true";
+    } catch {
+      return false;
     }
   });
 
@@ -62,11 +78,13 @@ export function AccessibilityProvider({ children }) {
       localStorage.setItem("essalud-tema", tema);
       localStorage.setItem("essalud-contraste", contraste);
       localStorage.setItem("essalud-tamano-texto", tamanoTexto);
+      localStorage.setItem("essalud-lectura-voz", String(lecturaVoz));
     } catch {
       console.warn("No se pudieron guardar las preferencias.");
     }
-  }, [tema, contraste, tamanoTexto]);
+  }, [tema, contraste, tamanoTexto, lecturaVoz]);
 
+  // Aumentar tamaño de texto
   const aumentarTexto = () => {
     setTamanoTexto((actual) => {
       if (actual === "pequeno") return "medio";
@@ -75,6 +93,7 @@ export function AccessibilityProvider({ children }) {
     });
   };
 
+  // Disminuir tamaño de texto
   const disminuirTexto = () => {
     setTamanoTexto((actual) => {
       if (actual === "grande") return "medio";
@@ -83,10 +102,84 @@ export function AccessibilityProvider({ children }) {
     });
   };
 
+  // Leer texto en voz alta
+  const leerTexto = useCallback(
+    (texto) => {
+      if (
+        !lecturaVoz ||
+        !texto?.trim() ||
+        typeof window === "undefined" ||
+        !("speechSynthesis" in window)
+      ) {
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const mensaje = new SpeechSynthesisUtterance(texto);
+      mensaje.lang = "es-PE";
+      mensaje.rate = 1;
+      mensaje.pitch = 1;
+      mensaje.volume = 1;
+
+      const voces = window.speechSynthesis.getVoices();
+
+      const vozEspanol =
+        voces.find((voz) => voz.lang.toLowerCase() === "es-pe") ||
+        voces.find((voz) => voz.lang.toLowerCase().startsWith("es"));
+
+      if (vozEspanol) {
+        mensaje.voice = vozEspanol;
+      }
+
+      window.speechSynthesis.speak(mensaje);
+    },
+    [lecturaVoz]
+  );
+
+  // Pausar lectura
+  const pausarLectura = useCallback(() => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.pause();
+    }
+  }, []);
+
+  // Reanudar lectura
+  const reanudarLectura = useCallback(() => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.resume();
+    }
+  }, []);
+
+  // Detener lectura
+  const detenerLectura = useCallback(() => {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  }, []);
+
+  // Si se desactiva la lectura, detener cualquier reproducción
+  useEffect(() => {
+    if (!lecturaVoz) {
+      detenerLectura();
+    }
+  }, [lecturaVoz, detenerLectura]);
+
+  // Detener lectura al desmontar el proveedor
+  useEffect(() => {
+    return () => {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  // Restablecer preferencias
   const restablecerAccesibilidad = () => {
     setTema(PREFERENCIAS_INICIALES.tema);
     setContraste(PREFERENCIAS_INICIALES.contraste);
     setTamanoTexto(PREFERENCIAS_INICIALES.tamanoTexto);
+    setLecturaVoz(PREFERENCIAS_INICIALES.lecturaVoz);
   };
 
   const value = {
@@ -99,6 +192,14 @@ export function AccessibilityProvider({ children }) {
     aumentarTexto,
     disminuirTexto,
     restablecerAccesibilidad,
+
+    // Funciones de lectura en voz alta
+    lecturaVoz,
+    setLecturaVoz,
+    leerTexto,
+    pausarLectura,
+    reanudarLectura,
+    detenerLectura,
   };
 
   return (

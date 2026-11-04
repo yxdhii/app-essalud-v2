@@ -43272,3 +43272,144 @@ html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile:
   max-width: 400px;
   margin: auto;
 }
+
+
+/* ========================================
+   LECTURA EN VOZ ALTA - ESSALUD DIGITAL
+======================================== */
+
+.lectura-voz {
+  position: absolute;
+  right: 18px;
+  bottom: 85px;
+  z-index: 5000;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.lectura-voz-boton {
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  background: #087cff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 18px rgba(0, 80, 180, 0.35);
+  cursor: pointer;
+}
+
+.lectura-voz-boton.activo {
+  background: #075fc4;
+}
+
+.lectura-voz-icono {
+  font-size: 23px;
+}
+
+.lectura-voz-panel {
+  position: absolute;
+  right: 0;
+  bottom: 66px;
+  width: 255px;
+  padding: 17px;
+  border-radius: 20px;
+  background: white;
+  color: #172b4d;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  animation: lecturaPanelEntrada 0.2s ease;
+}
+
+.lectura-voz-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.lectura-voz-header strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.lectura-voz-header p {
+  margin-top: 4px;
+  color: #718096;
+  font-size: 11px;
+}
+
+.lectura-voz-cerrar {
+  width: 27px;
+  height: 27px;
+  border: none;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.lectura-voz-accion {
+  min-height: 42px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.lectura-voz-accion.principal {
+  width: 100%;
+  min-height: 45px;
+  margin-bottom: 9px;
+  border: none;
+  background: #087cff;
+  color: white;
+  font-size: 12px;
+}
+
+.lectura-voz-controles {
+  display: flex;
+  gap: 8px;
+}
+
+.lectura-voz-controles button {
+  flex: 1;
+}
+
+.lectura-voz-detener {
+  width: 100%;
+  margin-top: 9px;
+  min-height: 39px;
+  border: none;
+  border-radius: 10px;
+  background: #fff1f2;
+  color: #e04452;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.lectura-voz-accion:hover,
+.lectura-voz-detener:hover {
+  opacity: 0.85;
+}
+
+@keyframes lecturaPanelEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
