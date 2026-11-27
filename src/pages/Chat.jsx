@@ -360,368 +360,620 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
     setArchivoAdjunto(null);
   };
 
+
   // =========================================
-  // GENERAR RESPUESTAS DEL ASISTENTE
+  // BASE DE CONOCIMIENTO: PREGUNTAS Y RESPUESTAS DEL DOCUMENTO
   // =========================================
+
+  const preguntasFrecuentes = [
+  {
+    "pregunta": "¿Cómo puedo reservar una cita?",
+    "respuesta": "Ingresa a «Reservar cita», selecciona el tipo de atención, la especialidad, el médico y el horario disponible. Finalmente, revisa los datos y confirma tu reserva."
+  },
+  {
+    "pregunta": "¿Dónde puedo ver mis citas?",
+    "respuesta": "Ingresa a «Mis citas» desde la barra inferior de navegación. Allí podrás consultar tus citas registradas y sus respectivos estados."
+  },
+  {
+    "pregunta": "¿Cómo puedo cancelar una cita médica?",
+    "respuesta": "Ingresa a «Mis citas», selecciona la cita que deseas cancelar y presiona «Cancelar cita». Revisa la información y confirma tu decisión."
+  },
+  {
+    "pregunta": "¿Qué hago si no encuentro citas disponibles?",
+    "respuesta": "Puedes consultar otras fechas o profesionales disponibles, según las opciones que te muestre el sistema. También puedes comunicarte con tu establecimiento de salud."
+  },
+  {
+    "pregunta": "¿Cómo sé si mi cita fue reservada correctamente?",
+    "respuesta": "Al finalizar el proceso, aparecerá un mensaje de confirmación con los datos de tu cita. También podrás verificarla en «Mis citas»."
+  },
+  {
+    "pregunta": "¿Cómo puedo cambiar la fecha de mi cita?",
+    "respuesta": "Ingresa a «Mis citas» y revisa las opciones disponibles. Si no existe una opción de reprogramación, consulta la disponibilidad de una nueva cita antes de cancelar la actual."
+  },
+  {
+    "pregunta": "¿Cómo busco una especialidad médica?",
+    "respuesta": "Ingresa a «Reservar cita» y utiliza el buscador de especialidades para encontrar la atención que necesitas."
+  },
+  {
+    "pregunta": "¿Dónde puedo consultar la fecha y hora de mi cita?",
+    "respuesta": "Ingresa a «Mis citas» y selecciona la cita correspondiente para visualizar sus detalles."
+  },
+  {
+    "pregunta": "¿Cómo sé qué médico me atenderá?",
+    "respuesta": "Puedes consultar el nombre del médico en el detalle de tu cita reservada."
+  },
+  {
+    "pregunta": "¿Puedo elegir al médico que me atenderá?",
+    "respuesta": "Durante el proceso de reserva podrás seleccionar un médico entre los profesionales disponibles para la especialidad elegida."
+  },
+  {
+    "pregunta": "¿Qué significa que mi cita está pendiente?",
+    "respuesta": "Significa que tu cita se encuentra registrada, pero todavía está pendiente de atención o programación, según el estado indicado."
+  },
+  {
+    "pregunta": "¿Qué significa que mi cita está atendida?",
+    "respuesta": "Significa que tu cita figura como realizada en el sistema."
+  },
+  {
+    "pregunta": "¿Qué significa que mi cita está cancelada?",
+    "respuesta": "Significa que la cita ya no se encuentra programada y no podrás recibir atención mediante esa reserva."
+  },
+  {
+    "pregunta": "¿Dónde me atiendo?",
+    "respuesta": "Puedes consultar el establecimiento de salud que te corresponde ingresando al servicio oficial de EsSalud «¿Dónde me atiendo?», disponible en https://dondemeatiendo.essalud.gob.pe/."
+  },
+  {
+    "pregunta": "¿Cómo puedo atenderme en EsSalud?",
+    "respuesta": "Verifica que tu seguro se encuentre activo, identifica el establecimiento de salud que te corresponde y solicita una cita médica según tus necesidades."
+  },
+  {
+    "pregunta": "¿Cómo sé si mi seguro está activo?",
+    "respuesta": "Ingresa al servicio oficial «¿Dónde me atiendo?» de EsSalud y completa los datos solicitados para consultar tu acreditación."
+  },
+  {
+    "pregunta": "¿Qué documentos necesito para atenderme?",
+    "respuesta": "Debes presentar tu documento de identidad y los documentos adicionales que correspondan al tipo de atención solicitada."
+  },
+  {
+    "pregunta": "¿Puedo atenderme en cualquier hospital de EsSalud?",
+    "respuesta": "Para consultas programadas, normalmente debes acudir al establecimiento de salud asignado o contar con una derivación médica, según corresponda."
+  },
+  {
+    "pregunta": "¿Cómo puedo saber cuál es mi centro de salud asignado?",
+    "respuesta": "Puedes consultar esta información mediante el servicio oficial «¿Dónde me atiendo?» de EsSalud."
+  },
+  {
+    "pregunta": "¿Qué hago si necesito atenderme en otro hospital?",
+    "respuesta": "Comunícate con tu establecimiento de salud para consultar las opciones disponibles o solicitar orientación sobre una derivación médica."
+  },
+  {
+    "pregunta": "¿Dónde queda el centro de salud en el que tengo mi cita?",
+    "respuesta": "Revisa el detalle de tu cita para identificar el establecimiento asignado. Puedes consultar su dirección mediante los canales oficiales de EsSalud."
+  },
+  {
+    "pregunta": "¿Cómo sé en qué consultorio me atenderán?",
+    "respuesta": "Revisa los detalles de tu cita médica. Si el número de consultorio no aparece, consulta con el personal de admisión del establecimiento."
+  },
+  {
+    "pregunta": "¿Qué hago si llego tarde a mi cita?",
+    "respuesta": "Comunícate con el establecimiento de salud para consultar si todavía puedes recibir atención o si necesitas solicitar una nueva cita."
+  },
+  {
+    "pregunta": "¿Con cuánto tiempo de anticipación debo llegar a mi cita?",
+    "respuesta": "Revisa las indicaciones de tu establecimiento de salud y procura llegar con anticipación para completar el registro correspondiente."
+  },
+  {
+    "pregunta": "¿Qué hago si necesito atención médica urgente?",
+    "respuesta": "Si presentas una emergencia médica, acude inmediatamente al servicio de emergencias más cercano. No esperes a reservar una cita mediante la aplicación."
+  },
+  {
+    "pregunta": "¿Puedo atenderme si no tengo una cita reservada?",
+    "respuesta": "Dependerá del tipo de atención que necesites y de las condiciones del establecimiento. Comunícate con tu centro de salud para recibir orientación."
+  },
+  {
+    "pregunta": "¿Qué hago si mi seguro no aparece activo?",
+    "respuesta": "Comunícate con los canales oficiales de acreditación de EsSalud para verificar tu situación y conocer los pasos necesarios para regularizarla."
+  },
+  {
+    "pregunta": "¿La atención médica virtual es igual a la presencial?",
+    "respuesta": "No. La atención virtual se realiza de manera remota, mientras que la presencial requiere acudir al establecimiento de salud. La modalidad dependerá del servicio disponible y de tus necesidades médicas."
+  },
+  {
+    "pregunta": "¿Cómo agrego a mi hijo?",
+    "respuesta": "Ingresa a «Mis perfiles», selecciona «Agregar familiar» y completa los datos solicitados."
+  },
+  {
+    "pregunta": "¿Cómo puedo agregar a un familiar?",
+    "respuesta": "Accede a la sección «Mis perfiles», selecciona «Agregar familiar» e ingresa la información requerida para vincularlo."
+  },
+  {
+    "pregunta": "¿Dónde puedo ver a mis familiares registrados?",
+    "respuesta": "Ingresa a «Mis perfiles» para consultar los familiares vinculados a tu cuenta."
+  },
+  {
+    "pregunta": "¿Cómo puedo reservar una cita para mi hijo?",
+    "respuesta": "Selecciona el perfil de tu hijo previamente vinculado, ingresa a «Reservar cita» y continúa con el proceso de reserva."
+  },
+  {
+    "pregunta": "¿Puedo reservar una cita para mi madre?",
+    "respuesta": "Puedes gestionar una cita para tu madre si su perfil se encuentra vinculado a tu cuenta y cuentas con la autorización correspondiente."
+  },
+  {
+    "pregunta": "¿Tengo que cerrar sesión para consultar las citas de otro familiar?",
+    "respuesta": "No. Puedes seleccionar el perfil familiar vinculado desde tu cuenta sin necesidad de cerrar sesión."
+  },
+  {
+    "pregunta": "¿Cómo puedo consultar las recetas de mi familiar?",
+    "respuesta": "Selecciona el perfil correspondiente e ingresa a la sección «Recetas» para consultar la información disponible."
+  },
+  {
+    "pregunta": "¿Puedo agregar a más de un familiar?",
+    "respuesta": "Sí. La propuesta permite administrar varios perfiles familiares desde una misma cuenta, sujeto a la validación y autorización correspondientes."
+  },
+  {
+    "pregunta": "¿Cómo regreso a mi perfil personal?",
+    "respuesta": "Ingresa a «Mis perfiles» y selecciona tu perfil de titular."
+  },
+  {
+    "pregunta": "¿Por qué no puedo agregar a un familiar?",
+    "respuesta": "Verifica que los datos ingresados sean correctos. Si el problema continúa, consulta con los canales de soporte de EsSalud."
+  },
+  {
+    "pregunta": "¿Dónde encuentro mis recetas médicas?",
+    "respuesta": "Ingresa al módulo «Recetas» desde la pantalla principal. Allí podrás consultar tus recetas registradas."
+  },
+  {
+    "pregunta": "¿Cómo puedo descargar mi receta médica?",
+    "respuesta": "Selecciona la receta que deseas consultar y presiona la opción de descarga disponible."
+  },
+  {
+    "pregunta": "¿Cómo puedo saber qué medicamentos me recetaron?",
+    "respuesta": "Ingresa al detalle de tu receta médica para consultar los medicamentos e indicaciones registrados por tu médico."
+  },
+  {
+    "pregunta": "¿Dónde puedo recoger mis medicamentos?",
+    "respuesta": "Consulta las indicaciones de tu receta o comunícate con la farmacia del establecimiento donde recibiste atención."
+  },
+  {
+    "pregunta": "¿Qué significa que mi receta está emitida?",
+    "respuesta": "Significa que tu receta médica ha sido generada y registrada en el sistema."
+  },
+  {
+    "pregunta": "¿Por qué no aparece mi receta médica?",
+    "respuesta": "Verifica que estés consultando el perfil correcto. Si la receta no aparece, comunícate con el establecimiento donde recibiste atención."
+  },
+  {
+    "pregunta": "¿Puedo consultar mis recetas anteriores?",
+    "respuesta": "Sí. Ingresa a la sección «Recetas» para consultar los registros disponibles."
+  },
+  {
+    "pregunta": "¿Qué hago si no encuentro un medicamento en farmacia?",
+    "respuesta": "Consulta con el personal de farmacia de tu establecimiento de salud para conocer las alternativas disponibles."
+  },
+  {
+    "pregunta": "¿Puedo cambiar la dosis de un medicamento?",
+    "respuesta": "No debes modificar la dosis de tus medicamentos sin consultar previamente con tu médico tratante."
+  },
+  {
+    "pregunta": "¿Puedes recomendarme algún medicamento?",
+    "respuesta": "No puedo recomendar medicamentos ni tratamientos. Te sugiero consultar con un profesional de salud para recibir una orientación adecuada."
+  },
+  {
+    "pregunta": "¿Dónde puedo consultar mis exámenes médicos?",
+    "respuesta": "Ingresa a la sección correspondiente a exámenes médicos, si se encuentra disponible en tu cuenta, para revisar tus registros."
+  },
+  {
+    "pregunta": "¿Cómo sé si mis resultados están disponibles?",
+    "respuesta": "Consulta el estado de tus exámenes en la aplicación o comunícate con el establecimiento donde fueron realizados."
+  },
+  {
+    "pregunta": "¿Por qué todavía no aparecen mis resultados?",
+    "respuesta": "Es posible que los resultados se encuentren pendientes de procesamiento o registro. Consulta con tu establecimiento de salud."
+  },
+  {
+    "pregunta": "¿Dónde puedo realizarme un examen de laboratorio?",
+    "respuesta": "Revisa las indicaciones de la orden médica proporcionada por tu médico para identificar el establecimiento o servicio correspondiente."
+  },
+  {
+    "pregunta": "¿Qué documentos necesito para realizarme un examen?",
+    "respuesta": "Debes presentar tu documento de identidad y la orden médica correspondiente. Recuerda seguir las indicaciones de preparación proporcionadas por el personal de salud."
+  },
+  {
+    "pregunta": "¿Puedes interpretar los resultados de mis exámenes?",
+    "respuesta": "No puedo realizar interpretaciones clínicas ni diagnósticos médicos. Te recomiendo consultar los resultados con tu médico tratante."
+  },
+  {
+    "pregunta": "¿Qué especialidades médicas están disponibles?",
+    "respuesta": "Ingresa a «Reservar cita» para consultar las especialidades que se encuentran habilitadas en el sistema."
+  },
+  {
+    "pregunta": "¿Cómo puedo reservar una cita en Medicina General?",
+    "respuesta": "Ingresa a «Reservar cita», busca Medicina General y selecciona un médico, una fecha y un horario disponibles."
+  },
+  {
+    "pregunta": "¿Cómo puedo reservar una cita en Pediatría?",
+    "respuesta": "Selecciona el perfil del menor que requiere atención, ingresa a «Reservar cita» y busca la especialidad de Pediatría."
+  },
+  {
+    "pregunta": "¿Cómo puedo reservar una cita en Odontología?",
+    "respuesta": "Ingresa al módulo de reservas y busca la especialidad de Odontología. Después, selecciona una opción disponible."
+  },
+  {
+    "pregunta": "¿Cómo puedo reservar una cita en Psicología?",
+    "respuesta": "Ingresa a «Reservar cita» y consulta si la especialidad de Psicología se encuentra disponible."
+  },
+  {
+    "pregunta": "¿Qué hago si no sé qué especialidad elegir?",
+    "respuesta": "Puedes solicitar orientación a un profesional de salud. Para consultas no urgentes, Medicina General puede ser un punto de partida."
+  },
+  {
+    "pregunta": "¿Puedo solicitar atención directamente con un especialista?",
+    "respuesta": "Dependerá de las condiciones de atención de tu establecimiento y de si necesitas una derivación médica previa."
+  },
+  {
+    "pregunta": "¿Qué es una derivación médica?",
+    "respuesta": "Es una indicación realizada por un profesional de salud para que recibas atención en otro servicio o establecimiento, según tus necesidades médicas."
+  },
+  {
+    "pregunta": "¿Cómo puedo aumentar el tamaño del texto?",
+    "respuesta": "Ingresa a «Mi perfil», busca el apartado «Accesibilidad e inclusión» y selecciona el tamaño de texto grande."
+  },
+  {
+    "pregunta": "¿Cómo puedo disminuir el tamaño de las letras?",
+    "respuesta": "Ingresa a «Accesibilidad e inclusión» y selecciona el tamaño de texto pequeño o mediano."
+  },
+  {
+    "pregunta": "¿Cómo puedo activar el modo oscuro?",
+    "respuesta": "Ingresa a «Mi perfil», busca «Tema de visualización» y selecciona el icono de luna."
+  },
+  {
+    "pregunta": "¿Cómo regreso al modo claro?",
+    "respuesta": "Ingresa a «Tema de visualización» y selecciona el icono de sol."
+  },
+  {
+    "pregunta": "¿Cómo puedo activar el contraste alto?",
+    "respuesta": "Accede a «Mi perfil», ingresa a «Accesibilidad e inclusión» y selecciona la opción de contraste alto."
+  },
+  {
+    "pregunta": "¿Cómo puedo regresar al contraste normal?",
+    "respuesta": "Ingresa al módulo de accesibilidad y selecciona la opción de contraste normal."
+  },
+  {
+    "pregunta": "¿Cómo puedo escuchar el contenido de la aplicación?",
+    "respuesta": "Ingresa a «Mi perfil» y activa la opción «Lectura en voz alta». Después, selecciona el botón flotante de altavoz para solicitar la lectura del contenido."
+  },
+  {
+    "pregunta": "¿Cómo desactivo la lectura en voz alta?",
+    "respuesta": "Regresa al apartado «Accesibilidad e inclusión» y desactiva el interruptor de lectura en voz alta."
+  },
+  {
+    "pregunta": "¿Puedo controlar la aplicación mediante comandos de voz?",
+    "respuesta": "Actualmente, la propuesta cuenta con una opción de lectura en voz alta, pero no permite realizar operaciones mediante comandos hablados."
+  },
+  {
+    "pregunta": "¿Cómo puedo desactivar el sonido de la aplicación?",
+    "respuesta": "Ingresa a «Mi perfil», busca «Accesibilidad e inclusión» y desactiva la opción «Sonido de la aplicación»."
+  },
+  {
+    "pregunta": "¿Dónde encuentro las opciones de accesibilidad?",
+    "respuesta": "Puedes encontrarlas dentro de «Mi perfil», en el apartado «Accesibilidad e inclusión»."
+  },
+  {
+    "pregunta": "¿Puedo utilizar la aplicación sin sonido?",
+    "respuesta": "Sí. La aplicación presenta mensajes escritos, iconos y confirmaciones visuales para facilitar la comprensión de las operaciones."
+  },
+  {
+    "pregunta": "¿Puedo personalizar la aplicación según mis necesidades?",
+    "respuesta": "Sí. Puedes modificar el tamaño del texto, el contraste, el tema de visualización y las opciones de sonido y lectura en voz alta."
+  },
+  {
+    "pregunta": "¿Cómo puedo iniciar sesión?",
+    "respuesta": "Ingresa tus credenciales en la pantalla de acceso y selecciona la opción para iniciar sesión."
+  },
+  {
+    "pregunta": "¿Cómo puedo cambiar mi contraseña?",
+    "respuesta": "¡Claro! 😊 Para cambiar tu contraseña, sigue estos pasos:\n\n1. Ingresa a Perfil.\n2. Selecciona Seguridad de mi cuenta.\n3. Pulsa Cambiar contraseña.\n4. Completa los campos solicitados y guarda los cambios.\n\n¡Así podrás actualizar tu contraseña de manera sencilla y segura!"
+  },
+  {
+    "pregunta": "¿Dónde puedo consultar mis datos personales?",
+    "respuesta": "Ingresa a «Mi perfil» para consultar la información asociada a tu cuenta."
+  },
+  {
+    "pregunta": "¿Cómo puedo actualizar mi número de celular?",
+    "respuesta": "Revisa las opciones disponibles dentro de «Mi perfil». Si no puedes modificarlo, comunícate con los canales oficiales de EsSalud."
+  },
+  {
+    "pregunta": "¿Cómo puedo actualizar mi correo electrónico?",
+    "respuesta": "Ingresa a tu perfil y revisa si se encuentra habilitada la opción de actualización de datos."
+  },
+  {
+    "pregunta": "¿Cómo puedo cerrar sesión?",
+    "respuesta": "Ingresa al menú de tu cuenta y selecciona «Cerrar sesión»."
+  },
+  {
+    "pregunta": "¿Qué hago si no puedo iniciar sesión?",
+    "respuesta": "Verifica que tus credenciales sean correctas y que tengas conexión a Internet. Si el problema continúa, comunícate con soporte."
+  },
+  {
+    "pregunta": "¿Puedo compartir mi contraseña contigo?",
+    "respuesta": "No. Por tu seguridad, nunca debes compartir contraseñas, códigos de verificación ni credenciales personales mediante el Chat."
+  },
+  {
+    "pregunta": "¿Puedes acceder a mi historia clínica?",
+    "respuesta": "No tengo acceso a tu historia clínica. Mi función es orientarte sobre el uso de la aplicación y los servicios de EsSalud."
+  },
+  {
+    "pregunta": "¿Qué puedo hacer en EsSalud Digital?",
+    "respuesta": "Puedes reservar citas médicas, consultar tus citas, gestionar perfiles familiares, revisar recetas y personalizar las opciones de accesibilidad."
+  },
+  {
+    "pregunta": "¿Cómo regreso a la pantalla principal?",
+    "respuesta": "Selecciona «Inicio» en la barra inferior de navegación."
+  },
+  {
+    "pregunta": "¿Cómo puedo encontrar un servicio dentro de la aplicación?",
+    "respuesta": "Utiliza el buscador disponible en la pantalla principal y escribe el nombre del servicio que necesitas."
+  },
+  {
+    "pregunta": "¿Dónde encuentro el menú principal?",
+    "respuesta": "Selecciona el icono de menú ubicado en la parte superior de la pantalla."
+  },
+  {
+    "pregunta": "¿Dónde encuentro la opción para reservar una cita?",
+    "respuesta": "Ingresa a la pantalla de inicio y selecciona «Reservar cita»."
+  },
+  {
+    "pregunta": "¿Dónde puedo encontrar ayuda para utilizar la aplicación?",
+    "respuesta": "Puedes ingresar al módulo «Chat» desde la barra inferior de navegación y realizar tus consultas al asistente virtual."
+  },
+  {
+    "pregunta": "¿Puedo utilizar la aplicación sin conexión a Internet?",
+    "respuesta": "Las consultas y gestiones que necesitan comunicarse con el sistema requieren una conexión a Internet."
+  },
+  {
+    "pregunta": "¿La aplicación tiene algún costo por reservar una cita?",
+    "respuesta": "La reserva mediante la aplicación no debe confundirse con un servicio privado de pago. Las condiciones de atención dependen de tu cobertura y acreditación en EsSalud."
+  },
+  {
+    "pregunta": "¿Qué hago si la aplicación no carga?",
+    "respuesta": "Verifica tu conexión a Internet, intenta actualizar la pantalla o ingresa nuevamente a la aplicación."
+  },
+  {
+    "pregunta": "¿Qué hago si aparece un mensaje de error?",
+    "respuesta": "Lee las indicaciones del mensaje y sigue las alternativas disponibles. Si el problema continúa, comunícate con soporte."
+  },
+  {
+    "pregunta": "¿Qué hago si la aplicación se cierra inesperadamente?",
+    "respuesta": "Intenta abrirla nuevamente y verifica tu conexión a Internet. Si el problema persiste, comunícate con soporte técnico."
+  },
+  {
+    "pregunta": "¿Qué hago si no puedo descargar mi receta?",
+    "respuesta": "Verifica tu conexión a Internet y los permisos de descarga del dispositivo. Si el problema continúa, consulta con tu establecimiento de salud."
+  },
+  {
+    "pregunta": "¿Cómo puedo presentar una queja o reclamo?",
+    "respuesta": "Puedes consultar los canales oficiales de atención al asegurado y reclamos disponibles en el portal institucional de EsSalud."
+  },
+  {
+    "pregunta": "¿Cómo puedo comunicarme con EsSalud?",
+    "respuesta": "Puedes consultar los números telefónicos y canales de atención correspondientes a tu región en el portal oficial https://www.essalud.gob.pe/."
+  },
+  {
+    "pregunta": "¿Qué hago si el asistente no puede resolver mi consulta?",
+    "respuesta": "Puedes intentar formular tu pregunta de otra manera o comunicarte con los canales oficiales de atención de EsSalud."
+  },
+  {
+    "pregunta": "Hola.",
+    "respuesta": "¡Hola! Bienvenido a EsSalud Digital. Soy tu asistente virtual y estoy aquí para ayudarte con tus citas médicas, recetas, familiares y consultas sobre los servicios de EsSalud. ¿En qué puedo ayudarte hoy?"
+  },
+  {
+    "pregunta": "¿Quién eres?",
+    "respuesta": "Soy el asistente virtual de EsSalud Digital. Mi función es orientarte y facilitar el uso de las funcionalidades de la aplicación."
+  },
+  {
+    "pregunta": "¿En qué puedes ayudarme?",
+    "respuesta": "Puedo ayudarte a conocer cómo reservar citas, consultar recetas, administrar familiares, localizar información sobre tu atención y utilizar las opciones de accesibilidad."
+  },
+  {
+    "pregunta": "Necesito ayuda.",
+    "respuesta": "¡Claro! Estoy aquí para ayudarte. Cuéntame si necesitas orientación sobre citas médicas, recetas, familiares, centros de salud o el funcionamiento de la aplicación."
+  },
+  {
+    "pregunta": "¿Eres un médico?",
+    "respuesta": "No. Soy un asistente virtual de orientación y no reemplazo la atención de un profesional de salud."
+  },
+  {
+    "pregunta": "¿Puedes decirme qué enfermedad tengo?",
+    "respuesta": "No puedo realizar diagnósticos médicos. Te recomiendo solicitar una consulta con un profesional de salud para recibir una evaluación adecuada."
+  },
+  {
+    "pregunta": "¿Puedes reservar una cita por mí?",
+    "respuesta": "Puedo orientarte durante el proceso de reserva, pero debes seleccionar y confirmar personalmente los datos de tu cita."
+  },
+  {
+    "pregunta": "¿Puedes cancelar mi cita por mí?",
+    "respuesta": "Puedo explicarte cómo cancelar una cita, pero debes realizar y confirmar esta operación desde la sección «Mis citas»."
+  },
+  {
+    "pregunta": "Disculpa. Puedo explicártelo nuevamente utilizando palabras más sencillas. ¿Qué parte de la información necesitas comprender mejor?",
+    "respuesta": "Gracias por tu ayuda."
+  },
+  {
+    "pregunta": "¡De nada! Estoy aquí para ayudarte cuando lo necesites. ¿Hay alguna otra consulta que quieras realizar?",
+    "respuesta": "Hasta luego."
+  }
+];
+
+  const obtenerAccionFAQ = (pregunta) => {
+    const p = normalizarTexto(pregunta);
+
+    if (
+      p.includes("reservar una cita") ||
+      p.includes("buscar una especialidad") ||
+      p.includes("medicina general") ||
+      p.includes("pediatria") ||
+      p.includes("odontologia") ||
+      p.includes("psicologia") ||
+      p.includes("especialidades medicas")
+    ) {
+      return { texto: "Ir a Reservar cita", ruta: RUTAS.reservarCita, icono: "cita" };
+    }
+
+    if (
+      p.includes("mis citas") ||
+      p.includes("cancelar una cita") ||
+      p.includes("cambiar la fecha") ||
+      p.includes("fecha y hora de mi cita")
+    ) {
+      return { texto: "Ir a Mis citas", ruta: RUTAS.citas, icono: "cita" };
+    }
+
+    if (p.includes("receta") || p.includes("medicamento")) {
+      return { texto: "Ver mis recetas", ruta: RUTAS.recetas, icono: "receta" };
+    }
+
+    if (p.includes("examen") || p.includes("resultado")) {
+      return { texto: "Consultar exámenes", ruta: RUTAS.examenes, icono: "examen" };
+    }
+
+    if (p.includes("centro de salud") || p.includes("donde me atiendo") ||
+        p.includes("hospital") || p.includes("establecimiento")) {
+      return { texto: "Ver centros de atención", ruta: RUTAS.centros, icono: "centro" };
+    }
+
+    if (p.includes("accesibilidad") || p.includes("texto") ||
+        p.includes("modo oscuro") || p.includes("contraste") ||
+        p.includes("lectura en voz alta") || p.includes("sonido")) {
+      return { texto: "Ir a Mi perfil", ruta: RUTAS.perfil, icono: "perfil" };
+    }
+
+    if (p.includes("perfil") || p.includes("familiar") ||
+        p.includes("iniciar sesion") || p.includes("contraseña") ||
+        p.includes("datos personales") || p.includes("cerrar sesion")) {
+      return { texto: "Ir a Mi perfil", ruta: RUTAS.perfil, icono: "perfil" };
+    }
+
+    if (p.includes("pantalla principal") || p.includes("menu principal") ||
+        p.includes("servicio dentro de la aplicacion")) {
+      return { texto: "Ir al inicio", ruta: RUTAS.inicio, icono: "inicio" };
+    }
+
+    return null;
+  };
+
+  const aliasPreguntas = [
+    { contiene: ["quiero sacar cita", "sacar cita", "agendar cita", "pedir cita", "solicitar cita", "necesito una cita", "quiero una consulta"], pregunta: "¿Cómo puedo reservar una cita?" },
+    { contiene: ["ver mis citas", "mis proximas citas", "cuando tengo cita", "consultar mis reservas"], pregunta: "¿Dónde puedo ver mis citas?" },
+    { contiene: ["anular cita", "dar de baja mi cita"], pregunta: "¿Cómo puedo cancelar una cita médica?" },
+    { contiene: ["no hay citas", "no encuentro horario", "no hay disponibilidad"], pregunta: "¿Qué hago si no encuentro citas disponibles?" },
+    { contiene: ["confirmar mi cita", "mi cita se registro", "se registro la reserva"], pregunta: "¿Cómo sé si mi cita fue reservada correctamente?" },
+    { contiene: ["reprogramar cita", "mover mi cita", "cambiar mi cita"], pregunta: "¿Cómo puedo cambiar la fecha de mi cita?" },
+    { contiene: ["buscar especialidad", "que especialidades hay"], pregunta: "¿Cómo busco una especialidad médica?" },
+    { contiene: ["quien me atendera", "nombre del doctor", "nombre del medico"], pregunta: "¿Cómo sé qué médico me atenderá?" },
+    { contiene: ["puedo escoger medico", "elegir doctor"], pregunta: "¿Puedo elegir al médico que me atenderá?" },
+    { contiene: ["seguro vigente", "vigencia de mi seguro", "mi seguro esta vigente"], pregunta: "¿Cómo sé si mi seguro está activo?" },
+    { contiene: ["mi centro asignado", "establecimiento que me corresponde"], pregunta: "¿Cómo puedo saber cuál es mi centro de salud asignado?" },
+    { contiene: ["agregar hijo", "registrar a mi hijo"], pregunta: "¿Cómo agrego a mi hijo?" },
+    { contiene: ["agregar familiar", "registrar familiar", "vincular familiar"], pregunta: "¿Cómo puedo agregar a un familiar?" },
+    { contiene: ["cita para mi hijo", "cita de mi hijo"], pregunta: "¿Cómo puedo reservar una cita para mi hijo?" },
+    { contiene: ["cita para mi mama", "cita para mi madre"], pregunta: "¿Puedo reservar una cita para mi madre?" },
+    { contiene: ["ver receta", "mis medicamentos recetados"], pregunta: "¿Dónde encuentro mis recetas médicas?" },
+    { contiene: ["bajar mi receta", "guardar receta"], pregunta: "¿Cómo puedo descargar mi receta médica?" },
+    { contiene: ["medicinas que me recetaron", "que me receto el doctor"], pregunta: "¿Cómo puedo saber qué medicamentos me recetaron?" },
+    { contiene: ["resultados de laboratorio", "analisis clinicos"], pregunta: "¿Dónde puedo consultar mis exámenes médicos?" },
+    { contiene: ["leeme la pantalla", "leer en voz alta", "que la app me lea"], pregunta: "¿Cómo puedo escuchar el contenido de la aplicación?" },
+    { contiene: ["letras mas grandes", "agrandar letras", "aumentar letra"], pregunta: "¿Cómo puedo aumentar el tamaño del texto?" },
+    { contiene: ["letras mas pequeñas", "reducir letra", "disminuir letra"], pregunta: "¿Cómo puedo disminuir el tamaño de las letras?" },
+    { contiene: ["pantalla negra", "tema oscuro", "fondo oscuro"], pregunta: "¿Cómo puedo activar el modo oscuro?" },
+    { contiene: ["cambiar contraseña", "cambiar mi contraseña", "quiero cambiar mi contraseña", "actualizar contraseña", "modificar mi clave"], pregunta: "¿Cómo puedo cambiar mi contraseña?" },
+    { contiene: ["no puedo entrar", "no puedo acceder", "error al iniciar sesion"], pregunta: "¿Qué hago si no puedo iniciar sesión?" },
+    { contiene: ["no abre la aplicacion", "app no carga", "pantalla no carga"], pregunta: "¿Qué hago si la aplicación no carga?" },
+    { contiene: ["presentar reclamo", "poner una queja"], pregunta: "¿Cómo puedo presentar una queja o reclamo?" },
+    { contiene: ["eres doctor", "eres doctora", "eres medico"], pregunta: "¿Eres un médico?" },
+    { contiene: ["diagnosticarme", "que enfermedad tengo", "saber que enfermedad tengo"], pregunta: "¿Puedes decirme qué enfermedad tengo?" },
+    { contiene: ["reservala por mi", "sacame una cita", "hazme una cita"], pregunta: "¿Puedes reservar una cita por mí?" },
+    { contiene: ["cancelala por mi", "cancela mi cita tu"], pregunta: "¿Puedes cancelar mi cita por mí?" }
+  ];
 
   const generarRespuesta = (texto) => {
     const consulta = normalizarTexto(texto);
 
-    // RESERVAR UNA NUEVA CITA
+    // Primero se buscan coincidencias con las variantes de redacción habituales.
+    const aliasEncontrado = aliasPreguntas.find((alias) =>
+      alias.contiene.some((frase) => consulta.includes(normalizarTexto(frase)))
+    );
 
-    if (
-      contieneAlguna(consulta, [
-        "reservar",
-        "reserva de cita",
-        "sacar una cita",
-        "sacar cita",
-        "agendar",
-        "programar una cita",
-        "quiero una cita",
-        "necesito una cita",
-        "obtener una cita",
-        "separar una cita",
-        "pedir una cita",
-        "solicitar una cita",
-        "como reservo",
-        "como puedo reservar",
-      ])
-    ) {
+    let coincidencia = null;
+
+    if (aliasEncontrado) {
+      const preguntaObjetivo = normalizarTexto(aliasEncontrado.pregunta);
+      coincidencia = preguntasFrecuentes.find(
+        (item) => normalizarTexto(item.pregunta) === preguntaObjetivo
+      );
+    }
+
+    // Después se compara con las preguntas originales del documento.
+    if (!coincidencia) {
+      coincidencia = preguntasFrecuentes.find((item) => {
+        const pregunta = normalizarTexto(item.pregunta);
+        return consulta === pregunta ||
+          (pregunta.length > 12 && consulta.includes(pregunta)) ||
+          (consulta.length > 12 && pregunta.includes(consulta));
+      });
+    }
+
+    // Coincidencia por palabras relevantes para aceptar preguntas formuladas de otra manera.
+    if (!coincidencia) {
+      const palabrasIgnoradas = new Set([
+        "como", "puedo", "puede", "puedes", "donde", "cuando", "para",
+        "esta", "este", "tengo", "quiero", "hacer", "hacerlo", "que",
+        "con", "una", "uno", "mis", "las", "los", "del", "por", "desde",
+        "salud", "essalud", "digital"
+      ]);
+
+      let mejorPuntaje = 0;
+      for (const item of preguntasFrecuentes) {
+        const palabrasPregunta = normalizarTexto(item.pregunta)
+          .split(" ")
+          .filter((palabra) => palabra.length > 3 && !palabrasIgnoradas.has(palabra));
+        const unicas = [...new Set(palabrasPregunta)];
+        if (!unicas.length) continue;
+
+        const coincidencias = unicas.filter((palabra) => consulta.includes(palabra)).length;
+        const puntaje = coincidencias / unicas.length;
+
+        if (coincidencias >= 2 && puntaje > mejorPuntaje && puntaje >= 0.45) {
+          mejorPuntaje = puntaje;
+          coincidencia = item;
+        }
+      }
+    }
+
+    if (coincidencia) {
       return {
-        texto: `¡Claro, ${nombreUsuario}! 😊
-
-Puedes reservar tu cita médica desde EsSalud Digital.
-
-Ingresa al apartado de reservas, selecciona el tipo de atención, la especialidad y el médico de tu preferencia.
-
-Después podrás elegir la fecha y el horario disponible.
-
-¡Haz clic en el siguiente botón para comenzar! 💙`,
-        accion: {
-          texto: "Reservar mi cita",
-          ruta: RUTAS.reservarCita,
-          icono: "cita",
-        },
+        texto: coincidencia.respuesta,
+        accion: obtenerAccionFAQ(coincidencia.pregunta)
       };
     }
 
-    // CANCELAR O REPROGRAMAR UNA CITA
-
-    if (
-      contieneAlguna(consulta, [
-        "cancelar",
-        "anular",
-        "reprogramar",
-        "cambiar la fecha",
-        "modificar la cita",
-        "cambiar mi cita",
-      ]) &&
-      consulta.includes("cita")
-    ) {
+    // Respuestas generales tomadas del apartado de interacción del documento.
+    if (consulta === "hola" || consulta.startsWith("hola ")) {
       return {
-        texto: `Puedes ingresar a Mis citas para revisar tus reservas y consultar las opciones disponibles para gestionar tu atención médica.
-
-Te llevaré a esa sección para que puedas revisarlas.`,
-        accion: {
-          texto: "Ir a Mis citas",
-          ruta: RUTAS.citas,
-          icono: "cita",
-        },
+        texto: "¡Hola! Bienvenido a EsSalud Digital. Soy tu asistente virtual y estoy aquí para ayudarte con tus citas médicas, recetas, familiares y consultas sobre los servicios de EsSalud. ¿En qué puedo ayudarte hoy?"
       };
     }
 
-    // CONSULTAR CITAS EXISTENTES
-
-    if (
-      contieneAlguna(consulta, [
-        "mis citas",
-        "proximas citas",
-        "ver mis citas",
-        "consultar cita",
-        "consultar mis citas",
-        "cuando es mi cita",
-        "fecha de mi cita",
-        "tengo una cita",
-        "cita programada",
-        "citas pendientes",
-        "mostrar mis citas",
-        "donde veo mis citas",
-      ])
-    ) {
+    if (consulta.includes("gracias")) {
       return {
-        texto: `¡Por supuesto, ${nombreUsuario}! 😊
-
-Desde Mis citas puedes consultar tus próximas atenciones médicas, revisar las fechas programadas y conocer los detalles de tus reservas.`,
-        accion: {
-          texto: "Consultar mis citas",
-          ruta: RUTAS.citas,
-          icono: "cita",
-        },
+        texto: "¡De nada! Estoy aquí para ayudarte cuando lo necesites. ¿Hay alguna otra consulta que quieras realizar?"
       };
     }
-
-    // ESPECIALIDADES MÉDICAS
-
-    if (
-      contieneAlguna(consulta, [
-        "especialidad",
-        "especialidades",
-        "especialista",
-        "medico",
-        "doctor",
-        "pediatra",
-        "cardiologo",
-        "dermatologo",
-        "ginecologo",
-        "odontologo",
-      ])
-    ) {
-      return {
-        texto: `En el proceso de reserva podrás consultar las especialidades disponibles y seleccionar la atención médica que necesitas.
-
-Puedes ingresar aquí para comenzar a buscar tu cita. 💙`,
-        accion: {
-          texto: "Buscar especialidades",
-          ruta: RUTAS.reservarCita,
-          icono: "cita",
-        },
-      };
-    }
-
-    // RECETAS MÉDICAS
-
-    if (
-      contieneAlguna(consulta, [
-        "receta",
-        "recetas",
-        "medicamento",
-        "medicamentos",
-        "medicina",
-        "medicinas",
-        "prescripcion",
-        "tratamiento indicado",
-      ])
-    ) {
-      return {
-        texto: `¡Claro que sí! 💊
-
-En la sección Recetas puedes revisar la información de tus prescripciones médicas y consultar los medicamentos indicados por tu profesional de salud.
-
-Ingresa aquí para revisar esta información.`,
-        accion: {
-          texto: "Ver mis recetas",
-          ruta: RUTAS.recetas,
-          icono: "receta",
-        },
-      };
-    }
-
-    // EXÁMENES MÉDICOS
-
-    if (
-      contieneAlguna(consulta, [
-        "examen",
-        "examenes",
-        "laboratorio",
-        "analisis",
-        "resultado",
-        "resultados",
-        "pruebas medicas",
-      ])
-    ) {
-      return {
-        texto: `Puedes consultar la información de tus exámenes médicos y revisar los resultados que se encuentren disponibles en la plataforma.
-
-Te dejo el acceso directo a esta sección. 🧪`,
-        accion: {
-          texto: "Consultar mis exámenes",
-          ruta: RUTAS.examenes,
-          icono: "examen",
-        },
-      };
-    }
-
-    // CENTROS DE ATENCIÓN
-
-    if (
-      contieneAlguna(consulta, [
-        "hospital",
-        "centro medico",
-        "centros medicos",
-        "centro de atencion",
-        "centros de atencion",
-        "establecimiento de salud",
-        "policlinico",
-        "ubicacion",
-        "direccion",
-        "donde queda",
-        "donde encuentro",
-        "buscar un centro",
-      ])
-    ) {
-      return {
-        texto: `¡Te ayudo a encontrarlo! 📍
-
-En Centros de atención puedes consultar los establecimientos de salud disponibles y revisar su ubicación.
-
-Ingresa aquí para encontrar el centro que necesitas.`,
-        accion: {
-          texto: "Buscar centros de atención",
-          ruta: RUTAS.centros,
-          icono: "centro",
-        },
-      };
-    }
-
-    // PERFIL Y CUENTA
-
-    if (
-      contieneAlguna(consulta, [
-        "mi perfil",
-        "mis datos",
-        "datos personales",
-        "informacion de mi cuenta",
-        "mi informacion",
-      ])
-    ) {
-      return {
-        texto: `Puedes revisar la información de tu cuenta desde la sección Perfil, disponible en la navegación inferior de EsSalud Digital.`,
-      };
-    }
-
-    // ¿QUÉ ES ESSALUD DIGITAL?
-
-    if (
-      contieneAlguna(consulta, [
-        "que es essalud digital",
-        "que es esta aplicacion",
-        "que es la aplicacion",
-        "para que sirve essalud digital",
-        "que significa essalud digital",
-      ])
-    ) {
-      return {
-        texto: `EsSalud Digital es una plataforma que busca facilitar el acceso a los servicios de salud mediante herramientas digitales.
-
-Su objetivo es permitir que los asegurados puedan realizar consultas y gestionar diferentes servicios desde un mismo espacio.
-
-A través de la aplicación puedes acceder a citas médicas, recetas, exámenes y centros de atención. 💙`,
-      };
-    }
-
-    // FUNCIONES Y SERVICIOS
-
-    if (
-      contieneAlguna(consulta, [
-        "que puedo hacer",
-        "que servicios ofrece",
-        "que servicios tiene",
-        "funciones de la aplicacion",
-        "para que sirve",
-        "que puedo consultar",
-        "que opciones hay",
-      ])
-    ) {
-      return {
-        texto: `Desde EsSalud Digital puedes acceder a diferentes servicios:
-
-📅 Reservar y consultar citas médicas.
-
-💊 Revisar tus recetas médicas.
-
-🧪 Consultar tus exámenes y resultados disponibles.
-
-📍 Buscar centros de atención.
-
-👤 Consultar la información de tu cuenta.
-
-¡Todo desde una misma plataforma! 💙`,
-      };
-    }
-
-    // SALUDOS
-
-    if (
-      contieneAlguna(consulta, [
-        "hola",
-        "buenos dias",
-        "buenas tardes",
-        "buenas noches",
-        "holi",
-        "que tal",
-      ]) &&
-      consulta.length < 45
-    ) {
-      return {
-        texto: `¡Hola nuevamente, ${nombreUsuario}! 😊
-
-Me alegra saludarte.
-
-Estoy aquí para orientarte sobre los servicios de EsSalud Digital.
-
-¿Qué te gustaría consultar hoy?`,
-      };
-    }
-
-    // AGRADECIMIENTOS
-
-    if (contieneAlguna(consulta, ["gracias", "te agradezco", "muy amable"])) {
-      return {
-        texto: `¡Con mucho gusto, ${nombreUsuario}! 💙
-
-Me alegra haberte ayudado. Recuerda que puedes consultarme cuando lo necesites.`,
-      };
-    }
-
-    // AYUDA
-
-    if (
-      contieneAlguna(consulta, [
-        "ayuda",
-        "como funciona",
-        "como utilizar",
-        "como uso",
-        "como puedo usar",
-        "necesito orientacion",
-      ])
-    ) {
-      return {
-        texto: `¡Claro que sí! 😊
-
-Puedo orientarte sobre los principales servicios de EsSalud Digital.
-
-Puedes preguntarme, por ejemplo:
-
-• ¿Cómo puedo reservar una cita?
-• ¿Dónde puedo consultar mis citas?
-• ¿Cómo reviso mis recetas?
-• ¿Dónde veo mis resultados de exámenes?
-• ¿Cómo encuentro un centro de atención?
-• ¿Qué servicios ofrece EsSalud Digital?
-
-También puedo dirigirte directamente a cada sección.`,
-      };
-    }
-
-    // RESPUESTA POR DEFECTO
 
     return {
-      texto: `¡Gracias por escribirme, ${nombreUsuario}! 💙
-
-Por el momento no tengo información suficiente para responder esa consulta.
-
-Sin embargo, puedo orientarte sobre:
-
-• Reserva de citas médicas.
-• Consulta de citas programadas.
-• Recetas y medicamentos.
-• Exámenes médicos.
-• Centros de atención.
-• Funciones de EsSalud Digital.
-
-¿Sobre cuál de estos servicios te gustaría saber más?`,
+      texto: `¡Hola, ${nombreUsuario}! Puedo orientarte sobre las funcionalidades de EsSalud Digital.\n\nPuedes consultarme sobre:\n• Reserva y gestión de citas médicas.\n• Atención médica y centros de salud.\n• Gestión de familiares.\n• Recetas médicas y medicamentos.\n• Exámenes y resultados médicos.\n• Especialidades médicas.\n• Accesibilidad e inclusión.\n• Cuenta y seguridad.\n• Navegación y funcionalidades.\n• Problemas técnicos y soporte.\n\nIntenta formular tu consulta de otra manera para que pueda encontrar la respuesta más adecuada.`
     };
   };
+
 
   // =========================================
   // NAVEGACIÓN SEGURA
@@ -818,6 +1070,12 @@ Sin embargo, puedo orientarte sobre:
 
       case "centro":
         return <MapPin size={18} />;
+
+      case "perfil":
+        return <ShieldCheck size={18} />;
+
+      case "inicio":
+        return <ArrowRight size={18} />;
 
       default:
         return <ArrowRight size={18} />;
