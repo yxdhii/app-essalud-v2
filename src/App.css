@@ -22776,6 +22776,295 @@ button:active {
   }
 }
 
+
+/* =========================================
+   CORRECCIÓN: ARCHIVO ADJUNTO EN EL CHAT
+========================================= */
+
+/* Permitir que el formulario tenga dos filas */
+.chat-page .chat-composer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* El archivo ocupa una fila independiente */
+.chat-page .chat-selected-file {
+  position: static;
+  order: -1;
+  display: flex;
+  align-items: center;
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0 0 4px;
+  padding: 9px 12px;
+  box-sizing: border-box;
+  z-index: auto;
+}
+
+/* Evitar que nombres largos desborden */
+.chat-page .chat-selected-file span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Mantener el botón de eliminar visible */
+.chat-page .chat-selected-file button {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+}
+
+/* El menú sigue apareciendo encima del formulario */
+.chat-page .chat-attachment-menu {
+  z-index: 50;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 380px) {
+  .chat-page .chat-composer {
+    gap: 5px;
+  }
+
+  .chat-page .chat-selected-file {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================
+   ACCIONES DE LOS MENSAJES DEL CHAT
+========================================= */
+
+.chat-message-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  margin-left: 2px;
+}
+
+.chat-message-action {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #777d89;
+  cursor: pointer;
+  transition: background 0.2s ease,
+              color 0.2s ease;
+}
+
+.chat-message-action:hover {
+  background: #eef3f8;
+  color: #2479bd;
+}
+
+.chat-message-action.active {
+  color: #2479bd;
+  background: #e8f2fb;
+}
+
+.chat-message-action:focus-visible {
+  outline: 2px solid #2479bd;
+  outline-offset: 2px;
+}
+
+
+/* =========================================
+   ACCIONES DE RESPUESTAS
+========================================= */
+
+.chat-message-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  position: relative;
+}
+
+.chat-message-action {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #858b96;
+  cursor: pointer;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chat-message-action:hover,
+.chat-message-action.active {
+  color: #2479bd;
+  background: #e8f2fb;
+}
+
+/* =========================================
+   MENÚ DE PERSONALIZACIÓN DE VOZ
+========================================= */
+
+.chat-voice-menu-container {
+  position: relative;
+}
+
+.chat-voice-menu {
+  position: absolute;
+  bottom: calc(100% + 10px);
+
+  /* Desplazar el menú hacia la derecha */
+  right: -18px;
+  left: auto;
+
+  z-index: 1000;
+
+  width: 260px;
+  max-width: calc(100vw - 90px);
+  box-sizing: border-box;
+
+  padding: 15px;
+
+  background: #ffffff;
+  border: 1px solid #e5e9ef;
+  border-radius: 12px;
+
+  box-shadow: 0 5px 22px rgba(0, 0, 0, 0.12);
+
+  /* Evitar que se corte verticalmente */
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* TÍTULO */
+
+.chat-voice-menu > strong {
+  display: block;
+  color: #263747;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+/* DESCRIPCIÓN */
+
+.chat-voice-menu > small {
+  display: block;
+  color: #858b96;
+  font-size: 11px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+/* OPCIONES DE VOZ */
+
+.chat-voice-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f0f2f5;
+  min-width: 0;
+}
+
+/* NOMBRE DE LA VOZ */
+
+.chat-voice-option > button:first-child {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+
+  padding: 9px 5px;
+
+  border: none;
+  background: transparent;
+
+  color: #485563;
+  font-size: 12px;
+  text-align: left;
+
+  overflow-wrap: anywhere;
+  word-break: normal;
+
+  cursor: pointer;
+}
+
+/* VOZ SELECCIONADA */
+
+.chat-voice-option > button.selected {
+  color: #2479bd;
+  font-weight: 600;
+}
+
+/* BOTÓN PARA PROBAR VOZ */
+
+.chat-voice-test {
+  flex-shrink: 0;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #eef5fb;
+  color: #2479bd;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.chat-voice-test:hover {
+  background: #dcecf9;
+}
+
+/* =========================================
+   RESPONSIVE - CELULARES
+========================================= */
+
+@media (max-width: 480px) {
+  .chat-voice-menu {
+    width: 260px;
+    max-width: calc(100vw - 90px);
+    right: -18px;
+  }
+
+  .chat-voice-menu > strong {
+    font-size: 13px;
+  }
+
+  .chat-voice-menu > small {
+    font-size: 10px;
+  }
+
+  .chat-voice-option > button:first-child {
+    font-size: 11px;
+  }
+}
+
+
 /* ==========================================
    ESSALUD DIGITAL - MI PERFIL
 ========================================== */
