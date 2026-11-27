@@ -22687,6 +22687,96 @@ button:active {
 }
 
 /* ==========================================
+   MICRÓFONO Y GRABACIÓN DE VOZ
+========================================== */
+
+.chat-mic-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  flex: 0 0 40px;
+  padding: 0;
+
+  color: #1684f4;
+  background: #edf6ff;
+  border: 1px solid #d8eaff;
+  border-radius: 50%;
+
+  cursor: pointer;
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.chat-mic-button:hover {
+  background: #dceeff;
+  transform: scale(1.04);
+}
+
+.chat-mic-button.recording {
+  color: #ffffff;
+  background: #e53950;
+  border-color: #e53950;
+  animation: micPulse 1.2s infinite;
+}
+
+.chat-mic-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chat-mic-button:focus-visible {
+  outline: 3px solid #8bc5ff;
+  outline-offset: 3px;
+}
+
+/* Animación mientras está grabando */
+@keyframes micPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(229, 57, 80, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(229, 57, 80, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 57, 80, 0);
+  }
+}
+
+/* Mensaje de error del micrófono */
+.chat-mic-error {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 12px;
+  right: 12px;
+  margin: 0;
+  padding: 9px 12px;
+  color: #b42335;
+  background: #fff0f1;
+  border: 1px solid #ffd5d9;
+  border-radius: 10px;
+  font-size: 11px;
+  line-height: 1.4;
+  z-index: 20;
+}
+
+@media (max-width: 380px) {
+  .chat-mic-button {
+    width: 36px;
+    height: 43px;
+  }
+}
+
+/* ==========================================
    ESSALUD DIGITAL - MI PERFIL
 ========================================== */
 
@@ -41577,7 +41667,6 @@ html.tema-oscuro .register-page button:focus-visible {
   height: 0;
 }
 
-
 /* Mejorar visibilidad del mensaje en Detalle de Examen */
 html.tema-oscuro .detalle-examen-not-found h2 {
   color: #ffffff !important;
@@ -41653,12 +41742,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
   width: 100%;
   height: 5px;
 
-  background: linear-gradient(
-    90deg,
-    #0876c9,
-    #27b6c9,
-    #0876c9
-  );
+  background: linear-gradient(90deg, #0876c9, #27b6c9, #0876c9);
 }
 
 /* Icono de éxito */
@@ -41677,7 +41761,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
   background: linear-gradient(145deg, #e7f5ff, #dff7f5);
   color: #0876c9;
 
-  box-shadow: 0 6px 18px rgba(8, 118, 201, 0.10);
+  box-shadow: 0 6px 18px rgba(8, 118, 201, 0.1);
 }
 
 /* Título */
@@ -41753,7 +41837,8 @@ html.tema-oscuro .detalle-examen-not-found svg {
 }
 
 @keyframes registerPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -41775,11 +41860,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
 }
 
 .register-page.tema-oscuro .register-success-card {
-  background: linear-gradient(
-    145deg,
-    #19283e 0%,
-    #111e32 100%
-  );
+  background: linear-gradient(145deg, #19283e 0%, #111e32 100%);
 
   border: 1px solid #30445f;
 
@@ -41788,12 +41869,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
 
 /* Línea superior */
 .register-page.tema-oscuro .register-success-card::before {
-  background: linear-gradient(
-    90deg,
-    #2563eb,
-    #38bdf8,
-    #2563eb
-  );
+  background: linear-gradient(90deg, #2563eb, #38bdf8, #2563eb);
 }
 
 /* Icono de confirmación */
@@ -41936,8 +42012,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
 }
 
 /* Overlay por encima de toda la pantalla */
-.gestionar-cuentas-screen.gestionar-cuentas-loading
-.loading-overlay {
+.gestionar-cuentas-screen.gestionar-cuentas-loading .loading-overlay {
   position: absolute;
   inset: 0;
   z-index: 9999;
@@ -41950,7 +42025,9 @@ html.tema-oscuro .detalle-examen-not-found svg {
 .tema-oscuro .essalud-welcome {
   background: #0b1425;
   color: #ffffff;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Sección principal */
@@ -41965,11 +42042,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
 
 /* Tarjeta inferior */
 .tema-oscuro .essalud-welcome-card {
-  background: linear-gradient(
-    145deg,
-    #19283e 0%,
-    #111e32 100%
-  );
+  background: linear-gradient(145deg, #19283e 0%, #111e32 100%);
 
   border: 1px solid #30445f;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
@@ -42293,7 +42366,9 @@ html.tema-oscuro .detalle-examen-not-found svg {
   color: #fff;
   background: #07516a;
   cursor: pointer;
-  transition: transform .18s ease, background .18s ease;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease;
 }
 
 .reservar-screen .reservar-calendar-monthbar button:hover:not(:disabled) {
@@ -42302,7 +42377,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
 }
 
 .reservar-screen .reservar-calendar-monthbar button:disabled {
-  opacity: .35;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
@@ -42340,7 +42415,10 @@ html.tema-oscuro .detalle-examen-not-found svg {
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+  transition:
+    transform 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
 .reservar-screen .reservar-calendar-day:hover:not(:disabled) {
@@ -42364,7 +42442,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
   color: #fff;
   background: #0784b5;
   border-color: #0784b5;
-  box-shadow: 0 4px 10px rgba(7, 132, 181, .25);
+  box-shadow: 0 4px 10px rgba(7, 132, 181, 0.25);
 }
 
 .reservar-screen .reservar-calendar-legend {
@@ -42490,7 +42568,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(12, 83, 112, .08);
+  box-shadow: 0 2px 4px rgba(12, 83, 112, 0.08);
 }
 
 .reservar-screen .reservar-calendar-times button small {
@@ -42502,7 +42580,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
   color: #fff;
   background: #0784b5;
   border-color: #0784b5;
-  box-shadow: 0 4px 10px rgba(7, 132, 181, .2);
+  box-shadow: 0 4px 10px rgba(7, 132, 181, 0.2);
 }
 
 .reservar-screen .reservar-calendar-times button:disabled {
@@ -42593,7 +42671,7 @@ html.tema-oscuro .detalle-examen-not-found svg {
 }
 
 .reservar-screen .reservar-footer-calendar .reservar-primary:disabled {
-  opacity: .45;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
@@ -42697,7 +42775,10 @@ html.tema-oscuro .reservar-screen .reservar-selection-summary strong {
   color: #bbf7d0 !important;
 }
 
-html.tema-oscuro .reservar-screen .reservar-footer-calendar .reservar-secondary {
+html.tema-oscuro
+  .reservar-screen
+  .reservar-footer-calendar
+  .reservar-secondary {
   color: #cbd5e1 !important;
   background: #172338 !important;
   border-color: #40536d !important;
@@ -42724,7 +42805,10 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-slots-card * {
 html.contraste-alto .reservar-screen .reservar-calendar-day,
 html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day,
 html.contraste-alto .reservar-screen .reservar-calendar-times button,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
@@ -42733,7 +42817,10 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button 
 html.contraste-alto .reservar-screen .reservar-calendar-day.selected,
 html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day.selected,
 html.contraste-alto .reservar-screen .reservar-calendar-times button.selected,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button.selected {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button.selected {
   color: #fff !important;
   background: #000 !important;
 }
@@ -42741,7 +42828,10 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button.
 html.contraste-alto .reservar-screen .reservar-calendar-day:disabled,
 html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day:disabled,
 html.contraste-alto .reservar-screen .reservar-calendar-times button:disabled,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button:disabled {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button:disabled {
   color: #555 !important;
   background: #ddd !important;
   border: 2px solid #555 !important;
@@ -42763,8 +42853,14 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-selection-summary * {
   color: #000 !important;
 }
 
-html.contraste-alto .reservar-screen .reservar-footer-calendar .reservar-secondary,
-html.tema-claro.contraste-alto .reservar-screen .reservar-footer-calendar .reservar-secondary {
+html.contraste-alto
+  .reservar-screen
+  .reservar-footer-calendar
+  .reservar-secondary,
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-footer-calendar
+  .reservar-secondary {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
@@ -42787,7 +42883,6 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-footer-calendar .reser
     gap: 9px;
   }
 }
-
 
 /* =========================================
    ESSALUD DIGITAL - IDENTIDAD VISUAL
@@ -42843,7 +42938,7 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-footer-calendar .reser
   color: #fff;
   background: var(--cal-primary);
   border-color: var(--cal-primary);
-  box-shadow: 0 4px 12px rgba(8, 123, 250, .25);
+  box-shadow: 0 4px 12px rgba(8, 123, 250, 0.25);
 }
 
 /* Leyenda */
@@ -42866,7 +42961,7 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-footer-calendar .reser
   color: #fff;
   background: var(--cal-primary);
   border-color: var(--cal-primary);
-  box-shadow: 0 4px 12px rgba(8, 123, 250, .25);
+  box-shadow: 0 4px 12px rgba(8, 123, 250, 0.25);
 }
 
 /* Información */
@@ -42912,7 +43007,10 @@ html.tema-oscuro .reservar-screen .reservar-calendar-times button.selected {
 html.contraste-alto .reservar-screen .reservar-calendar-day,
 html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day,
 html.contraste-alto .reservar-screen .reservar-calendar-times button,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
@@ -42921,11 +43019,13 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button 
 html.contraste-alto .reservar-screen .reservar-calendar-day.selected,
 html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day.selected,
 html.contraste-alto .reservar-screen .reservar-calendar-times button.selected,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button.selected {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button.selected {
   color: #fff !important;
   background: #000 !important;
 }
-
 
 /* =========================================
    TARJETA MÉDICO SELECCIONADO
@@ -42940,39 +43040,60 @@ html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail {
 }
 
 /* Título Médico seleccionado */
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail-heading,
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail-heading strong {
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-heading,
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-heading
+  strong {
   color: #60aaff !important;
 }
 
 /* Nombre del médico */
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail h3 {
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  h3 {
   color: #ffffff !important;
 }
 
 /* Descripción */
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail p {
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  p {
   color: #c5d8ee !important;
 }
 
 /* Experiencia y disponibilidad */
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail-info,
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail-info span {
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-info,
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-info
+  span {
   color: #c5d8ee !important;
 }
 
 /* Iconos */
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail svg {
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  svg {
   color: #60aaff !important;
 }
 
 /* Botón */
-html.tema-oscuro .appointments-screen.reservar-screen .reservar-doctor-detail .reservar-view-schedule {
+html.tema-oscuro
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  .reservar-view-schedule {
   color: #ffffff !important;
   background: #087bfa !important;
   border: 1px solid #087bfa !important;
 }
-
 
 /* MÉDICO FRECUENTE - MODO OSCURO */
 
@@ -42993,14 +43114,15 @@ html.tema-oscuro .appointments-screen.reservar-screen .reservar-frequent {
   font-weight: 600;
 }
 
-
 /* =========================================
    RESERVAR CITA - ALTO CONTRASTE
 ========================================= */
 
 /* Etiqueta Médico frecuente */
 html.contraste-alto .appointments-screen.reservar-screen .reservar-frequent,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-frequent {
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-frequent {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
@@ -43009,13 +43131,20 @@ html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-fr
 }
 
 html.contraste-alto .appointments-screen.reservar-screen .reservar-frequent svg,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-frequent svg {
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-frequent
+  svg {
   color: #000 !important;
 }
 
 /* Tarjeta Médico seleccionado */
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail {
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
@@ -43023,53 +43152,108 @@ html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-do
 }
 
 /* Encabezado */
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-heading,
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-heading strong,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-heading,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-heading strong {
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-heading,
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-heading
+  strong,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-heading,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-heading
+  strong {
   color: #000 !important;
 }
 
 /* Nombre del médico y descripción */
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail h3,
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail p,
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-info,
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-info span,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail h3,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail p,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-info,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail-info span {
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  h3,
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  p,
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-info,
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-info
+  span,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  h3,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  p,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-info,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail-info
+  span {
   color: #000 !important;
 }
 
 /* Iconos */
-html.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail svg,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-doctor-detail svg {
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  svg,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-doctor-detail
+  svg {
   color: #000 !important;
 }
 
 /* Botón de horarios */
-html.contraste-alto .appointments-screen.reservar-screen .reservar-view-schedule,
-html.tema-claro.contraste-alto .appointments-screen.reservar-screen .reservar-view-schedule {
+html.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-view-schedule,
+html.tema-claro.contraste-alto
+  .appointments-screen.reservar-screen
+  .reservar-view-schedule {
   color: #fff !important;
   background: #000 !important;
   border: 2px solid #000 !important;
 }
-
 
 /* =========================================
    ALTO CONTRASTE - MÉDICO SELECCIONADO
    RECUPERAR ICONO DE CALENDARIO
 ========================================= */
 
-html.contraste-alto .reservar-screen .reservar-doctor.selected .reservar-availability,
-html.tema-claro.contraste-alto .reservar-screen .reservar-doctor.selected .reservar-availability {
+html.contraste-alto
+  .reservar-screen
+  .reservar-doctor.selected
+  .reservar-availability,
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-doctor.selected
+  .reservar-availability {
   color: #fff !important;
 }
 
 /* Icono de calendario en la tarjeta negra */
-html.contraste-alto .reservar-screen .reservar-doctor.selected .reservar-availability svg,
-html.tema-claro.contraste-alto .reservar-screen .reservar-doctor.selected .reservar-availability svg {
+html.contraste-alto
+  .reservar-screen
+  .reservar-doctor.selected
+  .reservar-availability
+  svg,
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-doctor.selected
+  .reservar-availability
+  svg {
   color: #fff !important;
   stroke: #fff !important;
   visibility: visible !important;
@@ -43077,11 +43261,16 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-doctor.selected .reser
 }
 
 /* Texto de disponibilidad */
-html.contraste-alto .reservar-screen .reservar-doctor.selected .reservar-availability,
-html.tema-claro.contraste-alto .reservar-screen .reservar-doctor.selected .reservar-availability {
+html.contraste-alto
+  .reservar-screen
+  .reservar-doctor.selected
+  .reservar-availability,
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-doctor.selected
+  .reservar-availability {
   color: #fff !important;
 }
-
 
 /* =========================================
    ESSALUD DIGITAL - CALENDARIO
@@ -43109,15 +43298,24 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-slots-heading h3 {
 
 /* Flechas de navegación */
 html.contraste-alto .reservar-screen .reservar-calendar-monthbar button,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-monthbar button {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-monthbar
+  button {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
 }
 
 /* Flecha deshabilitada */
-html.contraste-alto .reservar-screen .reservar-calendar-monthbar button:disabled,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-monthbar button:disabled {
+html.contraste-alto
+  .reservar-screen
+  .reservar-calendar-monthbar
+  button:disabled,
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-monthbar
+  button:disabled {
   color: #555 !important;
   background: #ddd !important;
   border: 2px solid #555 !important;
@@ -43144,7 +43342,9 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day.past {
 
 /* Día elegido */
 html.contraste-alto .reservar-screen .reservar-calendar-day.selected,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-day.selected {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-day.selected {
   color: #fff !important;
   background: #000 !important;
   border: 2px solid #000 !important;
@@ -43174,37 +43374,55 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-legend i {
 }
 
 html.contraste-alto .reservar-screen .reservar-calendar-legend i.available,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-legend i.available {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-legend
+  i.available {
   background: #fff !important;
 }
 
 html.contraste-alto .reservar-screen .reservar-calendar-legend i.unavailable,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-legend i.unavailable {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-legend
+  i.unavailable {
   background: #aaa !important;
 }
 
 html.contraste-alto .reservar-screen .reservar-calendar-legend i.chosen,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-legend i.chosen {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-legend
+  i.chosen {
   background: #000 !important;
 }
 
 /* Horarios */
 html.contraste-alto .reservar-screen .reservar-calendar-times button,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button {
   color: #000 !important;
   background: #fff !important;
   border: 2px solid #000 !important;
 }
 
 html.contraste-alto .reservar-screen .reservar-calendar-times button.selected,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button.selected {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button.selected {
   color: #fff !important;
   background: #000 !important;
 }
 
 /* Horarios agotados */
 html.contraste-alto .reservar-screen .reservar-calendar-times button:disabled,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button:disabled {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-times
+  button:disabled {
   color: #555 !important;
   background: #ddd !important;
   border: 2px solid #555 !important;
@@ -43215,7 +43433,10 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-times button:
 html.contraste-alto .reservar-screen .reservar-slots-heading p,
 html.contraste-alto .reservar-screen .reservar-calendar-disclaimer *,
 html.tema-claro.contraste-alto .reservar-screen .reservar-slots-heading p,
-html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-disclaimer * {
+html.tema-claro.contraste-alto
+  .reservar-screen
+  .reservar-calendar-disclaimer
+  * {
   color: #000 !important;
 }
 
@@ -43227,7 +43448,9 @@ html.tema-claro.contraste-alto .reservar-screen .reservar-calendar-disclaimer {
 }
 
 /* DETALLE FAMILIAR - PERFIL SIN MARCO */
-html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile {
+html.tema-claro.contraste-alto
+  .detalle-familiar-page
+  .detalle-familiar-profile {
   background: transparent !important;
   border: 0 !important;
   outline: 0 !important;
@@ -43238,8 +43461,12 @@ html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile 
 }
 
 /* Eliminar posibles marcos decorativos */
-html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile::before,
-html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile::after {
+html.tema-claro.contraste-alto
+  .detalle-familiar-page
+  .detalle-familiar-profile::before,
+html.tema-claro.contraste-alto
+  .detalle-familiar-page
+  .detalle-familiar-profile::after {
   content: none !important;
   display: none !important;
 }
@@ -43261,7 +43488,7 @@ html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile:
   justify-content: center;
   padding: 16px;
   box-sizing: border-box;
-  background: rgba(0, 0, 0, 0.60);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 /* Mantener el modal centrado */
@@ -43272,7 +43499,6 @@ html.tema-claro.contraste-alto .detalle-familiar-page .detalle-familiar-profile:
   max-width: 400px;
   margin: auto;
 }
-
 
 /* ========================================
    LECTURA EN VOZ ALTA - ESSALUD DIGITAL

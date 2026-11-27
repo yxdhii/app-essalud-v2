@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +16,8 @@ import {
   X,
   Image as ImageIcon,
   Camera,
+  Mic,
+  Square,
 } from "lucide-react";
 
 import logoEssalud from "../assets/digital-logo.png";
@@ -44,6 +45,12 @@ export default function Chat() {
 
   const mensajesRef = useRef(null);
   const respuestaPendiente = useRef(null);
+  const reconocimientoRef = useRef(null);
+  const textoBaseRef = useRef("");
+  const textoReconocidoRef = useRef("");
+
+  const [grabando, setGrabando] = useState(false);
+  const [errorMicrofono, setErrorMicrofono] = useState("");
 
   // =========================================
   // IDENTIFICAR AL USUARIO ACTIVO
@@ -191,6 +198,107 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (reconocimientoRef.current) {
+        reconocimientoRef.current.abort();
+        reconocimientoRef.current = null;
+      }
+    };
+  }, []);
+
+  // =========================================
+  // TRANSCRIPCIÓN POR VOZ
+  // =========================================
+
+  const iniciarGrabacion = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setErrorMicrofono(
+        "Tu navegador no admite el reconocimiento de voz. Prueba con Google Chrome.",
+      );
+      return;
+    }
+
+    setErrorMicrofono("");
+
+    const reconocimiento = new SpeechRecognition();
+
+    reconocimiento.lang = "es-PE";
+    reconocimiento.continuous = true;
+    reconocimiento.interimResults = true;
+
+    textoBaseRef.current = mensaje.trim();
+    textoReconocidoRef.current = "";
+
+    reconocimiento.onstart = () => {
+      setGrabando(true);
+    };
+
+    reconocimiento.onresult = (event) => {
+      let textoFinal = "";
+      let textoTemporal = "";
+
+      for (let i = 0; i < event.results.length; i++) {
+        const resultado = event.results[i];
+        const texto = resultado[0].transcript;
+
+        if (resultado.isFinal) {
+          textoFinal += texto + " ";
+        } else {
+          textoTemporal += texto;
+        }
+      }
+
+      textoReconocidoRef.current = textoFinal.trim();
+
+      const textoCompleto = [
+        textoBaseRef.current,
+        textoReconocidoRef.current,
+        textoTemporal,
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      setMensaje(textoCompleto);
+    };
+
+    reconocimiento.onerror = (event) => {
+      setGrabando(false);
+
+      if (event.error === "not-allowed") {
+        setErrorMicrofono(
+          "Necesitas permitir el acceso al micrófono en tu navegador.",
+        );
+      } else if (event.error !== "no-speech" && event.error !== "aborted") {
+        setErrorMicrofono("No se pudo reconocer tu voz. Inténtalo nuevamente.");
+      }
+    };
+
+    reconocimiento.onend = () => {
+      setGrabando(false);
+    };
+
+    reconocimientoRef.current = reconocimiento;
+
+    try {
+      reconocimiento.start();
+    } catch (error) {
+      setGrabando(false);
+      setErrorMicrofono("No se pudo iniciar el micrófono.");
+    }
+  };
+
+  const detenerGrabacion = () => {
+    if (reconocimientoRef.current) {
+      reconocimientoRef.current.stop();
+      reconocimientoRef.current = null;
+    }
+
+    setGrabando(false);
+  };
   // =========================================
   // ADJUNTAR ARCHIVOS
   // =========================================
@@ -216,9 +324,7 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
     };
 
     if (tipo === "documento") {
-      const extensionValida = /\.(pdf|doc|docx|xls|xlsx)$/i.test(
-        archivo.name
-      );
+      const extensionValida = /\.(pdf|doc|docx|xls|xlsx)$/i.test(archivo.name);
 
       if (!extensionValida) {
         window.alert("Selecciona un documento PDF, Word o Excel.");
@@ -230,7 +336,7 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
     if (
       tipo === "multimedia" &&
       !tiposPermitidos.multimedia.some((tipoArchivo) =>
-        archivo.type.startsWith(tipoArchivo)
+        archivo.type.startsWith(tipoArchivo),
       )
     ) {
       window.alert("Selecciona una imagen o un video válido.");
@@ -559,13 +665,7 @@ Estoy aquí para orientarte sobre los servicios de EsSalud Digital.
 
     // AGRADECIMIENTOS
 
-    if (
-      contieneAlguna(consulta, [
-        "gracias",
-        "te agradezco",
-        "muy amable",
-      ])
-    ) {
+    if (contieneAlguna(consulta, ["gracias", "te agradezco", "muy amable"])) {
       return {
         texto: `¡Con mucho gusto, ${nombreUsuario}! 💙
 
@@ -657,10 +757,7 @@ Sin embargo, puedo orientarte sobre:
       hora: obtenerHora(),
     };
 
-    setMensajes((anteriores) => [
-      ...anteriores,
-      nuevoMensaje,
-    ]);
+    setMensajes((anteriores) => [...anteriores, nuevoMensaje]);
 
     setMensaje("");
     setArchivoAdjunto(null);
@@ -683,10 +780,7 @@ Sin embargo, puedo orientarte sobre:
         hora: obtenerHora(),
       };
 
-      setMensajes((anteriores) => [
-        ...anteriores,
-        nuevoMensajeAsistente,
-      ]);
+      setMensajes((anteriores) => [...anteriores, nuevoMensajeAsistente]);
 
       setRespondiendo(false);
       respuestaPendiente.current = null;
@@ -736,7 +830,6 @@ Sin embargo, puedo orientarte sobre:
 
   return (
     <main className="appointments-screen chat-page">
-
       {/* ENCABEZADO */}
 
       <header className="appointments-header">
@@ -763,7 +856,7 @@ Sin embargo, puedo orientarte sobre:
           aria-label="Ayuda"
           onClick={() =>
             window.alert(
-              "Puedes consultar sobre citas médicas, recetas, exámenes y centros de atención."
+              "Puedes consultar sobre citas médicas, recetas, exámenes y centros de atención.",
             )
           }
         >
@@ -774,7 +867,6 @@ Sin embargo, puedo orientarte sobre:
       {/* CONTENIDO DEL CHAT */}
 
       <section className="chat-content">
-
         {/* PERFIL DEL ASISTENTE */}
 
         <div className="chat-assistant-header">
@@ -818,9 +910,7 @@ Sin embargo, puedo orientarte sobre:
             <div
               key={item.id}
               className={`chat-message-row ${
-                item.tipo === "usuario"
-                  ? "user-row"
-                  : "assistant-row"
+                item.tipo === "usuario" ? "user-row" : "assistant-row"
               }`}
             >
               {item.tipo === "asistente" && (
@@ -834,10 +924,9 @@ Sin embargo, puedo orientarte sobre:
               )}
 
               <div className="chat-message-wrapper">
-
                 <div className={`chat-bubble ${item.tipo}`}>
                   {item.texto}
-                  
+
                   {item.archivo && (
                     <div className="chat-message-attachment">
                       <FileText size={19} />
@@ -873,10 +962,7 @@ Sin embargo, puedo orientarte sobre:
                   <span>{item.hora}</span>
 
                   {item.tipo === "usuario" && (
-                    <CheckCheck
-                      size={16}
-                      aria-label="Mensaje enviado"
-                    />
+                    <CheckCheck size={16} aria-label="Mensaje enviado" />
                   )}
                 </div>
               </div>
@@ -954,12 +1040,10 @@ Sin embargo, puedo orientarte sobre:
             enviarMensaje();
           }}
         >
-
           {/* MENÚ DE ADJUNTOS */}
 
           {mostrarAdjuntos && (
             <div className="chat-attachment-menu">
-
               <div className="chat-attachment-header">
                 <strong>Adjuntar a la conversación</strong>
 
@@ -1026,9 +1110,7 @@ Sin embargo, puedo orientarte sobre:
             type="file"
             accept=".pdf,.doc,.docx,.xls,.xlsx"
             hidden
-            onChange={(event) =>
-              seleccionarArchivo(event, "documento")
-            }
+            onChange={(event) => seleccionarArchivo(event, "documento")}
           />
 
           <input
@@ -1036,9 +1118,7 @@ Sin embargo, puedo orientarte sobre:
             type="file"
             accept="image/*,video/*"
             hidden
-            onChange={(event) =>
-              seleccionarArchivo(event, "multimedia")
-            }
+            onChange={(event) => seleccionarArchivo(event, "multimedia")}
           />
 
           <input
@@ -1047,9 +1127,7 @@ Sin embargo, puedo orientarte sobre:
             accept="image/*,video/*"
             capture="environment"
             hidden
-            onChange={(event) =>
-              seleccionarArchivo(event, "multimedia")
-            }
+            onChange={(event) => seleccionarArchivo(event, "multimedia")}
           />
 
           {/* ARCHIVO SELECCIONADO */}
@@ -1093,18 +1171,34 @@ Sin embargo, puedo orientarte sobre:
             autoComplete="off"
           />
 
+          {/* BOTÓN DE MICRÓFONO */}
+          <button
+            type="button"
+            className={`chat-mic-button ${grabando ? "recording" : ""}`}
+            onClick={grabando ? detenerGrabacion : iniciarGrabacion}
+            aria-label={grabando ? "Detener grabación" : "Grabar mensaje"}
+            title={grabando ? "Detener grabación" : "Grabar mensaje"}
+            disabled={respondiendo}
+          >
+            {grabando ? <Square size={19} /> : <Mic size={22} />}
+          </button>
+
           {/* BOTÓN ENVIAR */}
 
           <button
             type="submit"
             className="chat-send-button"
             aria-label="Enviar mensaje"
-            disabled={
-              (!mensaje.trim() && !archivoAdjunto) || respondiendo
-            }
+            disabled={(!mensaje.trim() && !archivoAdjunto) || respondiendo}
           >
             <Send size={23} />
           </button>
+
+          {errorMicrofono && (
+            <p className="chat-mic-error" role="alert">
+              {errorMicrofono}
+            </p>
+          )}
         </form>
       </section>
 
