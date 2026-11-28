@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
+  ArrowDown,
   CircleHelp,
   CalendarDays,
   FileText,
@@ -58,6 +59,7 @@ export default function Chat() {
   const reconocimientoRef = useRef(null);
   const textoBaseRef = useRef("");
   const textoReconocidoRef = useRef("");
+  const estaAlFinalRef = useRef(true);
 
   const [grabando, setGrabando] = useState(false);
   const [errorMicrofono, setErrorMicrofono] = useState("");
@@ -149,6 +151,7 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
   const [mensajeEnAudio, setMensajeEnAudio] = useState(null);
   const [mensajeCopiadoId, setMensajeCopiadoId] = useState(null);
   const [menuVozAbierto, setMenuVozAbierto] = useState(null);
+  const [mostrarFlechaAbajo, setMostrarFlechaAbajo] = useState(false);
 
   const [vozSeleccionada, setVozSeleccionada] = useState(
     () => localStorage.getItem("essalud_voz_asistente") || "Google español",
@@ -189,20 +192,55 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
     }
   }, [mensajes, claveChat]);
 
-  // =========================================
-  // DESPLAZAMIENTO AUTOMÁTICO
-  // =========================================
 
-  useEffect(() => {
-    const contenedor = mensajesRef.current;
+// =========================================
+// DESPLAZAMIENTO AUTOMÁTICO
+// =========================================
 
-    if (contenedor) {
-      contenedor.scrollTo({
-        top: contenedor.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [mensajes, respondiendo]);
+useEffect(() => {
+  const contenedor = mensajesRef.current;
+
+  if (contenedor && estaAlFinalRef.current) {
+    contenedor.scrollTo({
+      top: contenedor.scrollHeight,
+      behavior: "smooth",
+    });
+  }
+}, [mensajes, respondiendo]);
+
+// Detectar si el usuario está revisando mensajes anteriores.
+const manejarScrollChat = () => {
+  const contenedor = mensajesRef.current;
+  if (!contenedor) return;
+
+  const distanciaAlFinal =
+    contenedor.scrollHeight -
+    contenedor.scrollTop -
+    contenedor.clientHeight;
+
+  const estaAbajo = distanciaAlFinal < 80;
+
+  estaAlFinalRef.current = estaAbajo;
+
+  setMostrarFlechaAbajo(
+    !estaAbajo && contenedor.scrollHeight > contenedor.clientHeight
+  );
+};
+
+// Regresar al último mensaje.
+const bajarAlUltimoMensaje = () => {
+  const contenedor = mensajesRef.current;
+  if (!contenedor) return;
+
+  contenedor.scrollTo({
+    top: contenedor.scrollHeight,
+    behavior: "smooth",
+  });
+
+  estaAlFinalRef.current = true;
+  setMostrarFlechaAbajo(false);
+};
+
 
   // =========================================
   // LIMPIAR TEMPORIZADOR
@@ -1766,6 +1804,7 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
         <div
           className="chat-messages"
           ref={mensajesRef}
+            onScroll={manejarScrollChat}
           role="log"
           aria-label="Conversación con el asistente de salud"
           aria-live="polite"
@@ -1968,7 +2007,21 @@ Puedes preguntarme sobre citas médicas, recetas, exámenes y centros de atenci�
               </div>
             </div>
           )}
+            {/* FLECHA PARA REGRESAR ABAJO */}
+  {mostrarFlechaAbajo && (
+    <button
+      type="button"
+      className="chat-scroll-bottom"
+      onClick={bajarAlUltimoMensaje}
+      aria-label="Ir al último mensaje"
+      title="Ir al último mensaje"
+    >
+      <ArrowDown size={21} strokeWidth={2.5} />
+    </button>
+  )}
         </div>
+
+        
 
         {/* ACCESOS RÁPIDOS */}
 

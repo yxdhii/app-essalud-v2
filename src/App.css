@@ -23065,6 +23065,83 @@ button:active {
 }
 
 
+/* =========================================
+   FLECHA PARA IR AL ÚLTIMO MENSAJE
+========================================= */
+
+.chat-messages {
+  position: relative;
+}
+
+.chat-scroll-bottom {
+  position: sticky;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 44px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: -38px auto 10px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 20px;
+
+  background: #ffffff;
+  color: #1684df;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+
+  cursor: pointer;
+  z-index: 20;
+
+  transition: background 0.2s ease,
+              box-shadow 0.2s ease,
+              transform 0.2s ease;
+
+  animation: aparecerFlecha 0.2s ease;
+}
+
+.chat-scroll-bottom svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 2.4;
+}
+
+.chat-scroll-bottom:hover {
+  background: #f0f7ff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+}
+
+.chat-scroll-bottom:active {
+  transform: translateX(-50%) scale(0.94);
+}
+
+@keyframes aparecerFlecha {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-scroll-bottom {
+    animation: none;
+  }
+}
+
+
 /* ==========================================
    ESSALUD DIGITAL - MI PERFIL
 ========================================== */
